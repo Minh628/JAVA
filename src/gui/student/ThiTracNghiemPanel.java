@@ -1,0 +1,163 @@
+/*
+ * Hệ thống thi trắc nghiệm trực tuyến
+ * GUI: ThiTracNghiemPanel - Panel chọn và vào thi trắc nghiệm
+ */
+package gui.student;
+
+import bus.SinhVienBUS;
+import bus.SinhVienThiBUS;
+import config.Constants;
+import dto.DeThiDTO;
+import dto.KyThiDTO;
+import dto.SinhVienDTO;
+import gui.components.CustomButton;
+import gui.components.CustomTable;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.List;
+
+public class ThiTracNghiemPanel extends JPanel {
+    private SinhVienDTO nguoiDung;
+    private SinhVienBUS sinhVienBUS;
+    private SinhVienThiBUS sinhVienThiBUS;
+    private StudentDashboard parentFrame;
+    
+    private CustomTable tblDeThi;
+    private DefaultTableModel modelDeThi;
+    private JComboBox<KyThiDTO> cboKyThi;
+
+    public ThiTracNghiemPanel(SinhVienDTO nguoiDung, StudentDashboard parentFrame) {
+        this.nguoiDung = nguoiDung;
+        this.parentFrame = parentFrame;
+        this.sinhVienBUS = new SinhVienBUS();
+        this.sinhVienThiBUS = new SinhVienThiBUS();
+        initComponents();
+        loadData();
+    }
+
+    private void initComponents() {
+        setLayout(new BorderLayout(10, 10));
+        setBackground(Constants.CONTENT_BG);
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Header với combobox kỳ thi
+        JPanel panelHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+        panelHeader.setBackground(Constants.CONTENT_BG);
+        
+        JLabel lblTieuDe = new JLabel("📝 DANH SÁCH ĐỀ THI");
+        lblTieuDe.setFont(Constants.HEADER_FONT);
+        lblTieuDe.setForeground(Constants.PRIMARY_COLOR);
+        panelHeader.add(lblTieuDe);
+        
+        panelHeader.add(Box.createHorizontalStrut(30));
+        JLabel lblKyThi = new JLabel("Kỳ thi:");
+        lblKyThi.setFont(Constants.NORMAL_FONT);
+        panelHeader.add(lblKyThi);
+        
+        cboKyThi = new JComboBox<>();
+        cboKyThi.setPreferredSize(new Dimension(300, 32));
+        cboKyThi.setFont(Constants.NORMAL_FONT);
+        cboKyThi.addActionListener(e -> loadDeThi());
+        panelHeader.add(cboKyThi);
+        
+        add(panelHeader, BorderLayout.NORTH);
+        
+        // Bảng đề thi
+        String[] columns = {"Mã đề", "Tên đề thi", "Môn học", "Số câu", "Thời gian (phút)", "Trạng thái"};
+        modelDeThi = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tblDeThi = new CustomTable(modelDeThi);
+        
+        JScrollPane scrollPane = new JScrollPane(tblDeThi);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        scrollPane.getViewport().setBackground(Constants.CARD_COLOR);
+        add(scrollPane, BorderLayout.CENTER);
+        
+        // Nút vào thi
+        JPanel panelNut = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelNut.setBackground(Constants.CONTENT_BG);
+        
+        CustomButton btnVaoThi = new CustomButton("🚀  VÀO THI", Constants.SUCCESS_COLOR, Constants.TEXT_COLOR);
+        btnVaoThi.setPreferredSize(new Dimension(150, 45));
+        btnVaoThi.addActionListener(e -> vaoThi());
+        panelNut.add(btnVaoThi);
+        
+        CustomButton btnLamMoi = new CustomButton("🔄  Làm mới", Constants.PRIMARY_COLOR, Constants.TEXT_COLOR);
+        btnLamMoi.addActionListener(e -> loadData());
+        panelNut.add(btnLamMoi);
+        
+        add(panelNut, BorderLayout.SOUTH);
+    }
+    
+    private void loadData() {
+        loadKyThi();
+    }
+    
+    private void loadKyThi() {
+        cboKyThi.removeAllItems();
+        List<KyThiDTO> danhSach = sinhVienBUS.getKyThiDangDienRa();
+        if (danhSach != null) {
+            for (KyThiDTO kt : danhSach) {
+                cboKyThi.addItem(kt);
+            }
+        }
+    }
+    
+    public void loadDeThi() {
+        modelDeThi.setRowCount(0);
+        KyThiDTO kyThiChon = (KyThiDTO) cboKyThi.getSelectedItem();
+        if (kyThiChon == null) return;
+        
+        List<DeThiDTO> danhSach = sinhVienBUS.getDeThiTrongKyThi(kyThiChon.getMaKyThi());
+        if (danhSach != null) {
+            for (DeThiDTO dt : danhSach) {
+                boolean daThi = sinhVienBUS.daDuThi(dt.getMaDeThi(), nguoiDung.getMaSV());
+                modelDeThi.addRow(new Object[]{
+                    dt.getMaDeThi(), dt.getTenDeThi(), dt.getTenHocPhan(), 
+                    dt.getSoCauHoi(), dt.getThoiGianLam(),
+                    daThi ? "Đã thi" : "Chưa thi"
+                });
+            }
+        }
+    }
+    
+    private void vaoThi() {
+        int row = tblDeThi.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn đề thi!");
+            return;
+        }
+        
+        String trangThai = (String) modelDeThi.getValueAt(row, 5);
+        if ("Đã thi".equals(trangThai)) {
+            JOptionPane.showMessageDialog(this, "Bạn đã thi đề này rồi!");
+            return;
+        }
+        
+        int maDeThi = (int) modelDeThi.getValueAt(row, 0);
+        String tenDeThi = (String) modelDeThi.getValueAt(row, 1);
+        int soCau = (int) modelDeThi.getValueAt(row, 3);
+        int thoiGian = (int) modelDeThi.getValueAt(row, 4);
+        
+        int confirm = JOptionPane.showConfirmDialog(this,
+            String.format("Bạn chuẩn bị thi:\n- Đề thi: %s\n- Số câu: %d\n- Thời gian: %d phút\n\nBắt đầu thi?",
+                tenDeThi, soCau, thoiGian),
+            "Xác nhận vào thi", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            int maBaiThi = sinhVienThiBUS.batDauLamBai(maDeThi, nguoiDung.getMaSV());
+            if (maBaiThi > 0) {
+                parentFrame.setVisible(false);
+                LamBaiThiFrame lamBaiThiFrame = new LamBaiThiFrame(parentFrame, maBaiThi, maDeThi, thoiGian);
+                lamBaiThiFrame.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Không thể bắt đầu thi. Vui lòng thử lại!");
+            }
+        }
+    }
+}
