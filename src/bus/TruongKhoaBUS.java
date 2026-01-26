@@ -1,15 +1,18 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * BUS: TruongKhoaBUS - Xử lý logic nghiệp vụ trưởng khoa
+ * Sử dụng static ArrayList để cache dữ liệu, chỉ load từ DB 1 lần
  */
 package bus;
 
 import dao.*;
 import dto.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TruongKhoaBUS {
+    // Non-static DAO instances
     private GiangVienDAO giangVienDAO;
     private SinhVienDAO sinhVienDAO;
     private KhoaDAO khoaDAO;
@@ -18,7 +21,16 @@ public class TruongKhoaBUS {
     private KyThiDAO kyThiDAO;
     private DeThiDAO deThiDAO;
     private BaiThiDAO baiThiDAO;
-    
+
+    // Static ArrayList cache - chỉ load 1 lần từ DB
+    private static ArrayList<GiangVienDTO> danhSachGiangVien = null;
+    private static ArrayList<SinhVienDTO> danhSachSinhVien = null;
+    private static ArrayList<KhoaDTO> danhSachKhoa = null;
+    private static ArrayList<NganhDTO> danhSachNganh = null;
+    private static ArrayList<HocPhanDTO> danhSachHocPhan = null;
+    private static ArrayList<KyThiDTO> danhSachKyThi = null;
+    private static ArrayList<DeThiDTO> danhSachDeThi = null;
+
     public TruongKhoaBUS() {
         this.giangVienDAO = new GiangVienDAO();
         this.sinhVienDAO = new SinhVienDAO();
@@ -29,35 +41,40 @@ public class TruongKhoaBUS {
         this.deThiDAO = new DeThiDAO();
         this.baiThiDAO = new BaiThiDAO();
     }
-    
+
     // ==================== QUẢN LÝ GIẢNG VIÊN ====================
-    
+
     /**
-     * Lấy danh sách giảng viên
+     * Lấy danh sách giảng viên - load từ DB nếu chưa có cache
      */
     public List<GiangVienDTO> getDanhSachGiangVien() {
-        try {
-            return giangVienDAO.getAllGiangVien();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        if (danhSachGiangVien == null) {
+            try {
+                danhSachGiangVien = new ArrayList<>(giangVienDAO.getAllGiangVien());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return new ArrayList<>();
+            }
         }
+        return danhSachGiangVien;
     }
-    
+
     /**
-     * Lấy giảng viên theo khoa
+     * Lấy giảng viên theo khoa - lọc từ cache
      */
     public List<GiangVienDTO> getGiangVienTheoKhoa(int maKhoa) {
-        try {
-            return giangVienDAO.getByKhoa(maKhoa);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        getDanhSachGiangVien(); // Đảm bảo cache đã load
+        ArrayList<GiangVienDTO> ketQua = new ArrayList<>();
+        for (GiangVienDTO gv : danhSachGiangVien) {
+            if (gv.getMaKhoa() == maKhoa) {
+                ketQua.add(gv);
+            }
         }
+        return ketQua;
     }
-    
+
     /**
-     * Thêm giảng viên mới
+     * Thêm giảng viên mới - cập nhật DB và cache
      */
     public boolean themGiangVien(GiangVienDTO giangVien) {
         try {
@@ -65,40 +82,66 @@ public class TruongKhoaBUS {
             if (giangVienDAO.checkTenDangNhapExists(giangVien.getTenDangNhap())) {
                 return false;
             }
-            // Mã hóa mật khẩu
-            giangVien.setMatKhau(giangVien.getMatKhau());
             giangVien.setMaVaiTro(VaiTroDTO.GIANG_VIEN);
-            return giangVienDAO.insert(giangVien);
+            if (giangVienDAO.insert(giangVien)) {
+                // Reload cache sau khi thêm để lấy mã mới
+                danhSachGiangVien = new ArrayList<>(giangVienDAO.getAllGiangVien());
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Cập nhật giảng viên
+     * Cập nhật giảng viên - cập nhật DB và cache
      */
     public boolean capNhatGiangVien(GiangVienDTO giangVien) {
         try {
-            return giangVienDAO.update(giangVien);
+            if (giangVienDAO.update(giangVien)) {
+                // Cập nhật trong cache
+                if (danhSachGiangVien != null) {
+                    for (int i = 0; i < danhSachGiangVien.size(); i++) {
+                        if (danhSachGiangVien.get(i).getMaGV() == giangVien.getMaGV()) {
+                            // Reload thông tin mới từ DB
+                            GiangVienDTO updated = giangVienDAO.getById(giangVien.getMaGV());
+                            if (updated != null) {
+                                danhSachGiangVien.set(i, updated);
+                            }
+                            break;
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Xóa giảng viên
+     * Xóa giảng viên - cập nhật DB và cache
      */
     public boolean xoaGiangVien(int maGV) {
         try {
-            return giangVienDAO.delete(maGV);
+            if (giangVienDAO.delete(maGV)) {
+                // Xóa khỏi cache
+                if (danhSachGiangVien != null) {
+                    danhSachGiangVien.removeIf(gv -> gv.getMaGV() == maGV);
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
      * Reset mật khẩu giảng viên
      */
@@ -110,35 +153,40 @@ public class TruongKhoaBUS {
             return false;
         }
     }
-    
+
     // ==================== QUẢN LÝ SINH VIÊN ====================
-    
+
     /**
-     * Lấy danh sách sinh viên
+     * Lấy danh sách sinh viên - load từ DB nếu chưa có cache
      */
     public List<SinhVienDTO> getDanhSachSinhVien() {
-        try {
-            return sinhVienDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        if (danhSachSinhVien == null) {
+            try {
+                danhSachSinhVien = new ArrayList<>(sinhVienDAO.getAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return new ArrayList<>();
+            }
         }
+        return danhSachSinhVien;
     }
-    
+
     /**
-     * Lấy sinh viên theo ngành
+     * Lấy sinh viên theo ngành - lọc từ cache
      */
     public List<SinhVienDTO> getSinhVienTheoNganh(int maNganh) {
-        try {
-            return sinhVienDAO.getByNganh(maNganh);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        getDanhSachSinhVien(); // Đảm bảo cache đã load
+        ArrayList<SinhVienDTO> ketQua = new ArrayList<>();
+        for (SinhVienDTO sv : danhSachSinhVien) {
+            if (sv.getMaNganh() == maNganh) {
+                ketQua.add(sv);
+            }
         }
+        return ketQua;
     }
-    
+
     /**
-     * Thêm sinh viên mới
+     * Thêm sinh viên mới - cập nhật DB và cache
      */
     public boolean themSinhVien(SinhVienDTO sinhVien) {
         try {
@@ -146,39 +194,65 @@ public class TruongKhoaBUS {
             if (sinhVienDAO.checkTenDangNhapExists(sinhVien.getTenDangNhap())) {
                 return false;
             }
-            // Mã hóa mật khẩu
-            sinhVien.setMatKhau(sinhVien.getMatKhau());
-            return sinhVienDAO.insert(sinhVien);
+            if (sinhVienDAO.insert(sinhVien)) {
+                // Reload cache sau khi thêm để lấy mã mới
+                danhSachSinhVien = new ArrayList<>(sinhVienDAO.getAll());
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Cập nhật sinh viên
+     * Cập nhật sinh viên - cập nhật DB và cache
      */
     public boolean capNhatSinhVien(SinhVienDTO sinhVien) {
         try {
-            return sinhVienDAO.update(sinhVien);
+            if (sinhVienDAO.update(sinhVien)) {
+                // Cập nhật trong cache
+                if (danhSachSinhVien != null) {
+                    for (int i = 0; i < danhSachSinhVien.size(); i++) {
+                        if (danhSachSinhVien.get(i).getMaSV() == sinhVien.getMaSV()) {
+                            // Reload thông tin mới từ DB
+                            SinhVienDTO updated = sinhVienDAO.getById(sinhVien.getMaSV());
+                            if (updated != null) {
+                                danhSachSinhVien.set(i, updated);
+                            }
+                            break;
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Xóa sinh viên
+     * Xóa sinh viên - cập nhật DB và cache
      */
     public boolean xoaSinhVien(int maSV) {
         try {
-            return sinhVienDAO.delete(maSV);
+            if (sinhVienDAO.delete(maSV)) {
+                // Xóa khỏi cache
+                if (danhSachSinhVien != null) {
+                    danhSachSinhVien.removeIf(sv -> sv.getMaSV() == maSV);
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
      * Reset mật khẩu sinh viên
      */
@@ -190,165 +264,245 @@ public class TruongKhoaBUS {
             return false;
         }
     }
-    
-    // ==================== DANH MỤC ====================
-    
+
+    // ==================== QUẢN LÝ KHOA ====================
+
     /**
-     * Lấy danh sách khoa
+     * Lấy danh sách khoa - load từ DB nếu chưa có cache
      */
     public List<KhoaDTO> getDanhSachKhoa() {
-        try {
-            return khoaDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        if (danhSachKhoa == null) {
+            try {
+                danhSachKhoa = new ArrayList<>(khoaDAO.getAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return new ArrayList<>();
+            }
         }
+        return danhSachKhoa;
     }
-    
+
     /**
-     * Thêm khoa mới
+     * Thêm khoa mới - cập nhật DB và cache
      */
     public boolean themKhoa(KhoaDTO khoa) {
         try {
-            return khoaDAO.insert(khoa);
+            if (khoaDAO.insert(khoa)) {
+                // Reload cache sau khi thêm để lấy mã mới
+                danhSachKhoa = new ArrayList<>(khoaDAO.getAll());
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Cập nhật khoa
+     * Cập nhật khoa - cập nhật DB và cache
      */
     public boolean capNhatKhoa(KhoaDTO khoa) {
         try {
-            return khoaDAO.update(khoa);
+            if (khoaDAO.update(khoa)) {
+                // Cập nhật trong cache
+                if (danhSachKhoa != null) {
+                    for (int i = 0; i < danhSachKhoa.size(); i++) {
+                        if (danhSachKhoa.get(i).getMaKhoa() == khoa.getMaKhoa()) {
+                            danhSachKhoa.set(i, khoa);
+                            break;
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Xóa khoa
+     * Xóa khoa - cập nhật DB và cache
      */
     public boolean xoaKhoa(int maKhoa) {
         try {
-            return khoaDAO.delete(maKhoa);
+            if (khoaDAO.delete(maKhoa)) {
+                // Xóa khỏi cache
+                if (danhSachKhoa != null) {
+                    danhSachKhoa.removeIf(k -> k.getMaKhoa() == maKhoa);
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
+    // ==================== QUẢN LÝ NGÀNH ====================
+
     /**
-     * Lấy danh sách ngành
+     * Lấy danh sách ngành - load từ DB nếu chưa có cache
      */
     public List<NganhDTO> getDanhSachNganh() {
-        try {
-            return nganhDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        if (danhSachNganh == null) {
+            try {
+                danhSachNganh = new ArrayList<>(nganhDAO.getAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return new ArrayList<>();
+            }
         }
+        return danhSachNganh;
     }
-    
+
     /**
-     * Thêm ngành mới
+     * Thêm ngành mới - cập nhật DB và cache
      */
     public boolean themNganh(NganhDTO nganh) {
         try {
-            return nganhDAO.insert(nganh);
+            if (nganhDAO.insert(nganh)) {
+                // Reload cache sau khi thêm để lấy mã mới và tên khoa
+                danhSachNganh = new ArrayList<>(nganhDAO.getAll());
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Cập nhật ngành
+     * Cập nhật ngành - cập nhật DB và cache
      */
     public boolean capNhatNganh(NganhDTO nganh) {
         try {
-            return nganhDAO.update(nganh);
+            if (nganhDAO.update(nganh)) {
+                // Reload cache để lấy tên khoa mới
+                danhSachNganh = new ArrayList<>(nganhDAO.getAll());
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Xóa ngành
+     * Xóa ngành - cập nhật DB và cache
      */
     public boolean xoaNganh(int maNganh) {
         try {
-            return nganhDAO.delete(maNganh);
+            if (nganhDAO.delete(maNganh)) {
+                // Xóa khỏi cache
+                if (danhSachNganh != null) {
+                    danhSachNganh.removeIf(n -> n.getMaNganh() == maNganh);
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Lấy ngành theo khoa
+     * Lấy ngành theo khoa - lọc từ cache
      */
     public List<NganhDTO> getNganhTheoKhoa(int maKhoa) {
-        try {
-            return nganhDAO.getByKhoa(maKhoa);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        getDanhSachNganh(); // Đảm bảo cache đã load
+        ArrayList<NganhDTO> ketQua = new ArrayList<>();
+        for (NganhDTO nganh : danhSachNganh) {
+            if (nganh.getMaKhoa() == maKhoa) {
+                ketQua.add(nganh);
+            }
         }
+        return ketQua;
     }
-    
+
+    // ==================== QUẢN LÝ HỌC PHẦN ====================
+
     /**
-     * Lấy danh sách học phần
+     * Lấy danh sách học phần - load từ DB nếu chưa có cache
      */
     public List<HocPhanDTO> getDanhSachHocPhan() {
-        try {
-            return hocPhanDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        if (danhSachHocPhan == null) {
+            try {
+                danhSachHocPhan = new ArrayList<>(hocPhanDAO.getAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return new ArrayList<>();
+            }
         }
+        return danhSachHocPhan;
     }
-    
+
     /**
-     * Thêm học phần mới
+     * Thêm học phần mới - cập nhật DB và cache
      */
     public boolean themHocPhan(HocPhanDTO hocPhan) {
         try {
-            return hocPhanDAO.insert(hocPhan);
+            if (hocPhanDAO.insert(hocPhan)) {
+                // Reload cache sau khi thêm để lấy mã mới
+                danhSachHocPhan = new ArrayList<>(hocPhanDAO.getAll());
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Cập nhật học phần
+     * Cập nhật học phần - cập nhật DB và cache
      */
     public boolean capNhatHocPhan(HocPhanDTO hocPhan) {
         try {
-            return hocPhanDAO.update(hocPhan);
+            if (hocPhanDAO.update(hocPhan)) {
+                // Cập nhật trong cache
+                if (danhSachHocPhan != null) {
+                    for (int i = 0; i < danhSachHocPhan.size(); i++) {
+                        if (danhSachHocPhan.get(i).getMaHocPhan() == hocPhan.getMaHocPhan()) {
+                            danhSachHocPhan.set(i, hocPhan);
+                            break;
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Xóa học phần
+     * Xóa học phần - cập nhật DB và cache
      */
     public boolean xoaHocPhan(int maHocPhan) {
         try {
-            return hocPhanDAO.delete(maHocPhan);
+            if (hocPhanDAO.delete(maHocPhan)) {
+                // Xóa khỏi cache
+                if (danhSachHocPhan != null) {
+                    danhSachHocPhan.removeIf(hp -> hp.getMaHocPhan() == maHocPhan);
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
      * Đổi mật khẩu giảng viên
      */
@@ -365,59 +519,103 @@ public class TruongKhoaBUS {
             return false;
         }
     }
-    
+
     // ==================== QUẢN LÝ KỲ THI ====================
-    
+
     /**
-     * Lấy danh sách kỳ thi
+     * Lấy danh sách kỳ thi - load từ DB nếu chưa có cache
      */
     public List<KyThiDTO> getDanhSachKyThi() {
-        try {
-            return kyThiDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        if (danhSachKyThi == null) {
+            try {
+                danhSachKyThi = new ArrayList<>(kyThiDAO.getAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return new ArrayList<>();
+            }
         }
+        return danhSachKyThi;
     }
-    
+
     /**
-     * Thêm kỳ thi mới
+     * Thêm kỳ thi mới - cập nhật DB và cache
      */
     public boolean themKyThi(KyThiDTO kyThi) {
         try {
-            return kyThiDAO.insert(kyThi);
+            if (kyThiDAO.insert(kyThi)) {
+                // Reload cache sau khi thêm để lấy mã mới
+                danhSachKyThi = new ArrayList<>(kyThiDAO.getAll());
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Cập nhật kỳ thi
+     * Cập nhật kỳ thi - cập nhật DB và cache
      */
     public boolean capNhatKyThi(KyThiDTO kyThi) {
         try {
-            return kyThiDAO.update(kyThi);
+            if (kyThiDAO.update(kyThi)) {
+                // Cập nhật trong cache
+                if (danhSachKyThi != null) {
+                    for (int i = 0; i < danhSachKyThi.size(); i++) {
+                        if (danhSachKyThi.get(i).getMaKyThi() == kyThi.getMaKyThi()) {
+                            danhSachKyThi.set(i, kyThi);
+                            break;
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
-     * Xóa kỳ thi
+     * Xóa kỳ thi - cập nhật DB và cache
      */
     public boolean xoaKyThi(int maKyThi) {
         try {
-            return kyThiDAO.delete(maKyThi);
+            if (kyThiDAO.delete(maKyThi)) {
+                // Xóa khỏi cache
+                if (danhSachKyThi != null) {
+                    danhSachKyThi.removeIf(kt -> kt.getMaKyThi() == maKyThi);
+                }
+                return true;
+            }
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
+    // ==================== QUẢN LÝ ĐỀ THI ====================
+
+    /**
+     * Lấy danh sách đề thi - load từ DB nếu chưa có cache
+     */
+    public List<DeThiDTO> getDanhSachDeThi() {
+        if (danhSachDeThi == null) {
+            try {
+                danhSachDeThi = new ArrayList<>(deThiDAO.getAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return new ArrayList<>();
+            }
+        }
+        return danhSachDeThi;
+    }
+
     // ==================== THỐNG KÊ ====================
-    
+
     /**
      * Lấy kết quả thi theo đề thi
      */
@@ -429,16 +627,68 @@ public class TruongKhoaBUS {
             return null;
         }
     }
-    
+
+    // ==================== STATIC METHODS ĐỂ RELOAD CACHE ====================
+
     /**
-     * Lấy danh sách đề thi
+     * Reload cache giảng viên từ DB
      */
-    public List<DeThiDTO> getDanhSachDeThi() {
-        try {
-            return deThiDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public static void reloadGiangVien() {
+        danhSachGiangVien = null;
+    }
+
+    /**
+     * Reload cache sinh viên từ DB
+     */
+    public static void reloadSinhVien() {
+        danhSachSinhVien = null;
+    }
+
+    /**
+     * Reload cache khoa từ DB
+     */
+    public static void reloadKhoa() {
+        danhSachKhoa = null;
+    }
+
+    /**
+     * Reload cache ngành từ DB
+     */
+    public static void reloadNganh() {
+        danhSachNganh = null;
+    }
+
+    /**
+     * Reload cache học phần từ DB
+     */
+    public static void reloadHocPhan() {
+        danhSachHocPhan = null;
+    }
+
+    /**
+     * Reload cache kỳ thi từ DB
+     */
+    public static void reloadKyThi() {
+        danhSachKyThi = null;
+    }
+
+    /**
+     * Reload cache đề thi từ DB
+     */
+    public static void reloadDeThi() {
+        danhSachDeThi = null;
+    }
+
+    /**
+     * Reload tất cả cache
+     */
+    public static void reloadAll() {
+        danhSachGiangVien = null;
+        danhSachSinhVien = null;
+        danhSachKhoa = null;
+        danhSachNganh = null;
+        danhSachHocPhan = null;
+        danhSachKyThi = null;
+        danhSachDeThi = null;
     }
 }
