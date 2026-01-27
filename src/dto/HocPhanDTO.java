@@ -5,15 +5,18 @@
 package dto;
 
 public class HocPhanDTO {
-    private int maHocPhan;   // ma_hoc_phan - Mã học phần (PK)
-    private String tenMon;   // ten_mon - Tên môn học
-    private int soTin;       // so_tin - Số tín chỉ
+    private int maHocPhan; // ma_hoc_phan - Mã học phần (PK)
+    private int maKhoa; // ma_khoa - Mã khoa (FK)
+    private String tenMon; // ten_mon - Tên môn học
+    private int soTin; // so_tin - Số tín chỉ
+    private String tenKhoa; // Tên khoa (JOIN)
 
     public HocPhanDTO() {
     }
 
-    public HocPhanDTO(int maHocPhan, String tenMon, int soTin) {
+    public HocPhanDTO(int maHocPhan, int maKhoa, String tenMon, int soTin) {
         this.maHocPhan = maHocPhan;
+        this.maKhoa = maKhoa;
         this.tenMon = tenMon;
         this.soTin = soTin;
     }
@@ -24,6 +27,14 @@ public class HocPhanDTO {
 
     public void setMaHocPhan(int maHocPhan) {
         this.maHocPhan = maHocPhan;
+    }
+
+    public int getMaKhoa() {
+        return this.maKhoa;
+    }
+
+    public void setMaKhoa(int maKhoa) {
+        this.maKhoa = maKhoa;
     }
 
     public String getTenMon() {
@@ -40,6 +51,14 @@ public class HocPhanDTO {
 
     public void setSoTin(int soTin) {
         this.soTin = soTin;
+    }
+
+    public String getTenKhoa() {
+        return this.tenKhoa;
+    }
+
+    public void setTenKhoa(String tenKhoa) {
+        this.tenKhoa = tenKhoa;
     }
 
     @Override

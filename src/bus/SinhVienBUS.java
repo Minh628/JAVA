@@ -20,14 +20,14 @@ public class SinhVienBUS {
     private BaiThiDAO baiThiDAO;
     private DeThiDAO deThiDAO;
     private KyThiDAO kyThiDAO;
-    
+
     public SinhVienBUS() {
         this.sinhVienDAO = new SinhVienDAO();
         this.baiThiDAO = new BaiThiDAO();
         this.deThiDAO = new DeThiDAO();
         this.kyThiDAO = new KyThiDAO();
     }
-    
+
     /**
      * Lấy thông tin sinh viên
      */
@@ -39,7 +39,7 @@ public class SinhVienBUS {
             return null;
         }
     }
-    
+
     /**
      * Cập nhật thông tin sinh viên
      */
@@ -51,7 +51,7 @@ public class SinhVienBUS {
             return false;
         }
     }
-    
+
     /**
      * Lấy lịch sử bài thi
      */
@@ -63,7 +63,7 @@ public class SinhVienBUS {
             return null;
         }
     }
-    
+
     /**
      * Lấy danh sách kỳ thi đang diễn ra
      */
@@ -75,7 +75,7 @@ public class SinhVienBUS {
             return null;
         }
     }
-    
+
     /**
      * Lấy danh sách đề thi trong kỳ thi
      */
@@ -87,7 +87,20 @@ public class SinhVienBUS {
             return null;
         }
     }
-    
+
+    /**
+     * Lấy danh sách đề thi trong kỳ thi THEO KHOA (sinh viên chỉ thấy đề thi của
+     * khoa mình)
+     */
+    public List<DeThiDTO> getDeThiTrongKyThiTheoKhoa(int maKyThi, int maKhoa) {
+        try {
+            return deThiDAO.getByKyThiAndKhoa(maKyThi, maKhoa);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Kiểm tra sinh viên đã thi đề này chưa
      */
@@ -99,7 +112,7 @@ public class SinhVienBUS {
             return true; // Mặc định trả về true để an toàn
         }
     }
-    
+
     /**
      * Lấy chi tiết đề thi
      */
@@ -111,7 +124,7 @@ public class SinhVienBUS {
             return null;
         }
     }
-    
+
     /**
      * Lấy chi tiết bài thi
      */
@@ -123,7 +136,7 @@ public class SinhVienBUS {
             return null;
         }
     }
-    
+
     /**
      * Đổi mật khẩu sinh viên
      */

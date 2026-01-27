@@ -61,6 +61,32 @@ public class DeThiDAO {
     }
 
     /**
+     * Lấy đề thi theo kỳ thi VÀ khoa (sinh viên chỉ thấy đề thi của khoa mình)
+     */
+    public List<DeThiDTO> getByKyThiAndKhoa(int maKyThi, int maKhoa) throws SQLException {
+        List<DeThiDTO> danhSachDT = new ArrayList<>();
+        String sql = "SELECT dt.*, hp.ten_mon, kt.ten_ky_thi, CONCAT(gv.ho, ' ', gv.ten) AS ten_gv " +
+                "FROM DeThi dt " +
+                "LEFT JOIN HocPhan hp ON dt.ma_hoc_phan = hp.ma_hoc_phan " +
+                "LEFT JOIN KyThi kt ON dt.ma_ky_thi = kt.ma_ky_thi " +
+                "LEFT JOIN GiangVien gv ON dt.ma_gv = gv.ma_gv " +
+                "WHERE dt.ma_ky_thi = ? AND hp.ma_khoa = ? ORDER BY dt.ten_de_thi";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, maKyThi);
+            pstmt.setInt(2, maKhoa);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                danhSachDT.add(mapResultSetToDTO(rs));
+            }
+        }
+        return danhSachDT;
+    }
+
+    /**
      * Lấy đề thi theo giảng viên
      */
     public List<DeThiDTO> getByGiangVien(int maGV) throws SQLException {

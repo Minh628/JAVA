@@ -17,8 +17,9 @@ public class SinhVienDAO {
      */
     public List<SinhVienDTO> getAll() throws SQLException {
         List<SinhVienDTO> danhSachSV = new ArrayList<>();
-        String sql = "SELECT sv.*, n.ten_nganh, vt.ten_vai_tro FROM SinhVien sv " +
+        String sql = "SELECT sv.*, n.ten_nganh, n.ma_khoa, k.ten_khoa, vt.ten_vai_tro FROM SinhVien sv " +
                 "LEFT JOIN Nganh n ON sv.ma_nganh = n.ma_nganh " +
+                "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
                 "LEFT JOIN VaiTro vt ON sv.ma_vai_tro = vt.ma_vai_tro " +
                 "ORDER BY sv.ho, sv.ten";
 
@@ -37,8 +38,9 @@ public class SinhVienDAO {
      * Lấy sinh viên theo mã
      */
     public SinhVienDTO getById(int maSV) throws SQLException {
-        String sql = "SELECT sv.*, n.ten_nganh, vt.ten_vai_tro FROM SinhVien sv " +
+        String sql = "SELECT sv.*, n.ten_nganh, n.ma_khoa, k.ten_khoa, vt.ten_vai_tro FROM SinhVien sv " +
                 "LEFT JOIN Nganh n ON sv.ma_nganh = n.ma_nganh " +
+                "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
                 "LEFT JOIN VaiTro vt ON sv.ma_vai_tro = vt.ma_vai_tro " +
                 "WHERE sv.ma_sv = ?";
 
@@ -59,8 +61,9 @@ public class SinhVienDAO {
      * Lấy sinh viên theo tên đăng nhập
      */
     public SinhVienDTO getByTenDangNhap(String tenDangNhap) throws SQLException {
-        String sql = "SELECT sv.*, n.ten_nganh, vt.ten_vai_tro FROM SinhVien sv " +
+        String sql = "SELECT sv.*, n.ten_nganh, n.ma_khoa, k.ten_khoa, vt.ten_vai_tro FROM SinhVien sv " +
                 "LEFT JOIN Nganh n ON sv.ma_nganh = n.ma_nganh " +
+                "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
                 "LEFT JOIN VaiTro vt ON sv.ma_vai_tro = vt.ma_vai_tro " +
                 "WHERE sv.ten_dang_nhap = ?";
 
@@ -82,8 +85,9 @@ public class SinhVienDAO {
      */
     public List<SinhVienDTO> getByNganh(int maNganh) throws SQLException {
         List<SinhVienDTO> danhSachSV = new ArrayList<>();
-        String sql = "SELECT sv.*, n.ten_nganh, vt.ten_vai_tro FROM SinhVien sv " +
+        String sql = "SELECT sv.*, n.ten_nganh, n.ma_khoa, k.ten_khoa, vt.ten_vai_tro FROM SinhVien sv " +
                 "LEFT JOIN Nganh n ON sv.ma_nganh = n.ma_nganh " +
+                "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
                 "LEFT JOIN VaiTro vt ON sv.ma_vai_tro = vt.ma_vai_tro " +
                 "WHERE sv.ma_nganh = ? ORDER BY sv.ho, sv.ten";
 
@@ -264,6 +268,13 @@ public class SinhVienDAO {
         sv.setTrangThai(rs.getBoolean("trang_thai"));
         sv.setTenNganh(rs.getString("ten_nganh"));
         sv.setTenVaiTro(rs.getString("ten_vai_tro"));
+        // Lấy thông tin khoa
+        try {
+            sv.setMaKhoa(rs.getInt("ma_khoa"));
+            sv.setTenKhoa(rs.getString("ten_khoa"));
+        } catch (SQLException e) {
+            // Không có cột khoa trong query này
+        }
         return sv;
     }
 }
