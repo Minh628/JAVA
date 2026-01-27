@@ -324,7 +324,54 @@ public class TruongKhoaBUS {
     }
 
     /**
+     * Đếm số ngành thuộc khoa
+     */
+    public int demNganhTheoKhoa(int maKhoa) {
+        try {
+            return khoaDAO.countNganhByKhoa(maKhoa);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    /**
+     * Kiểm tra có thể xóa khoa không (không có ngành nào)
+     */
+    public boolean coTheXoaKhoa(int maKhoa) {
+        return demNganhTheoKhoa(maKhoa) == 0;
+    }
+
+    /**
      * Xóa khoa - cập nhật DB và cache
+     * Trả về:
+     * - 1: Thành công
+     * - 0: Thất bại (lỗi DB)
+     * - -1: Không thể xóa vì có ngành thuộc khoa
+     */
+    public int xoaKhoaAnToan(int maKhoa) {
+        try {
+            // Kiểm tra có ngành không
+            int soNganh = khoaDAO.countNganhByKhoa(maKhoa);
+            if (soNganh > 0) {
+                return -1; // Có ngành, không cho xóa
+            }
+            if (khoaDAO.delete(maKhoa)) {
+                // Xóa khỏi cache
+                if (danhSachKhoa != null) {
+                    danhSachKhoa.removeIf(k -> k.getMaKhoa() == maKhoa);
+                }
+                return 1; // Thành công
+            }
+            return 0; // Thất bại
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    /**
+     * Xóa khoa - cập nhật DB và cache (legacy - không kiểm tra ràng buộc)
      */
     public boolean xoaKhoa(int maKhoa) {
         try {

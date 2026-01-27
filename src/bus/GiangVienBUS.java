@@ -239,6 +239,48 @@ public class GiangVienBUS {
 
     /**
      * Xóa đề thi - cập nhật DB và cache
+     * Trả về:
+     * - 1: Thành công
+     * - 0: Thất bại (lỗi DB)
+     * - -1: Không thể xóa vì có bài thi
+     */
+    public int xoaDeThiAnToan(int maDeThi) {
+        try {
+            // Kiểm tra có bài thi không
+            int soBaiThi = deThiDAO.countBaiThiByDeThi(maDeThi);
+            if (soBaiThi > 0) {
+                return -1; // Có bài thi, không cho xóa
+            }
+            if (deThiDAO.delete(maDeThi)) {
+                // Xóa khỏi cache
+                if (danhSachDeThi != null) {
+                    danhSachDeThi.removeIf(dt -> dt.getMaDeThi() == maDeThi);
+                }
+                // Cũng reload cache đề thi trong TruongKhoaBUS
+                TruongKhoaBUS.reloadDeThi();
+                return 1; // Thành công
+            }
+            return 0; // Thất bại
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    /**
+     * Đếm số bài thi của đề thi
+     */
+    public int demBaiThiTheoDeThi(int maDeThi) {
+        try {
+            return deThiDAO.countBaiThiByDeThi(maDeThi);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    /**
+     * Xóa đề thi - cập nhật DB và cache (legacy - không kiểm tra ràng buộc)
      */
     public boolean xoaDeThi(int maDeThi) {
         try {
@@ -249,6 +291,80 @@ public class GiangVienBUS {
                 }
                 // Cũng reload cache đề thi trong TruongKhoaBUS
                 TruongKhoaBUS.reloadDeThi();
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // ==================== QUẢN LÝ CÂU HỎI TRONG ĐỀ THI ====================
+
+    /**
+     * Lấy danh sách mã câu hỏi trong đề thi
+     */
+    public List<Integer> getMaCauHoiTrongDeThi(int maDeThi) {
+        try {
+            return deThiDAO.getCauHoiInDeThi(maDeThi);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Thêm câu hỏi vào đề thi
+     */
+    public boolean themCauHoiVaoDeThi(int maDeThi, int maCauHoi) {
+        try {
+            return deThiDAO.themCauHoiVaoDeThi(maDeThi, maCauHoi);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Thêm nhiều câu hỏi vào đề thi
+     */
+    public boolean themNhieuCauHoiVaoDeThi(int maDeThi, List<Integer> danhSachMaCauHoi) {
+        try {
+            return deThiDAO.themNhieuCauHoiVaoDeThi(maDeThi, danhSachMaCauHoi);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Xóa câu hỏi khỏi đề thi
+     */
+    public boolean xoaCauHoiKhoiDeThi(int maDeThi, int maCauHoi) {
+        try {
+            return deThiDAO.xoaCauHoiKhoiDeThi(maDeThi, maCauHoi);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Cập nhật số câu hỏi trong đề thi
+     */
+    public boolean capNhatSoCauHoi(int maDeThi, int soCauHoi) {
+        try {
+            if (deThiDAO.updateSoCauHoi(maDeThi, soCauHoi)) {
+                // Cập nhật cache
+                if (danhSachDeThi != null) {
+                    for (DeThiDTO dt : danhSachDeThi) {
+                        if (dt.getMaDeThi() == maDeThi) {
+                            dt.setSoCauHoi(soCauHoi);
+                            break;
+                        }
+                    }
+                }
                 return true;
             }
             return false;
