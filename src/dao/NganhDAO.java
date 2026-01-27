@@ -11,82 +11,82 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NganhDAO {
-    
+
     /**
      * Lấy tất cả ngành
      */
     public List<NganhDTO> getAll() throws SQLException {
         List<NganhDTO> danhSachNganh = new ArrayList<>();
         String sql = "SELECT n.*, k.ten_khoa FROM Nganh n " +
-                     "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
-                     "ORDER BY n.ten_nganh";
-        
+                "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
+                "ORDER BY n.ten_nganh";
+
         try (Connection conn = DatabaseHelper.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
             while (rs.next()) {
                 danhSachNganh.add(mapResultSetToDTO(rs));
             }
         }
         return danhSachNganh;
     }
-    
+
     /**
      * Lấy ngành theo khoa
      */
     public List<NganhDTO> getByKhoa(int maKhoa) throws SQLException {
         List<NganhDTO> danhSachNganh = new ArrayList<>();
         String sql = "SELECT n.*, k.ten_khoa FROM Nganh n " +
-                     "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
-                     "WHERE n.ma_khoa = ? ORDER BY n.ten_nganh";
-        
+                "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
+                "WHERE n.ma_khoa = ? ORDER BY n.ten_nganh";
+
         try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, maKhoa);
             ResultSet rs = pstmt.executeQuery();
-            
+
             while (rs.next()) {
                 danhSachNganh.add(mapResultSetToDTO(rs));
             }
         }
         return danhSachNganh;
     }
-    
+
     /**
      * Lấy ngành theo mã
      */
     public NganhDTO getById(int maNganh) throws SQLException {
         String sql = "SELECT n.*, k.ten_khoa FROM Nganh n " +
-                     "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
-                     "WHERE n.ma_nganh = ?";
-        
+                "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
+                "WHERE n.ma_nganh = ?";
+
         try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, maNganh);
             ResultSet rs = pstmt.executeQuery();
-            
+
             if (rs.next()) {
                 return mapResultSetToDTO(rs);
             }
         }
         return null;
     }
-    
+
     /**
      * Thêm ngành mới
      */
     public boolean insert(NganhDTO nganh) throws SQLException {
         String sql = "INSERT INTO Nganh (ma_khoa, ten_nganh) VALUES (?, ?)";
-        
+
         try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
             pstmt.setInt(1, nganh.getMaKhoa());
             pstmt.setString(2, nganh.getTenNganh());
-            
+
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
                 ResultSet rs = pstmt.getGeneratedKeys();
@@ -98,38 +98,82 @@ public class NganhDAO {
         }
         return false;
     }
-    
+
     /**
      * Cập nhật ngành
      */
     public boolean update(NganhDTO nganh) throws SQLException {
         String sql = "UPDATE Nganh SET ma_khoa = ?, ten_nganh = ? WHERE ma_nganh = ?";
-        
+
         try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, nganh.getMaKhoa());
             pstmt.setString(2, nganh.getTenNganh());
             pstmt.setInt(3, nganh.getMaNganh());
-            
+
             return pstmt.executeUpdate() > 0;
         }
     }
-    
+
     /**
      * Xóa ngành
      */
     public boolean delete(int maNganh) throws SQLException {
         String sql = "DELETE FROM Nganh WHERE ma_nganh = ?";
-        
+
         try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, maNganh);
             return pstmt.executeUpdate() > 0;
         }
     }
-    
+
+    /**
+     * Tìm kiếm ngành theo từ khóa
+     * Tìm trong: mã ngành, tên ngành, tên khoa
+     */
+    public List<NganhDTO> search(String keyword) throws SQLException {
+        List<NganhDTO> danhSachNganh = new ArrayList<>();
+        String sql = "SELECT n.*, k.ten_khoa FROM Nganh n " +
+                "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
+                "WHERE n.ma_nganh LIKE ? OR n.ten_nganh LIKE ? OR k.ten_khoa LIKE ? " +
+                "ORDER BY n.ten_nganh";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            String searchPattern = "%" + keyword + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+            pstmt.setString(3, searchPattern);
+
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                danhSachNganh.add(mapResultSetToDTO(rs));
+            }
+        }
+        return danhSachNganh;
+    }
+
+    /**
+     * Lấy mã ngành tiếp theo (mã duy nhất)
+     */
+    public int getNextMaNganh() throws SQLException {
+        String sql = "SELECT COALESCE(MAX(ma_nganh), 0) + 1 AS next_ma FROM Nganh";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                return rs.getInt("next_ma");
+            }
+        }
+        return 1;
+    }
+
     /**
      * Map ResultSet sang DTO
      */

@@ -28,11 +28,14 @@ public class QuanLyKhoaPanel extends JPanel {
     private DefaultTableModel modelNganh;
 
     private JTextField txtTenKhoa;
+    private JTextField txtTimKiem;
+    private JComboBox<String> cboLoaiTimKiem;
 
     private CustomButton btnThem;
     private CustomButton btnSua;
     private CustomButton btnXoa;
     private CustomButton btnLamMoi;
+    private CustomButton btnTimKiem;
 
     private int selectedMaKhoa = -1;
 
@@ -123,6 +126,30 @@ public class QuanLyKhoaPanel extends JPanel {
         lblTableKhoa.setForeground(Constants.PRIMARY_COLOR);
         panelKhoa.add(lblTableKhoa, BorderLayout.NORTH);
 
+        // Panel tìm kiếm khoa
+        JPanel panelTimKiem = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        panelTimKiem.setBackground(Constants.CONTENT_BG);
+
+        cboLoaiTimKiem = new JComboBox<>(new String[] { "Tất cả", "Mã Khoa", "Tên Khoa" });
+        cboLoaiTimKiem.setFont(Constants.NORMAL_FONT);
+        panelTimKiem.add(cboLoaiTimKiem);
+
+        txtTimKiem = new JTextField(15);
+        txtTimKiem.setFont(Constants.NORMAL_FONT);
+        txtTimKiem.addActionListener(e -> timKiem());
+        panelTimKiem.add(txtTimKiem);
+
+        btnTimKiem = new CustomButton("Tìm", Constants.INFO_COLOR, Constants.TEXT_COLOR);
+        btnTimKiem.addActionListener(e -> timKiem());
+        panelTimKiem.add(btnTimKiem);
+
+        CustomButton btnHienTatCa = new CustomButton("Tất cả", Constants.SECONDARY_COLOR, Constants.TEXT_COLOR);
+        btnHienTatCa.addActionListener(e -> {
+            txtTimKiem.setText("");
+            loadData();
+        });
+        panelTimKiem.add(btnHienTatCa);
+
         String[] columnsKhoa = { "Mã Khoa", "Tên Khoa", "Số ngành" };
         modelKhoa = new DefaultTableModel(columnsKhoa, 0) {
             @Override
@@ -140,7 +167,12 @@ public class QuanLyKhoaPanel extends JPanel {
 
         JScrollPane scrollKhoa = new JScrollPane(tblKhoa);
         scrollKhoa.getViewport().setBackground(Constants.CARD_COLOR);
-        panelKhoa.add(scrollKhoa, BorderLayout.CENTER);
+
+        JPanel panelKhoaContent = new JPanel(new BorderLayout(0, 5));
+        panelKhoaContent.setBackground(Constants.CONTENT_BG);
+        panelKhoaContent.add(panelTimKiem, BorderLayout.NORTH);
+        panelKhoaContent.add(scrollKhoa, BorderLayout.CENTER);
+        panelKhoa.add(panelKhoaContent, BorderLayout.CENTER);
 
         // === Bảng Ngành (bên phải) ===
         JPanel panelNganh = new JPanel(new BorderLayout(0, 5));
@@ -184,6 +216,43 @@ public class QuanLyKhoaPanel extends JPanel {
             }
         }
         // Clear bảng ngành
+        modelNganh.setRowCount(0);
+    }
+
+    private void timKiem() {
+        String keyword = txtTimKiem.getText().trim();
+        String loaiTimKiem = (String) cboLoaiTimKiem.getSelectedItem();
+        modelKhoa.setRowCount(0);
+
+        List<KhoaDTO> danhSach;
+        if (keyword.isEmpty() || loaiTimKiem.equals("Tất cả")) {
+            danhSach = truongKhoaBUS.timKiemKhoa(keyword);
+        } else {
+            danhSach = truongKhoaBUS.getDanhSachKhoa();
+        }
+
+        if (danhSach != null) {
+            for (KhoaDTO khoa : danhSach) {
+                boolean match = true;
+                if (!keyword.isEmpty() && !loaiTimKiem.equals("Tất cả")) {
+                    String keyLower = keyword.toLowerCase();
+                    switch (loaiTimKiem) {
+                        case "Mã Khoa":
+                            match = String.valueOf(khoa.getMaKhoa()).contains(keyword);
+                            break;
+                        case "Tên Khoa":
+                            match = khoa.getTenKhoa() != null && khoa.getTenKhoa().toLowerCase().contains(keyLower);
+                            break;
+                    }
+                }
+                if (match) {
+                    int soNganh = truongKhoaBUS.demNganhTheoKhoa(khoa.getMaKhoa());
+                    modelKhoa.addRow(new Object[] {
+                            khoa.getMaKhoa(), khoa.getTenKhoa(), soNganh
+                    });
+                }
+            }
+        }
         modelNganh.setRowCount(0);
     }
 

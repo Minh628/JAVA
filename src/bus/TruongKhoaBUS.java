@@ -738,4 +738,170 @@ public class TruongKhoaBUS {
         danhSachKyThi = null;
         danhSachDeThi = null;
     }
+
+    // ==================== TÌM KIẾM ====================
+
+    /**
+     * Tìm kiếm sinh viên theo từ khóa
+     */
+    public List<SinhVienDTO> timKiemSinhVien(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getDanhSachSinhVien();
+        }
+        try {
+            return sinhVienDAO.search(keyword.trim());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Tìm kiếm giảng viên theo từ khóa
+     */
+    public List<GiangVienDTO> timKiemGiangVien(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getDanhSachGiangVien();
+        }
+        try {
+            return giangVienDAO.search(keyword.trim());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Tìm kiếm khoa theo từ khóa
+     */
+    public List<KhoaDTO> timKiemKhoa(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getDanhSachKhoa();
+        }
+        try {
+            return khoaDAO.search(keyword.trim());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Tìm kiếm ngành theo từ khóa
+     */
+    public List<NganhDTO> timKiemNganh(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getDanhSachNganh();
+        }
+        try {
+            return nganhDAO.search(keyword.trim());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Tìm kiếm học phần theo từ khóa
+     */
+    public List<HocPhanDTO> timKiemHocPhan(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getDanhSachHocPhan();
+        }
+        try {
+            return hocPhanDAO.search(keyword.trim());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Tìm kiếm kỳ thi theo từ khóa
+     */
+    public List<KyThiDTO> timKiemKyThi(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getDanhSachKyThi();
+        }
+        try {
+            return kyThiDAO.search(keyword.trim());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    // ==================== LẤY MÃ DUY NHẤT TIẾP THEO ====================
+
+    /**
+     * Lấy mã sinh viên tiếp theo (mã duy nhất)
+     */
+    public int getNextMaSinhVien() {
+        try {
+            return sinhVienDAO.getNextMaSV();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    /**
+     * Lấy mã giảng viên tiếp theo (mã duy nhất)
+     */
+    public int getNextMaGiangVien() {
+        try {
+            return giangVienDAO.getNextMaGV();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    /**
+     * Lấy mã khoa tiếp theo (mã duy nhất)
+     */
+    public int getNextMaKhoa() {
+        try {
+            return khoaDAO.getNextMaKhoa();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    /**
+     * Lấy mã ngành tiếp theo (mã duy nhất)
+     */
+    public int getNextMaNganh() {
+        try {
+            return nganhDAO.getNextMaNganh();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    /**
+     * Lấy mã học phần tiếp theo (mã duy nhất)
+     */
+    public int getNextMaHocPhan() {
+        try {
+            return hocPhanDAO.getNextMaHocPhan();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    /**
+     * Lấy mã kỳ thi tiếp theo (mã duy nhất)
+     */
+    public int getNextMaKyThi() {
+        try {
+            return kyThiDAO.getNextMaKyThi();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 }

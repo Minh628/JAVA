@@ -39,6 +39,10 @@ public class QuanLyDeThiPanel extends JPanel {
     private JComboBox<KyThiDTO> cboKyThi;
     private JSpinner spnThoiGian;
 
+    private JTextField txtTimKiem;
+    private JComboBox<String> cboLoaiTimKiem;
+    private CustomButton btnTimKiem;
+
     private CustomButton btnThem;
     private CustomButton btnSua;
     private CustomButton btnXoa;
@@ -166,7 +170,41 @@ public class QuanLyDeThiPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(tblDeThi);
         scrollPane.getViewport().setBackground(Constants.CARD_COLOR);
-        add(scrollPane, BorderLayout.CENTER);
+
+        // Panel tìm kiếm
+        JPanel panelTimKiem = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        panelTimKiem.setBackground(Constants.CONTENT_BG);
+
+        JLabel lblTimKiem = new JLabel("Tìm kiếm:");
+        lblTimKiem.setFont(Constants.NORMAL_FONT);
+        panelTimKiem.add(lblTimKiem);
+
+        cboLoaiTimKiem = new JComboBox<>(new String[] { "Tất cả", "Mã đề", "Tên đề thi", "Học phần", "Kỳ thi" });
+        cboLoaiTimKiem.setFont(Constants.NORMAL_FONT);
+        panelTimKiem.add(cboLoaiTimKiem);
+
+        txtTimKiem = new JTextField(20);
+        txtTimKiem.setFont(Constants.NORMAL_FONT);
+        txtTimKiem.addActionListener(e -> timKiem());
+        panelTimKiem.add(txtTimKiem);
+
+        btnTimKiem = new CustomButton("Tìm", Constants.INFO_COLOR, Constants.TEXT_COLOR);
+        btnTimKiem.addActionListener(e -> timKiem());
+        panelTimKiem.add(btnTimKiem);
+
+        CustomButton btnHienTatCa = new CustomButton("Hiện tất cả", Constants.SECONDARY_COLOR, Constants.TEXT_COLOR);
+        btnHienTatCa.addActionListener(e -> {
+            txtTimKiem.setText("");
+            loadDeThi();
+        });
+        panelTimKiem.add(btnHienTatCa);
+
+        // Panel center chứa tìm kiếm và bảng
+        JPanel panelCenter = new JPanel(new BorderLayout(0, 5));
+        panelCenter.setBackground(Constants.CONTENT_BG);
+        panelCenter.add(panelTimKiem, BorderLayout.NORTH);
+        panelCenter.add(scrollPane, BorderLayout.CENTER);
+        add(panelCenter, BorderLayout.CENTER);
     }
 
     private void addLabel(JPanel panel, String text, GridBagConstraints gbc) {
@@ -210,6 +248,48 @@ public class QuanLyDeThiPanel extends JPanel {
                         dt.getMaDeThi(), dt.getTenDeThi(), dt.getTenHocPhan(),
                         dt.getTenKyThi(), dt.getSoCauHoi(), dt.getThoiGianLam() + " phút"
                 });
+            }
+        }
+    }
+
+    private void timKiem() {
+        String keyword = txtTimKiem.getText().trim();
+        String loaiTimKiem = (String) cboLoaiTimKiem.getSelectedItem();
+        modelDeThi.setRowCount(0);
+
+        List<DeThiDTO> danhSach = giangVienBUS.getDanhSachDeThi(nguoiDung.getMaGV());
+        if (danhSach != null) {
+            for (DeThiDTO dt : danhSach) {
+                boolean match = true;
+                if (!keyword.isEmpty() && !loaiTimKiem.equals("Tất cả")) {
+                    String keyLower = keyword.toLowerCase();
+                    switch (loaiTimKiem) {
+                        case "Mã đề":
+                            match = String.valueOf(dt.getMaDeThi()).contains(keyword);
+                            break;
+                        case "Tên đề thi":
+                            match = dt.getTenDeThi() != null && dt.getTenDeThi().toLowerCase().contains(keyLower);
+                            break;
+                        case "Học phần":
+                            match = dt.getTenHocPhan() != null && dt.getTenHocPhan().toLowerCase().contains(keyLower);
+                            break;
+                        case "Kỳ thi":
+                            match = dt.getTenKyThi() != null && dt.getTenKyThi().toLowerCase().contains(keyLower);
+                            break;
+                    }
+                } else if (!keyword.isEmpty()) {
+                    String keyLower = keyword.toLowerCase();
+                    match = String.valueOf(dt.getMaDeThi()).contains(keyword)
+                            || (dt.getTenDeThi() != null && dt.getTenDeThi().toLowerCase().contains(keyLower))
+                            || (dt.getTenHocPhan() != null && dt.getTenHocPhan().toLowerCase().contains(keyLower))
+                            || (dt.getTenKyThi() != null && dt.getTenKyThi().toLowerCase().contains(keyLower));
+                }
+                if (match) {
+                    modelDeThi.addRow(new Object[] {
+                            dt.getMaDeThi(), dt.getTenDeThi(), dt.getTenHocPhan(),
+                            dt.getTenKyThi(), dt.getSoCauHoi(), dt.getThoiGianLam() + " phút"
+                    });
+                }
             }
         }
     }

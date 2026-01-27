@@ -396,16 +396,34 @@ INSERT INTO ChiTietDeThi (ma_de_thi, ma_cau_hoi) VALUES
 (5, 11), (5, 12), (5, 31), (5, 32), (5, 33);
 
 -- ========== 16. INSERT BaiThi mẫu ==========
--- Một số bài thi mẫu đã hoàn thành
+-- MỖI SINH VIÊN PHẢI CÓ ÍT NHẤT 1 BÀI THI
 INSERT INTO BaiThi (ma_bai_thi, ma_de_thi, ma_sv, thoi_gian_bat_dau, thoi_gian_nop, ngay_thi, so_cau_dung, so_cau_sai, diem_so) VALUES 
+-- Sinh viên 1: 2 bài thi
 (1, 1, 1, '2024-10-05 08:00:00', '2024-10-05 08:40:00', '2024-10-05', 8, 2, 8.0),
-(2, 1, 2, '2024-10-05 08:00:00', '2024-10-05 08:35:00', '2024-10-05', 7, 3, 7.0),
-(3, 1, 3, '2024-10-05 08:00:00', '2024-10-05 08:42:00', '2024-10-05', 9, 1, 9.0),
-(4, 3, 4, '2024-10-06 09:00:00', '2024-10-06 09:55:00', '2024-10-06', 8, 2, 8.0),
-(5, 3, 5, '2024-10-06 09:00:00', '2024-10-06 09:50:00', '2024-10-06', 6, 4, 6.0);
+(2, 3, 1, '2024-10-06 09:00:00', '2024-10-06 09:45:00', '2024-10-06', 9, 1, 9.0),
+-- Sinh viên 2: 2 bài thi
+(3, 1, 2, '2024-10-05 08:00:00', '2024-10-05 08:35:00', '2024-10-05', 7, 3, 7.0),
+(4, 3, 2, '2024-10-06 09:00:00', '2024-10-06 09:50:00', '2024-10-06', 7, 3, 7.0),
+-- Sinh viên 3: 2 bài thi
+(5, 1, 3, '2024-10-05 08:00:00', '2024-10-05 08:42:00', '2024-10-05', 9, 1, 9.0),
+(6, 2, 3, '2024-10-05 14:00:00', '2024-10-05 14:40:00', '2024-10-05', 8, 2, 8.0),
+-- Sinh viên 4: 1 bài thi
+(7, 3, 4, '2024-10-06 09:00:00', '2024-10-06 09:55:00', '2024-10-06', 8, 2, 8.0),
+-- Sinh viên 5: 1 bài thi
+(8, 3, 5, '2024-10-06 09:00:00', '2024-10-06 09:50:00', '2024-10-06', 6, 4, 6.0),
+-- Sinh viên 6: 1 bài thi
+(9, 1, 6, '2024-10-05 08:00:00', '2024-10-05 08:38:00', '2024-10-05', 7, 3, 7.0),
+-- Sinh viên 7: 1 bài thi
+(10, 2, 7, '2024-10-05 14:00:00', '2024-10-05 14:35:00', '2024-10-05', 9, 1, 9.0),
+-- Sinh viên 8: 1 bài thi
+(11, 4, 8, '2024-12-20 08:00:00', '2024-12-20 09:25:00', '2024-12-20', 12, 3, 8.0),
+-- Sinh viên 9: 1 bài thi
+(12, 5, 9, '2024-12-20 08:00:00', '2024-12-20 09:20:00', '2024-12-20', 13, 2, 8.67),
+-- Sinh viên 10: 1 bài thi
+(13, 4, 10, '2024-12-20 08:00:00', '2024-12-20 09:30:00', '2024-12-20', 11, 4, 7.33);
 
 -- ========== 17. INSERT ChiTietBaiThi mẫu ==========
--- Chi tiết bài thi của sinh viên 1 (ma_bai_thi = 1)
+-- Chi tiết bài thi của sinh viên 1 - Bài thi 1 (ma_bai_thi = 1, Đề Java 1)
 INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
 (1, 1, 'Tất cả các đáp án trên'),
 (1, 2, 'class'),
@@ -417,6 +435,177 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (1, 8, 'Phương thức static và default (từ Java 8)'),
 (1, 11, 'Interface có thể có biến instance'),  -- Sai
 (1, 12, 'Factory Pattern');                    -- Sai
+
+-- Chi tiết bài thi của sinh viên 1 - Bài thi 2 (ma_bai_thi = 2, Đề CSDL 1)
+INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
+(2, 16, 'Structured Query Language'),
+(2, 17, 'SELECT'),
+(2, 18, 'Duy nhất và không NULL'),
+(2, 19, 'INSERT INTO'),
+(2, 20, 'Chuỗi ký tự'),
+(2, 21, 'Liên kết giữa các bảng'),
+(2, 22, 'FULL OUTER JOIN'),
+(2, 23, 'Tăng tốc độ truy vấn'),
+(2, 34, 'DELETE'),
+(2, 35, 'ORDER BY');
+
+-- Chi tiết bài thi của sinh viên 2 - Bài thi 3 (ma_bai_thi = 3, Đề Java 1)
+INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
+(3, 1, 'Tất cả các đáp án trên'),
+(3, 2, 'class'),
+(3, 3, 'public static void main(String[] args)'),
+(3, 4, 'float'),  -- Sai
+(3, 5, 'Java Virtual Machine'),
+(3, 6, 'for'),    -- Sai
+(3, 7, 'Một phương thức có thể có nhiều hành vi khác nhau'),
+(3, 8, 'Phương thức static và default (từ Java 8)'),
+(3, 11, 'Abstract class có thể có constructor, Interface thì không'),
+(3, 12, 'Builder Pattern');  -- Sai
+
+-- Chi tiết bài thi của sinh viên 2 - Bài thi 4 (ma_bai_thi = 4, Đề CSDL 1)
+INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
+(4, 16, 'Structured Query Language'),
+(4, 17, 'SELECT'),
+(4, 18, 'Duy nhất và không NULL'),
+(4, 19, 'ADD INTO'),  -- Sai
+(4, 20, 'Chuỗi ký tự'),
+(4, 21, 'Xóa dữ liệu'),  -- Sai
+(4, 22, 'INNER JOIN'),   -- Sai
+(4, 23, 'Tăng tốc độ truy vấn'),
+(4, 34, 'DELETE'),
+(4, 35, 'ORDER BY');
+
+-- Chi tiết bài thi của sinh viên 3 - Bài thi 5 (ma_bai_thi = 5, Đề Java 1)
+INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
+(5, 1, 'Tất cả các đáp án trên'),
+(5, 2, 'class'),
+(5, 3, 'public static void main(String[] args)'),
+(5, 4, 'int'),
+(5, 5, 'Java Virtual Machine'),
+(5, 6, 'do-while'),
+(5, 7, 'Một phương thức có thể có nhiều hành vi khác nhau'),
+(5, 8, 'Phương thức static và default (từ Java 8)'),
+(5, 11, 'Abstract class có thể có constructor, Interface thì không'),
+(5, 12, 'Factory Pattern');  -- Sai
+
+-- Chi tiết bài thi của sinh viên 3 - Bài thi 6 (ma_bai_thi = 6, Đề Java 2)
+INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
+(6, 1, 'Tất cả các đáp án trên'),
+(6, 3, 'public static void main(String[] args)'),
+(6, 5, 'Java Virtual Machine'),
+(6, 6, 'do-while'),
+(6, 7, 'Một phương thức có thể có nhiều hành vi khác nhau'),
+(6, 9, '== so sánh tham chiếu, equals() so sánh nội dung'),
+(6, 10, 'ArrayList dùng mảng, LinkedList dùng danh sách liên kết'),
+(6, 13, 'Tự động giải phóng bộ nhớ không còn được tham chiếu'),
+(6, 14, 'Code không cần đồng bộ hóa'),  -- Sai
+(6, 15, 'Cho phép kiểm tra và thao tác class/method/field tại runtime');
+
+-- Chi tiết bài thi của sinh viên 4 - Bài thi 7 (ma_bai_thi = 7, Đề CSDL 1)
+INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
+(7, 16, 'Structured Query Language'),
+(7, 17, 'SELECT'),
+(7, 18, 'Duy nhất và không NULL'),
+(7, 19, 'INSERT INTO'),
+(7, 20, 'Chuỗi ký tự'),
+(7, 21, 'Liên kết giữa các bảng'),
+(7, 22, 'LEFT JOIN'),  -- Sai
+(7, 23, 'Tăng tốc độ truy vấn'),
+(7, 34, 'TRUNCATE'),  -- Sai
+(7, 35, 'ORDER BY');
+
+-- Chi tiết bài thi của sinh viên 5 - Bài thi 8 (ma_bai_thi = 8, Đề CSDL 1)
+INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
+(8, 16, 'Structured Query Language'),
+(8, 17, 'INSERT'),  -- Sai
+(8, 18, 'Duy nhất và không NULL'),
+(8, 19, 'INSERT INTO'),
+(8, 20, 'Số nguyên'),  -- Sai
+(8, 21, 'Liên kết giữa các bảng'),
+(8, 22, 'INNER JOIN'),  -- Sai
+(8, 23, 'Bảo mật dữ liệu'),  -- Sai
+(8, 34, 'DELETE'),
+(8, 35, 'ORDER BY');
+
+-- Chi tiết bài thi của sinh viên 6 - Bài thi 9 (ma_bai_thi = 9, Đề Java 1)
+INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
+(9, 1, 'Tất cả các đáp án trên'),
+(9, 2, 'class'),
+(9, 3, 'static void main()'),  -- Sai
+(9, 4, 'int'),
+(9, 5, 'Java Virtual Machine'),
+(9, 6, 'do-while'),
+(9, 7, 'Khả năng tạo nhiều đối tượng'),  -- Sai
+(9, 8, 'Phương thức static và default (từ Java 8)'),
+(9, 11, 'Abstract class có thể có constructor, Interface thì không'),
+(9, 12, 'Observer Pattern');  -- Sai
+
+-- Chi tiết bài thi của sinh viên 7 - Bài thi 10 (ma_bai_thi = 10, Đề Java 2)
+INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
+(10, 1, 'Tất cả các đáp án trên'),
+(10, 3, 'public static void main(String[] args)'),
+(10, 5, 'Java Virtual Machine'),
+(10, 6, 'do-while'),
+(10, 7, 'Một phương thức có thể có nhiều hành vi khác nhau'),
+(10, 9, '== so sánh tham chiếu, equals() so sánh nội dung'),
+(10, 10, 'ArrayList dùng mảng, LinkedList dùng danh sách liên kết'),
+(10, 13, 'Tự động giải phóng bộ nhớ không còn được tham chiếu'),
+(10, 14, 'Code có thể chạy an toàn từ nhiều thread'),
+(10, 15, 'Chỉ dùng cho debug');  -- Sai
+
+-- Chi tiết bài thi của sinh viên 8 - Bài thi 11 (ma_bai_thi = 11, Đề CSDL Cuối kỳ)
+INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
+(11, 16, 'Structured Query Language'),
+(11, 17, 'SELECT'),
+(11, 18, 'Duy nhất và không NULL'),
+(11, 19, 'INSERT INTO'),
+(11, 20, 'Chuỗi ký tự'),
+(11, 21, 'Liên kết giữa các bảng'),
+(11, 22, 'FULL OUTER JOIN'),
+(11, 23, 'Tăng tốc độ truy vấn'),
+(11, 24, 'WHERE lọc trước GROUP BY, HAVING lọc sau'),
+(11, 25, 'Loại bỏ các bản ghi trùng lặp'),
+(11, 26, 'LOW, MEDIUM, HIGH'),  -- Sai
+(11, 27, 'Giảm dư thừa dữ liệu: 1NF, 2NF, 3NF, BCNF'),
+(11, 28, 'Hai transaction chờ đợi lẫn nhau vô hạn'),
+(11, 29, 'Procedure và Function giống nhau'),  -- Sai
+(11, 30, 'Sharding phân tán qua nhiều server, Partitioning trong cùng server');
+
+-- Chi tiết bài thi của sinh viên 9 - Bài thi 12 (ma_bai_thi = 12, Đề Java Cuối kỳ)
+INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
+(12, 1, 'Tất cả các đáp án trên'),
+(12, 2, 'class'),
+(12, 3, 'public static void main(String[] args)'),
+(12, 4, 'int'),
+(12, 5, 'Java Virtual Machine'),
+(12, 6, 'do-while'),
+(12, 7, 'Một phương thức có thể có nhiều hành vi khác nhau'),
+(12, 8, 'Phương thức static và default (từ Java 8)'),
+(12, 9, '== so sánh tham chiếu, equals() so sánh nội dung'),
+(12, 10, 'ArrayList dùng mảng, LinkedList dùng danh sách liên kết'),
+(12, 11, 'Abstract class có thể có constructor, Interface thì không'),
+(12, 12, 'Singleton Pattern'),
+(12, 31, 'extends'),
+(12, 32, 'destructor'),  -- Sai
+(12, 33, 'final');
+
+-- Chi tiết bài thi của sinh viên 10 - Bài thi 13 (ma_bai_thi = 13, Đề CSDL Cuối kỳ)
+INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
+(13, 16, 'Structured Query Language'),
+(13, 17, 'SELECT'),
+(13, 18, 'Duy nhất và không NULL'),
+(13, 19, 'INSERT INTO'),
+(13, 20, 'Chuỗi ký tự'),
+(13, 21, 'Liên kết giữa các bảng'),
+(13, 22, 'INNER JOIN'),  -- Sai
+(13, 23, 'Tăng tốc độ truy vấn'),
+(13, 24, 'WHERE lọc trước GROUP BY, HAVING lọc sau'),
+(13, 25, 'Sắp xếp dữ liệu'),  -- Sai
+(13, 26, 'READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE'),
+(13, 27, 'Giảm dư thừa dữ liệu: 1NF, 2NF, 3NF, BCNF'),
+(13, 28, 'Lỗi kết nối database'),  -- Sai
+(13, 29, 'Procedure không trả về giá trị qua RETURN, Function có'),
+(13, 30, 'Giống nhau hoàn toàn');  -- Sai
 
 -- =====================================================
 -- VIEWS & INDEXES (Tối ưu hiệu suất)
