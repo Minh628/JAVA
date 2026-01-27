@@ -144,6 +144,7 @@ CREATE TABLE DeThi (
 CREATE TABLE ChiTietDeThi (
     ma_de_thi INT NOT NULL,                     -- Mã đề thi (PK, FK -> DeThi)
     ma_cau_hoi INT NOT NULL,                    -- Mã câu hỏi (PK, FK -> CauHoi)
+    thu_tu INT DEFAULT 1,                       -- Thứ tự câu hỏi trong đề
     PRIMARY KEY (ma_de_thi, ma_cau_hoi),        -- Khóa chính kép
     FOREIGN KEY (ma_de_thi) REFERENCES DeThi(ma_de_thi) ON DELETE CASCADE,
     FOREIGN KEY (ma_cau_hoi) REFERENCES CauHoi(ma_cau_hoi) ON DELETE CASCADE
@@ -186,7 +187,7 @@ CREATE TABLE ChiTietBaiThi (
 -- ========== 1. INSERT VaiTro ==========
 -- Các vai trò trong hệ thống: 1-Trưởng Khoa, 2-Giảng Viên, 3-Sinh Viên
 INSERT INTO VaiTro (ma_vai_tro, ten_vai_tro) VALUES 
-(1, 'Trưởng Khoa'),   -- Quyền cao nhất: quản lý GV, SV, Ngành, HP
+(1, 'Admin'),   -- Quyền cao nhất: quản lý GV, SV, Ngành, HP
 (2, 'Giảng Viên'),    -- Quyền: quản lý câu hỏi, đề thi, xem kết quả
 (3, 'Sinh Viên');     -- Quyền: làm bài thi, xem kết quả cá nhân
 
@@ -252,12 +253,9 @@ INSERT INTO HocPhan (ma_hoc_phan, ma_khoa, ten_mon, so_tin) VALUES
 
 -- ========== 5. INSERT GiangVien ==========
 -- Password mặc định: 123456 (plain text - code hỗ trợ cả plain text và SHA-256)
--- Trưởng Khoa cho tất cả các khoa (ma_vai_tro = 1)
+-- Admin cho tất cả các khoa (ma_vai_tro = 1)
 INSERT INTO GiangVien (ma_gv, ma_khoa, ma_vai_tro, ten_dang_nhap, mat_khau, ho, ten, email, ngay_tao) VALUES 
-(1, 1, 1, 'truong_cntt', '123456', 'Nguyễn Văn', 'An', 'truong_cntt@edu.vn', NOW()),
-(2, 2, 1, 'truong_kinh_te', '123456', 'Trần Thị', 'Hương', 'truong_ke@edu.vn', NOW()),
-(3, 3, 1, 'truong_ngoai_ngu', '123456', 'Phạm Văn', 'Minh', 'truong_nn@edu.vn', NOW()),
-(4, 4, 1, 'truong_dien', '123456', 'Hoàng Anh', 'Tuấn', 'truong_dien@edu.vn', NOW());
+(1, , 1, 'admin', '123456', 'Lương Kiện', 'Minh', 'admin@edu.vn', NOW()),
 
 -- Giảng viên thuộc Khoa CNTT (ma_vai_tro = 2)
 INSERT INTO GiangVien (ma_gv, ma_khoa, ma_vai_tro, ten_dang_nhap, mat_khau, ho, ten, email, ngay_tao) VALUES 

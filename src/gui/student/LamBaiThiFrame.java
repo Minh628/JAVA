@@ -4,7 +4,10 @@
  */
 package gui.student;
 
-import bus.SinhVienThiBUS;
+import bus.BaiThiBUS;
+import bus.CauHoiBUS;
+import bus.ChiTietBaiThiBUS;
+import bus.ChiTietDeThiBUS;
 import config.Constants;
 import dto.*;
 import gui.components.CustomButton;
@@ -35,7 +38,10 @@ public class LamBaiThiFrame extends JFrame {
     private JButton[] btnCau;
     
     private Timer timer;
-    private SinhVienThiBUS sinhVienThiBUS;
+    private BaiThiBUS baiThiBUS;
+    private ChiTietDeThiBUS chiTietDeThiBUS;
+    private CauHoiBUS cauHoiBUS;
+    private ChiTietBaiThiBUS chiTietBaiThiBUS;
     private StudentDashboard parentDashboard;
 
     // Constructor đơn giản - tự động load câu hỏi
@@ -44,10 +50,19 @@ public class LamBaiThiFrame extends JFrame {
         this.maBaiThi = maBaiThi;
         this.maDeThi = maDeThi;
         this.thoiGianConLai = thoiGianPhut * 60;
-        this.sinhVienThiBUS = new SinhVienThiBUS();
+        this.baiThiBUS = new BaiThiBUS();
+        this.chiTietDeThiBUS = new ChiTietDeThiBUS();
+        this.cauHoiBUS = new CauHoiBUS();
+        this.chiTietBaiThiBUS = new ChiTietBaiThiBUS();
         
-        // Load câu hỏi từ database
-        this.danhSachCauHoi = sinhVienThiBUS.getCauHoiDeThi(maDeThi);
+        // GUI tự load câu hỏi: Lấy ID từ ChiTietDeThi -> Lấy nội dung từ CauHoi
+        this.danhSachCauHoi = new ArrayList<>();
+        List<Integer> listMaCauHoi = chiTietDeThiBUS.getMaCauHoiByDeThi(maDeThi);
+        for (int maCH : listMaCauHoi) {
+            CauHoiDTO ch = cauHoiBUS.getById(maCH);
+            if (ch != null) this.danhSachCauHoi.add(ch);
+        }
+        
         if (this.danhSachCauHoi == null) {
             this.danhSachCauHoi = new ArrayList<>();
         }
@@ -72,7 +87,8 @@ public class LamBaiThiFrame extends JFrame {
         this.maBaiThi = maBaiThi;
         this.danhSachCauHoi = danhSachCauHoi;
         this.thoiGianConLai = thoiGianPhut * 60;
-        this.sinhVienThiBUS = new SinhVienThiBUS();
+        this.baiThiBUS = new BaiThiBUS();
+        this.chiTietBaiThiBUS = new ChiTietBaiThiBUS();
         
         // Khởi tạo danh sách đáp án
         this.dapAnChon = new ArrayList<>();
@@ -328,22 +344,27 @@ public class LamBaiThiFrame extends JFrame {
             chiTiet.add(ct);
         }
         
-        // Nộp bài
-        BaiThiDTO ketQua = sinhVienThiBUS.nopBai(maBaiThi, chiTiet);
+        // Lưu chi tiết bài thi - gọi ChiTietBaiThiBUS
+        chiTietBaiThiBUS.themBatch(chiTiet);
         
-        if (ketQua != null) {
-            String thongBao = String.format(
-                "Nộp bài thành công!\n\n" +
-                "Số câu đúng: %d/%d\n" +
-                "Điểm số: %.2f/10",
-                ketQua.getSoCauDung(),
-                ketQua.getSoCauDung() + ketQua.getSoCauSai(),
-                ketQua.getDiemSo()
-            );
-            JOptionPane.showMessageDialog(this, thongBao, "Kết quả", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "Có lỗi khi nộp bài!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
+        // Tính điểm - gọi ChiTietBaiThiBUS
+        float[] ketQua = chiTietBaiThiBUS.tinhDiem(maBaiThi);
+        int soCauDung = (int) ketQua[0];
+        int soCauSai = (int) ketQua[1];
+        float diemSo = ketQua[2];
+        
+        // Cập nhật kết quả bài thi - gọi BaiThiBUS
+        baiThiBUS.capNhatKetQua(maBaiThi, soCauDung, soCauSai, diemSo);
+        
+        String thongBao = String.format(
+            "Nộp bài thành công!\n\n" +
+            "Số câu đúng: %d/%d\n" +
+            "Điểm số: %.2f/10",
+            soCauDung,
+            soCauDung + soCauSai,
+            diemSo
+        );
+        JOptionPane.showMessageDialog(this, thongBao, "Kết quả", JOptionPane.INFORMATION_MESSAGE);
         
         this.dispose();
         if (parentDashboard != null) {

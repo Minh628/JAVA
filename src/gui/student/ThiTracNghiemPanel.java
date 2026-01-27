@@ -4,23 +4,27 @@
  */
 package gui.student;
 
+import bus.BaiThiBUS;
+import bus.DeThiBUS;
+import bus.KyThiBUS;
 import bus.SinhVienBUS;
-import bus.SinhVienThiBUS;
 import config.Constants;
 import dto.DeThiDTO;
 import dto.KyThiDTO;
 import dto.SinhVienDTO;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class ThiTracNghiemPanel extends JPanel {
     private SinhVienDTO nguoiDung;
     private SinhVienBUS sinhVienBUS;
-    private SinhVienThiBUS sinhVienThiBUS;
+    private BaiThiBUS baiThiBUS;
+    private KyThiBUS kyThiBUS;
+    private DeThiBUS deThiBUS;
     private StudentDashboard parentFrame;
 
     private CustomTable tblDeThi;
@@ -31,7 +35,9 @@ public class ThiTracNghiemPanel extends JPanel {
         this.nguoiDung = nguoiDung;
         this.parentFrame = parentFrame;
         this.sinhVienBUS = new SinhVienBUS();
-        this.sinhVienThiBUS = new SinhVienThiBUS();
+        this.baiThiBUS = new BaiThiBUS();
+        this.kyThiBUS = new KyThiBUS();
+        this.deThiBUS = new DeThiBUS();
         initComponents();
         loadData();
     }
@@ -100,7 +106,8 @@ public class ThiTracNghiemPanel extends JPanel {
 
     private void loadKyThi() {
         cboKyThi.removeAllItems();
-        List<KyThiDTO> danhSach = sinhVienBUS.getKyThiDangDienRa();
+        // Gọi KyThiBUS để lấy kỳ thi đang diễn ra
+        List<KyThiDTO> danhSach = kyThiBUS.getKyThiDangDienRa();
         if (danhSach != null) {
             for (KyThiDTO kt : danhSach) {
                 cboKyThi.addItem(kt);
@@ -114,11 +121,12 @@ public class ThiTracNghiemPanel extends JPanel {
         if (kyThiChon == null)
             return;
 
-        // Lấy đề thi theo khoa của sinh viên (sinh viên chỉ thấy đề thi của khoa mình)
-        List<DeThiDTO> danhSach = sinhVienBUS.getDeThiTrongKyThiTheoKhoa(kyThiChon.getMaKyThi(), nguoiDung.getMaKhoa());
+        // Lấy đề thi theo khoa của sinh viên - gọi DeThiBUS
+        List<DeThiDTO> danhSach = deThiBUS.getDeThiTheoKyThiVaKhoa(kyThiChon.getMaKyThi(), nguoiDung.getMaKhoa());
         if (danhSach != null) {
             for (DeThiDTO dt : danhSach) {
-                boolean daThi = sinhVienBUS.daDuThi(dt.getMaDeThi(), nguoiDung.getMaSV());
+                // Kiểm tra đã thi chưa - gọi BaiThiBUS
+                boolean daThi = baiThiBUS.daDuThi(dt.getMaDeThi(), nguoiDung.getMaSV());
                 modelDeThi.addRow(new Object[] {
                         dt.getMaDeThi(), dt.getTenDeThi(), dt.getTenHocPhan(),
                         dt.getSoCauHoi(), dt.getThoiGianLam(),
@@ -152,7 +160,7 @@ public class ThiTracNghiemPanel extends JPanel {
                 "Xác nhận vào thi", JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            int maBaiThi = sinhVienThiBUS.batDauLamBai(maDeThi, nguoiDung.getMaSV());
+            int maBaiThi = baiThiBUS.batDauLamBai(maDeThi, nguoiDung.getMaSV());
             if (maBaiThi > 0) {
                 parentFrame.setVisible(false);
                 LamBaiThiFrame lamBaiThiFrame = new LamBaiThiFrame(parentFrame, maBaiThi, maDeThi, thoiGian);

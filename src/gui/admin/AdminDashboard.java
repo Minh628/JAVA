@@ -5,7 +5,7 @@
  */
 package gui.admin;
 
-import bus.TruongKhoaBUS;
+import bus.*;
 import config.Constants;
 import dto.*;
 import gui.components.*;
@@ -15,12 +15,22 @@ import javax.swing.*;
 
 public class AdminDashboard extends BaseDashboardFrame {
     private GiangVienDTO nguoiDung;
-    private TruongKhoaBUS truongKhoaBUS;
+    private KhoaBUS khoaBUS;
+    private NganhBUS nganhBUS;
+    private HocPhanBUS hocPhanBUS;
+    private KyThiBUS kyThiBUS;
+    private GiangVienBUS giangVienBUS;
+    private SinhVienBUS sinhVienBUS;
     
     public AdminDashboard(GiangVienDTO nguoiDung) {
         super("EXAM MANAGEMENT - Hệ thống quản lý thi trắc nghiệm");
         this.nguoiDung = nguoiDung;
-        this.truongKhoaBUS = new TruongKhoaBUS();
+        this.khoaBUS = new KhoaBUS();
+        this.nganhBUS = new NganhBUS();
+        this.hocPhanBUS = new HocPhanBUS();
+        this.kyThiBUS = new KyThiBUS();
+        this.giangVienBUS = new GiangVienBUS();
+        this.sinhVienBUS = new SinhVienBUS();
         initUI();
     }
     
@@ -100,18 +110,18 @@ public class AdminDashboard extends BaseDashboardFrame {
         cardsPanel.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
         
         // Load số liệu thực tế
-        int soGiangVien = truongKhoaBUS.getDanhSachGiangVien() != null ? 
-                          truongKhoaBUS.getDanhSachGiangVien().size() : 0;
-        int soSinhVien = truongKhoaBUS.getDanhSachSinhVien() != null ? 
-                         truongKhoaBUS.getDanhSachSinhVien().size() : 0;
-        int soHocPhan = truongKhoaBUS.getDanhSachHocPhan() != null ? 
-                        truongKhoaBUS.getDanhSachHocPhan().size() : 0;
-        int soKhoa = truongKhoaBUS.getDanhSachKhoa() != null ? 
-                     truongKhoaBUS.getDanhSachKhoa().size() : 0;
-        int soNganh = truongKhoaBUS.getDanhSachNganh() != null ? 
-                      truongKhoaBUS.getDanhSachNganh().size() : 0;
-        int soKyThi = truongKhoaBUS.getDanhSachKyThi() != null ? 
-                      truongKhoaBUS.getDanhSachKyThi().size() : 0;
+        int soGiangVien = giangVienBUS.getDanhSachGiangVien() != null ? 
+                          giangVienBUS.getDanhSachGiangVien().size() : 0;
+        int soSinhVien = sinhVienBUS.getDanhSachSinhVien() != null ? 
+                         sinhVienBUS.getDanhSachSinhVien().size() : 0;
+        int soHocPhan = hocPhanBUS.getDanhSachHocPhan() != null ? 
+                        hocPhanBUS.getDanhSachHocPhan().size() : 0;
+        int soKhoa = khoaBUS.getDanhSachKhoa() != null ? 
+                     khoaBUS.getDanhSachKhoa().size() : 0;
+        int soNganh = nganhBUS.getDanhSachNganh() != null ? 
+                      nganhBUS.getDanhSachNganh().size() : 0;
+        int soKyThi = kyThiBUS.getDanhSachKyThi() != null ? 
+                      kyThiBUS.getDanhSachKyThi().size() : 0;
         
         cardsPanel.add(createStatCard("👨‍🏫", "Giảng Viên", String.valueOf(soGiangVien), Constants.SECONDARY_COLOR));
         cardsPanel.add(createStatCard("👨‍🎓", "Sinh Viên", String.valueOf(soSinhVien), Constants.SUCCESS_COLOR));
@@ -161,7 +171,7 @@ public class AdminDashboard extends BaseDashboardFrame {
     
     private void doiMatKhau() {
         ChangePasswordDialog.show(this, (oldPwd, newPwd) -> 
-            truongKhoaBUS.doiMatKhauGiangVien(nguoiDung.getMaGV(), oldPwd, newPwd)
+            giangVienBUS.resetMatKhau(nguoiDung.getMaGV(), newPwd)
         );
     }
 }

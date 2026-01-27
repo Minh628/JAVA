@@ -1,16 +1,16 @@
 package gui.admin;
 
-import bus.TruongKhoaBUS;
+import bus.CauHoiBUS;
+import bus.HocPhanBUS;
 import config.Constants;
 import dto.HocPhanDTO;
 import gui.components.BaseCrudPanel;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import javax.swing.*;
 
 public class QuanLyHocPhanPanel extends BaseCrudPanel {
-    private TruongKhoaBUS truongKhoaBUS = new TruongKhoaBUS();
+    private HocPhanBUS hocPhanBUS = new HocPhanBUS();
     private JTextField txtTenMon;
     private JSpinner spnSoTin;
     private int selectedMaHocPhan = -1;
@@ -60,7 +60,7 @@ public class QuanLyHocPhanPanel extends BaseCrudPanel {
     @Override
     protected void loadData() {
         tableModel.setRowCount(0);
-        List<HocPhanDTO> danhSach = truongKhoaBUS.getDanhSachHocPhan();
+        List<HocPhanDTO> danhSach = hocPhanBUS.getDanhSachHocPhan();
         if (danhSach != null) {
             danhSach.forEach(hp -> tableModel.addRow(new Object[] {
                     hp.getMaHocPhan(), hp.getTenMon(), hp.getSoTin()
@@ -75,8 +75,8 @@ public class QuanLyHocPhanPanel extends BaseCrudPanel {
         tableModel.setRowCount(0);
 
         List<HocPhanDTO> danhSach = keyword.isEmpty() || "Tất cả".equals(loai)
-                ? truongKhoaBUS.timKiemHocPhan(keyword)
-                : truongKhoaBUS.getDanhSachHocPhan();
+                ? hocPhanBUS.timKiem(keyword)
+                : hocPhanBUS.getDanhSachHocPhan();
 
         if (danhSach != null) {
             danhSach.stream().filter(hp -> matchFilter(hp, keyword, loai))
@@ -115,7 +115,7 @@ public class QuanLyHocPhanPanel extends BaseCrudPanel {
         hp.setTenMon(txtTenMon.getText().trim());
         hp.setSoTin((Integer) spnSoTin.getValue());
 
-        if (truongKhoaBUS.themHocPhan(hp)) {
+        if (hocPhanBUS.themHocPhan(hp)) {
             showMessage("Thêm học phần thành công!");
             loadData();
             lamMoi();
@@ -137,7 +137,7 @@ public class QuanLyHocPhanPanel extends BaseCrudPanel {
         hp.setTenMon(txtTenMon.getText().trim());
         hp.setSoTin((Integer) spnSoTin.getValue());
 
-        if (truongKhoaBUS.capNhatHocPhan(hp)) {
+        if (hocPhanBUS.capNhatHocPhan(hp)) {
             showMessage("Cập nhật học phần thành công!");
             loadData();
             lamMoi();
@@ -152,7 +152,7 @@ public class QuanLyHocPhanPanel extends BaseCrudPanel {
             return;
         }
         if (confirmDelete("học phần")) {
-            if (truongKhoaBUS.xoaHocPhan(selectedMaHocPhan)) {
+            if (hocPhanBUS.xoaHocPhan(selectedMaHocPhan)) {
                 showMessage("Xóa học phần thành công!");
                 loadData();
                 lamMoi();

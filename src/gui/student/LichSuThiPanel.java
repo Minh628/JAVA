@@ -4,6 +4,7 @@
  */
 package gui.student;
 
+import bus.BaiThiBUS;
 import bus.SinhVienBUS;
 import config.Constants;
 import dto.BaiThiDTO;
@@ -18,6 +19,7 @@ import java.util.List;
 public class LichSuThiPanel extends JPanel {
     private SinhVienDTO nguoiDung;
     private SinhVienBUS sinhVienBUS;
+    private BaiThiBUS baiThiBUS;
 
     private CustomTable tblLichSu;
     private DefaultTableModel modelLichSu;
@@ -29,6 +31,7 @@ public class LichSuThiPanel extends JPanel {
     public LichSuThiPanel(SinhVienDTO nguoiDung) {
         this.nguoiDung = nguoiDung;
         this.sinhVienBUS = new SinhVienBUS();
+        this.baiThiBUS = new BaiThiBUS();
         initComponents();
     }
 
@@ -110,7 +113,8 @@ public class LichSuThiPanel extends JPanel {
 
     public void loadData() {
         modelLichSu.setRowCount(0);
-        List<BaiThiDTO> danhSach = sinhVienBUS.getLichSuBaiThi(nguoiDung.getMaSV());
+        // Gọi BaiThiBUS để lấy lịch sử bài thi
+        List<BaiThiDTO> danhSach = baiThiBUS.getLichSuBaiThi(nguoiDung.getMaSV());
         if (danhSach != null) {
             for (BaiThiDTO bt : danhSach) {
                 modelLichSu.addRow(new Object[] {
@@ -127,7 +131,8 @@ public class LichSuThiPanel extends JPanel {
         String loaiTimKiem = (String) cboLoaiTimKiem.getSelectedItem();
         modelLichSu.setRowCount(0);
 
-        List<BaiThiDTO> danhSach = sinhVienBUS.getLichSuBaiThi(nguoiDung.getMaSV());
+        // Gọi BaiThiBUS để lấy lịch sử bài thi
+        List<BaiThiDTO> danhSach = baiThiBUS.getLichSuBaiThi(nguoiDung.getMaSV());
         if (danhSach != null) {
             for (BaiThiDTO bt : danhSach) {
                 boolean match = true;

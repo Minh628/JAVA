@@ -4,22 +4,23 @@
  */
 package gui.admin;
 
-import bus.TruongKhoaBUS;
+import bus.DeThiBUS;
+import bus.KyThiBUS;
 import config.Constants;
 import dto.KyThiDTO;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class QuanLyKyThiPanel extends JPanel {
-    private TruongKhoaBUS truongKhoaBUS;
+    private KyThiBUS kyThiBUS;
 
     private CustomTable tblKyThi;
     private DefaultTableModel modelKyThi;
@@ -40,7 +41,7 @@ public class QuanLyKyThiPanel extends JPanel {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     public QuanLyKyThiPanel() {
-        this.truongKhoaBUS = new TruongKhoaBUS();
+        this.kyThiBUS = new KyThiBUS();
         initComponents();
         loadData();
     }
@@ -201,7 +202,7 @@ public class QuanLyKyThiPanel extends JPanel {
 
     private void loadData() {
         modelKyThi.setRowCount(0);
-        List<KyThiDTO> danhSach = truongKhoaBUS.getDanhSachKyThi();
+        List<KyThiDTO> danhSach = kyThiBUS.getDanhSachKyThi();
         if (danhSach != null) {
             Timestamp now = new Timestamp(System.currentTimeMillis());
             for (KyThiDTO kt : danhSach) {
@@ -224,9 +225,9 @@ public class QuanLyKyThiPanel extends JPanel {
 
         List<KyThiDTO> danhSach;
         if (keyword.isEmpty() || loaiTimKiem.equals("Tất cả")) {
-            danhSach = truongKhoaBUS.timKiemKyThi(keyword);
+            danhSach = kyThiBUS.timKiem(keyword);
         } else {
-            danhSach = truongKhoaBUS.getDanhSachKyThi();
+            danhSach = kyThiBUS.getDanhSachKyThi();
         }
 
         if (danhSach != null) {
@@ -305,7 +306,7 @@ public class QuanLyKyThiPanel extends JPanel {
         kyThi.setThoiGianBatDau(new Timestamp(((Date) spnNgayBatDau.getValue()).getTime()));
         kyThi.setThoiGianKetThuc(new Timestamp(((Date) spnNgayKetThuc.getValue()).getTime()));
 
-        if (truongKhoaBUS.themKyThi(kyThi)) {
+        if (kyThiBUS.themKyThi(kyThi)) {
             JOptionPane.showMessageDialog(this, "Thêm kỳ thi thành công!");
             loadData();
             lamMoi();
@@ -328,7 +329,7 @@ public class QuanLyKyThiPanel extends JPanel {
         kyThi.setThoiGianBatDau(new Timestamp(((Date) spnNgayBatDau.getValue()).getTime()));
         kyThi.setThoiGianKetThuc(new Timestamp(((Date) spnNgayKetThuc.getValue()).getTime()));
 
-        if (truongKhoaBUS.capNhatKyThi(kyThi)) {
+        if (kyThiBUS.capNhatKyThi(kyThi)) {
             JOptionPane.showMessageDialog(this, "Cập nhật kỳ thi thành công!");
             loadData();
             lamMoi();
@@ -347,12 +348,12 @@ public class QuanLyKyThiPanel extends JPanel {
                 "Bạn có chắc muốn xóa kỳ thi này?\nCác đề thi liên quan cũng sẽ bị xóa!",
                 "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirm == JOptionPane.YES_OPTION) {
-            if (truongKhoaBUS.xoaKyThi(selectedMaKyThi)) {
+            if (kyThiBUS.xoaKyThi(selectedMaKyThi)) {
                 JOptionPane.showMessageDialog(this, "Xóa kỳ thi thành công!");
                 loadData();
                 lamMoi();
             } else {
-                JOptionPane.showMessageDialog(this, "Xóa kỳ thi thất bại!");
+                JOptionPane.showMessageDialog(this, "Xóa kỳ thi thất bại! Kỳ thi có thể đang có đề thi.");
             }
         }
     }

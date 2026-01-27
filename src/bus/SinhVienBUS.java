@@ -1,37 +1,61 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
- * BUS: SinhVienBUS - Xử lý logic nghiệp vụ sinh viên
+ * BUS: SinhVienBUS - Xử lý logic nghiệp vụ Sinh viên
+ * CHỈ gọi SinhVienDAO - tuân thủ nguyên tắc 1 BUS : 1 DAO
  */
 package bus;
 
-import dao.BaiThiDAO;
-import dao.DeThiDAO;
-import dao.KyThiDAO;
 import dao.SinhVienDAO;
-import dto.BaiThiDTO;
-import dto.DeThiDTO;
-import dto.KyThiDTO;
 import dto.SinhVienDTO;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SinhVienBUS {
     private SinhVienDAO sinhVienDAO;
-    private BaiThiDAO baiThiDAO;
-    private DeThiDAO deThiDAO;
-    private KyThiDAO kyThiDAO;
+
+    // Cache
+    private static ArrayList<SinhVienDTO> danhSachSinhVien = null;
 
     public SinhVienBUS() {
         this.sinhVienDAO = new SinhVienDAO();
-        this.baiThiDAO = new BaiThiDAO();
-        this.deThiDAO = new DeThiDAO();
-        this.kyThiDAO = new KyThiDAO();
     }
 
     /**
-     * Lấy thông tin sinh viên
+     * Lấy danh sách tất cả sinh viên
      */
-    public SinhVienDTO getThongTin(int maSV) {
+    public List<SinhVienDTO> getDanhSachSinhVien() {
+        if (danhSachSinhVien == null) {
+            try {
+                danhSachSinhVien = new ArrayList<>(sinhVienDAO.getAll());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return new ArrayList<>();
+            }
+        }
+        return danhSachSinhVien;
+    }
+
+    /**
+     * Lấy sinh viên theo ngành
+     */
+    public List<SinhVienDTO> getSinhVienTheoNganh(int maNganh) {
+        getDanhSachSinhVien();
+        ArrayList<SinhVienDTO> ketQua = new ArrayList<>();
+        if (danhSachSinhVien != null) {
+            for (SinhVienDTO sv : danhSachSinhVien) {
+                if (sv.getMaNganh() == maNganh) {
+                    ketQua.add(sv);
+                }
+            }
+        }
+        return ketQua;
+    }
+
+    /**
+     * Lấy sinh viên theo mã
+     */
+    public SinhVienDTO getById(int maSV) {
         try {
             return sinhVienDAO.getById(maSV);
         } catch (SQLException e) {
@@ -41,99 +65,86 @@ public class SinhVienBUS {
     }
 
     /**
-     * Cập nhật thông tin sinh viên
+     * Lấy thông tin sinh viên (alias cho getById)
+     */
+    public SinhVienDTO getThongTin(int maSV) {
+        return getById(maSV);
+    }
+
+    /**
+     * Thêm sinh viên mới
+     */
+    public boolean themSinhVien(SinhVienDTO sinhVien) {
+        try {
+            if (sinhVienDAO.checkTenDangNhapExists(sinhVien.getTenDangNhap())) {
+                return false;
+            }
+            if (sinhVienDAO.insert(sinhVien)) {
+                danhSachSinhVien = new ArrayList<>(sinhVienDAO.getAll());
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Cập nhật sinh viên
+     */
+    public boolean capNhatSinhVien(SinhVienDTO sinhVien) {
+        try {
+            if (sinhVienDAO.update(sinhVien)) {
+                SinhVienDTO updated = sinhVienDAO.getById(sinhVien.getMaSV());
+                if (danhSachSinhVien != null) {
+                    for (int i = 0; i < danhSachSinhVien.size(); i++) {
+                        if (danhSachSinhVien.get(i).getMaSV() == sinhVien.getMaSV()) {
+                            danhSachSinhVien.set(i, updated);
+                            break;
+                        }
+                    }
+                }
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Cập nhật thông tin sinh viên (alias cho capNhatSinhVien)
      */
     public boolean capNhatThongTin(SinhVienDTO sinhVien) {
+        return capNhatSinhVien(sinhVien);
+    }
+
+    /**
+     * Xóa sinh viên
+     */
+    public boolean xoaSinhVien(int maSV) {
         try {
-            return sinhVienDAO.update(sinhVien);
+            if (sinhVienDAO.delete(maSV)) {
+                if (danhSachSinhVien != null) {
+                    danhSachSinhVien.removeIf(sv -> sv.getMaSV() == maSV);
+                }
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Reset mật khẩu
+     */
+    public boolean resetMatKhau(int maSV, String matKhauMoi) {
+        try {
+            return sinhVienDAO.updatePassword(maSV, matKhauMoi);
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    /**
-     * Lấy lịch sử bài thi
-     */
-    public List<BaiThiDTO> getLichSuBaiThi(int maSV) {
-        try {
-            return baiThiDAO.getBySinhVien(maSV);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Lấy danh sách kỳ thi đang diễn ra
-     */
-    public List<KyThiDTO> getKyThiDangDienRa() {
-        try {
-            return kyThiDAO.getKyThiDangDienRa();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Lấy danh sách đề thi trong kỳ thi
-     */
-    public List<DeThiDTO> getDeThiTrongKyThi(int maKyThi) {
-        try {
-            return deThiDAO.getByKyThi(maKyThi);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Lấy danh sách đề thi trong kỳ thi THEO KHOA (sinh viên chỉ thấy đề thi của
-     * khoa mình)
-     */
-    public List<DeThiDTO> getDeThiTrongKyThiTheoKhoa(int maKyThi, int maKhoa) {
-        try {
-            return deThiDAO.getByKyThiAndKhoa(maKyThi, maKhoa);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Kiểm tra sinh viên đã thi đề này chưa
-     */
-    public boolean daDuThi(int maDeThi, int maSV) {
-        try {
-            return baiThiDAO.checkDaThi(maDeThi, maSV);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return true; // Mặc định trả về true để an toàn
-        }
-    }
-
-    /**
-     * Lấy chi tiết đề thi
-     */
-    public DeThiDTO getChiTietDeThi(int maDeThi) {
-        try {
-            return deThiDAO.getById(maDeThi);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Lấy chi tiết bài thi
-     */
-    public BaiThiDTO getChiTietBaiThi(int maBaiThi) {
-        try {
-            return baiThiDAO.getById(maBaiThi);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
         }
     }
 
@@ -142,7 +153,6 @@ public class SinhVienBUS {
      */
     public boolean doiMatKhau(int maSV, String matKhauCu, String matKhauMoi) {
         try {
-            // Kiểm tra mật khẩu cũ
             SinhVienDTO sv = sinhVienDAO.getById(maSV);
             if (sv == null || !sv.getMatKhau().equals(matKhauCu)) {
                 return false;
@@ -152,5 +162,21 @@ public class SinhVienBUS {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Tìm kiếm sinh viên
+     */
+    public List<SinhVienDTO> timKiem(String keyword) {
+        try {
+            return sinhVienDAO.search(keyword);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    public static void reloadCache() {
+        danhSachSinhVien = null;
     }
 }

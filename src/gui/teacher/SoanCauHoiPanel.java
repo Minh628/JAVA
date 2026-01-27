@@ -1,10 +1,15 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * GUI: SoanCauHoiPanel - Panel soạn câu hỏi
+ * 
+ * Sử dụng BUS chuyên biệt:
+ * - CauHoiBUS: Quản lý câu hỏi
+ * - HocPhanBUS: Lấy danh sách học phần
  */
 package gui.teacher;
 
-import bus.GiangVienBUS;
+import bus.CauHoiBUS;
+import bus.HocPhanBUS;
 import config.Constants;
 import dto.CauHoiDTO;
 import dto.CauHoiMCDTO;
@@ -19,7 +24,8 @@ import javax.swing.table.DefaultTableModel;
 
 public class SoanCauHoiPanel extends JPanel {
     private GiangVienDTO giangVien;
-    private GiangVienBUS giangVienBUS;
+    private CauHoiBUS cauHoiBUS;
+    private HocPhanBUS hocPhanBUS;
 
     private CustomTable tblCauHoi;
     private DefaultTableModel modelCauHoi;
@@ -45,7 +51,8 @@ public class SoanCauHoiPanel extends JPanel {
 
     public SoanCauHoiPanel(GiangVienDTO giangVien) {
         this.giangVien = giangVien;
-        this.giangVienBUS = new GiangVienBUS();
+        this.cauHoiBUS = new CauHoiBUS();
+        this.hocPhanBUS = new HocPhanBUS();
         initComponents();
         loadData();
     }
@@ -248,7 +255,7 @@ public class SoanCauHoiPanel extends JPanel {
 
     private void loadHocPhan() {
         cboHocPhan.removeAllItems();
-        List<HocPhanDTO> danhSach = giangVienBUS.getDanhSachHocPhan();
+        List<HocPhanDTO> danhSach = hocPhanBUS.getDanhSachHocPhan();
         if (danhSach != null) {
             for (HocPhanDTO hp : danhSach) {
                 cboHocPhan.addItem(hp);
@@ -258,7 +265,7 @@ public class SoanCauHoiPanel extends JPanel {
 
     private void loadCauHoi() {
         modelCauHoi.setRowCount(0);
-        List<CauHoiDTO> danhSach = giangVienBUS.getDanhSachCauHoi(giangVien.getMaGV());
+        List<CauHoiDTO> danhSach = cauHoiBUS.getDanhSachCauHoi(giangVien.getMaGV());
         if (danhSach != null) {
             for (CauHoiDTO ch : danhSach) {
                 String noiDung = ch.getNoiDungCauHoi();
@@ -278,7 +285,7 @@ public class SoanCauHoiPanel extends JPanel {
         String loaiTimKiem = (String) cboLoaiTimKiem.getSelectedItem();
         modelCauHoi.setRowCount(0);
 
-        List<CauHoiDTO> danhSach = giangVienBUS.getDanhSachCauHoi(giangVien.getMaGV());
+        List<CauHoiDTO> danhSach = cauHoiBUS.getDanhSachCauHoi(giangVien.getMaGV());
         if (danhSach != null) {
             for (CauHoiDTO ch : danhSach) {
                 boolean match = true;
@@ -324,7 +331,7 @@ public class SoanCauHoiPanel extends JPanel {
         int row = tblCauHoi.getSelectedRow();
         if (row >= 0) {
             int maCauHoi = (int) modelCauHoi.getValueAt(row, 0);
-            CauHoiDTO cauHoi = giangVienBUS.getCauHoiById(maCauHoi);
+            CauHoiDTO cauHoi = cauHoiBUS.getById(maCauHoi);
 
             if (cauHoi != null) {
                 txtMaCauHoi.setText(String.valueOf(cauHoi.getMaCauHoi()));
@@ -373,7 +380,7 @@ public class SoanCauHoiPanel extends JPanel {
         cauHoi.setDapAnDung((String) cboDapAnDung.getSelectedItem());
         cauHoi.setMucDo((String) cboMucDo.getSelectedItem());
 
-        if (giangVienBUS.themCauHoi(cauHoi)) {
+        if (cauHoiBUS.themCauHoi(cauHoi)) {
             JOptionPane.showMessageDialog(this, "Thêm câu hỏi thành công!");
             loadCauHoi();
             lamMoi();
@@ -405,7 +412,7 @@ public class SoanCauHoiPanel extends JPanel {
         cauHoi.setDapAnDung((String) cboDapAnDung.getSelectedItem());
         cauHoi.setMucDo((String) cboMucDo.getSelectedItem());
 
-        if (giangVienBUS.capNhatCauHoi(cauHoi)) {
+        if (cauHoiBUS.capNhatCauHoi(cauHoi)) {
             JOptionPane.showMessageDialog(this, "Cập nhật câu hỏi thành công!");
             loadCauHoi();
         } else {
@@ -423,7 +430,7 @@ public class SoanCauHoiPanel extends JPanel {
                 "Bạn có chắc muốn xóa câu hỏi này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             int maCauHoi = Integer.parseInt(txtMaCauHoi.getText());
-            if (giangVienBUS.xoaCauHoi(maCauHoi)) {
+            if (cauHoiBUS.xoaCauHoi(maCauHoi)) {
                 JOptionPane.showMessageDialog(this, "Xóa câu hỏi thành công!");
                 loadCauHoi();
                 lamMoi();

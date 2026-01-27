@@ -2,6 +2,12 @@
  * Hệ thống thi trắc nghiệm trực tuyến
  * GUI: QuanLyDeThiPanel - Panel quản lý đề thi cho giảng viên
  * 
+ * Sử dụng BUS chuyên biệt:
+ * - DeThiBUS: Quản lý đề thi và chi tiết đề thi
+ * - HocPhanBUS: Lấy danh sách học phần
+ * - KyThiBUS: Lấy danh sách kỳ thi
+ * - CauHoiBUS: Lấy danh sách câu hỏi
+ * 
  * Luồng thao tác:
  * 1. Thêm đề thi: Tạo vỏ đề thi (metadata) trước
  * 2. Chọn đề thi -> Bấm "Quản lý câu hỏi" để thêm/xóa câu hỏi
@@ -9,7 +15,12 @@
  */
 package gui.teacher;
 
-import bus.GiangVienBUS;
+import bus.BaiThiBUS;
+import bus.CauHoiBUS;
+import bus.ChiTietDeThiBUS;
+import bus.DeThiBUS;
+import bus.HocPhanBUS;
+import bus.KyThiBUS;
 import config.Constants;
 import dto.CauHoiDTO;
 import dto.DeThiDTO;
@@ -18,17 +29,22 @@ import dto.HocPhanDTO;
 import dto.KyThiDTO;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class QuanLyDeThiPanel extends JPanel {
     private GiangVienDTO nguoiDung;
-    private GiangVienBUS giangVienBUS;
+    private DeThiBUS deThiBUS;
+    private HocPhanBUS hocPhanBUS;
+    private KyThiBUS kyThiBUS;
+    private CauHoiBUS cauHoiBUS;
+    private BaiThiBUS baiThiBUS;
+    private ChiTietDeThiBUS chiTietDeThiBUS;
 
     private CustomTable tblDeThi;
     private DefaultTableModel modelDeThi;
@@ -53,7 +69,12 @@ public class QuanLyDeThiPanel extends JPanel {
 
     public QuanLyDeThiPanel(GiangVienDTO nguoiDung) {
         this.nguoiDung = nguoiDung;
-        this.giangVienBUS = new GiangVienBUS();
+        this.deThiBUS = new DeThiBUS();
+        this.hocPhanBUS = new HocPhanBUS();
+        this.kyThiBUS = new KyThiBUS();
+        this.cauHoiBUS = new CauHoiBUS();
+        this.baiThiBUS = new BaiThiBUS();
+        this.chiTietDeThiBUS = new ChiTietDeThiBUS();
         initComponents();
         loadData();
     }
@@ -221,7 +242,7 @@ public class QuanLyDeThiPanel extends JPanel {
 
     private void loadHocPhan() {
         cboHocPhan.removeAllItems();
-        List<HocPhanDTO> danhSach = giangVienBUS.getDanhSachHocPhan();
+        List<HocPhanDTO> danhSach = hocPhanBUS.getDanhSachHocPhan();
         if (danhSach != null) {
             for (HocPhanDTO hp : danhSach) {
                 cboHocPhan.addItem(hp);
@@ -231,7 +252,7 @@ public class QuanLyDeThiPanel extends JPanel {
 
     private void loadKyThi() {
         cboKyThi.removeAllItems();
-        List<KyThiDTO> danhSach = giangVienBUS.getDanhSachKyThi();
+        List<KyThiDTO> danhSach = kyThiBUS.getDanhSachKyThi();
         if (danhSach != null) {
             for (KyThiDTO kt : danhSach) {
                 cboKyThi.addItem(kt);
@@ -241,7 +262,7 @@ public class QuanLyDeThiPanel extends JPanel {
 
     private void loadDeThi() {
         modelDeThi.setRowCount(0);
-        List<DeThiDTO> danhSach = giangVienBUS.getDanhSachDeThi(nguoiDung.getMaGV());
+        List<DeThiDTO> danhSach = deThiBUS.getDanhSachDeThi(nguoiDung.getMaGV());
         if (danhSach != null) {
             for (DeThiDTO dt : danhSach) {
                 modelDeThi.addRow(new Object[] {
@@ -257,7 +278,7 @@ public class QuanLyDeThiPanel extends JPanel {
         String loaiTimKiem = (String) cboLoaiTimKiem.getSelectedItem();
         modelDeThi.setRowCount(0);
 
-        List<DeThiDTO> danhSach = giangVienBUS.getDanhSachDeThi(nguoiDung.getMaGV());
+        List<DeThiDTO> danhSach = deThiBUS.getDanhSachDeThi(nguoiDung.getMaGV());
         if (danhSach != null) {
             for (DeThiDTO dt : danhSach) {
                 boolean match = true;
@@ -340,7 +361,7 @@ public class QuanLyDeThiPanel extends JPanel {
         deThi.setSoCauHoi(0); // Ban đầu chưa có câu hỏi
         deThi.setThoiGianLam((Integer) spnThoiGian.getValue());
 
-        if (giangVienBUS.themDeThi(deThi)) {
+        if (deThiBUS.themDeThi(deThi)) {
             JOptionPane.showMessageDialog(this,
                     "Thêm đề thi thành công!\nBấm 'Quản lý câu hỏi' để thêm câu hỏi vào đề thi.",
                     "Thành công", JOptionPane.INFORMATION_MESSAGE);
@@ -359,8 +380,8 @@ public class QuanLyDeThiPanel extends JPanel {
         if (!validateInput())
             return;
 
-        // Kiểm tra có bài thi chưa
-        int soBaiThi = giangVienBUS.demBaiThiTheoDeThi(selectedMaDeThi);
+        // Kiểm tra có bài thi chưa - gọi BaiThiBUS
+        int soBaiThi = baiThiBUS.demBaiThiTheoDeThi(selectedMaDeThi);
         if (soBaiThi > 0) {
             JOptionPane.showMessageDialog(this,
                     "Không thể sửa đề thi!\nĐã có " + soBaiThi + " bài thi sử dụng đề thi này.",
@@ -386,7 +407,7 @@ public class QuanLyDeThiPanel extends JPanel {
         deThi.setSoCauHoi((Integer) modelDeThi.getValueAt(row, 4));
         deThi.setThoiGianLam((Integer) spnThoiGian.getValue());
 
-        if (giangVienBUS.capNhatDeThi(deThi)) {
+        if (deThiBUS.capNhatDeThi(deThi)) {
             JOptionPane.showMessageDialog(this, "Cập nhật đề thi thành công!");
             loadDeThi();
             lamMoi();
@@ -404,21 +425,23 @@ public class QuanLyDeThiPanel extends JPanel {
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Bạn có chắc muốn xóa đề thi này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            // Sử dụng xoaDeThiAnToan để kiểm tra ràng buộc
-            int ketQua = giangVienBUS.xoaDeThiAnToan(selectedMaDeThi);
-            switch (ketQua) {
-                case 1:
-                    JOptionPane.showMessageDialog(this, "Xóa đề thi thành công!");
-                    loadDeThi();
-                    lamMoi();
-                    break;
-                case -1:
-                    JOptionPane.showMessageDialog(this,
-                            "Không thể xóa đề thi!\nĐã có sinh viên làm bài thi với đề này.",
-                            "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-                    break;
-                default:
-                    JOptionPane.showMessageDialog(this, "Xóa đề thi thất bại!");
+            // Kiểm tra có bài thi chưa - gọi BaiThiBUS
+            int soBaiThi = baiThiBUS.demBaiThiTheoDeThi(selectedMaDeThi);
+            if (soBaiThi > 0) {
+                JOptionPane.showMessageDialog(this, 
+                    "Không thể xóa. Đề thi đã có " + soBaiThi + " sinh viên làm bài.",
+                    "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            // Xóa chi tiết đề thi trước - gọi ChiTietDeThiBUS
+            chiTietDeThiBUS.xoaTatCaCauHoiTrongDeThi(selectedMaDeThi);
+            // Xóa đề thi
+            if (deThiBUS.xoaDeThi(selectedMaDeThi)) {
+                JOptionPane.showMessageDialog(this, "Xóa đề thi thành công!");
+                loadDeThi();
+                lamMoi();
+            } else {
+                JOptionPane.showMessageDialog(this, "Không thể xóa đề thi!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
@@ -432,8 +455,8 @@ public class QuanLyDeThiPanel extends JPanel {
             return;
         }
 
-        // Kiểm tra có bài thi chưa
-        int soBaiThi = giangVienBUS.demBaiThiTheoDeThi(selectedMaDeThi);
+        // Kiểm tra có bài thi chưa - gọi BaiThiBUS
+        int soBaiThi = baiThiBUS.demBaiThiTheoDeThi(selectedMaDeThi);
         if (soBaiThi > 0) {
             JOptionPane.showMessageDialog(this,
                     "Không thể sửa đổi câu hỏi!\nĐã có " + soBaiThi + " bài thi sử dụng đề thi này.",
@@ -455,7 +478,7 @@ public class QuanLyDeThiPanel extends JPanel {
         String tenDeThi = (String) modelDeThi.getValueAt(row, 1);
         QuanLyCauHoiDeThiDialog dialog = new QuanLyCauHoiDeThiDialog(
                 (JFrame) SwingUtilities.getWindowAncestor(this),
-                giangVienBUS, nguoiDung.getMaGV(), selectedMaDeThi, tenDeThi, maHocPhan);
+                deThiBUS, cauHoiBUS, chiTietDeThiBUS, nguoiDung.getMaGV(), selectedMaDeThi, tenDeThi, maHocPhan);
         dialog.setVisible(true);
 
         // Reload sau khi đóng dialog
@@ -494,9 +517,15 @@ public class QuanLyDeThiPanel extends JPanel {
 /**
  * Dialog quản lý câu hỏi trong đề thi
  * Có 2 table: câu hỏi trong đề thi và câu hỏi có thể thêm
+ * 
+ * Sử dụng BUS chuyên biệt:
+ * - DeThiBUS: Quản lý chi tiết đề thi
+ * - CauHoiBUS: Lấy danh sách câu hỏi
  */
 class QuanLyCauHoiDeThiDialog extends JDialog {
-    private GiangVienBUS giangVienBUS;
+    private DeThiBUS deThiBUS;
+    private CauHoiBUS cauHoiBUS;
+    private ChiTietDeThiBUS chiTietDeThiBUS;
     private int maGV;
     private int maDeThi;
     private int maHocPhan;
@@ -515,10 +544,12 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
 
     private JLabel lblSoCauHoi;
 
-    public QuanLyCauHoiDeThiDialog(JFrame parent, GiangVienBUS giangVienBUS,
-            int maGV, int maDeThi, String tenDeThi, int maHocPhan) {
+    public QuanLyCauHoiDeThiDialog(JFrame parent, DeThiBUS deThiBUS, CauHoiBUS cauHoiBUS,
+            ChiTietDeThiBUS chiTietDeThiBUS, int maGV, int maDeThi, String tenDeThi, int maHocPhan) {
         super(parent, "Quản lý câu hỏi - " + tenDeThi, true);
-        this.giangVienBUS = giangVienBUS;
+        this.deThiBUS = deThiBUS;
+        this.cauHoiBUS = cauHoiBUS;
+        this.chiTietDeThiBUS = chiTietDeThiBUS;
         this.maGV = maGV;
         this.maDeThi = maDeThi;
         this.maHocPhan = maHocPhan;
@@ -629,11 +660,11 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
     private void loadCauHoiTrongDeThi() {
         modelCauHoiTrongDeThi.setRowCount(0);
 
-        // Lấy danh sách mã câu hỏi trong đề thi
-        List<Integer> danhSachMaCH = giangVienBUS.getMaCauHoiTrongDeThi(maDeThi);
+        // Lấy danh sách mã câu hỏi trong đề thi - gọi ChiTietDeThiBUS
+        List<Integer> danhSachMaCH = chiTietDeThiBUS.getMaCauHoiByDeThi(maDeThi);
 
         // Lấy thông tin chi tiết từ danh sách câu hỏi của giảng viên
-        List<CauHoiDTO> danhSachCauHoi = giangVienBUS.getDanhSachCauHoi(maGV);
+        List<CauHoiDTO> danhSachCauHoi = cauHoiBUS.getDanhSachCauHoi(maGV);
 
         int count = 0;
         for (Integer maCH : danhSachMaCH) {
@@ -658,16 +689,16 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
     private void loadCauHoiCoTheThem() {
         modelCauHoiCoTheThem.setRowCount(0);
 
-        // Lấy danh sách mã câu hỏi đã có trong đề thi
-        Set<Integer> danhSachDaCo = new HashSet<>(giangVienBUS.getMaCauHoiTrongDeThi(maDeThi));
+        // Lấy danh sách mã câu hỏi đã có trong đề thi - gọi ChiTietDeThiBUS
+        Set<Integer> danhSachDaCo = new HashSet<>(chiTietDeThiBUS.getMaCauHoiByDeThi(maDeThi));
 
         // Lấy danh sách câu hỏi của giảng viên theo môn học
         List<CauHoiDTO> danhSachCauHoi;
         if (maHocPhan > 0) {
             // Lọc theo môn học
-            danhSachCauHoi = giangVienBUS.getCauHoiTheoMon(maHocPhan);
+            danhSachCauHoi = cauHoiBUS.getCauHoiTheoMon(maHocPhan);
         } else {
-            danhSachCauHoi = giangVienBUS.getDanhSachCauHoi(maGV);
+            danhSachCauHoi = cauHoiBUS.getDanhSachCauHoi(maGV);
         }
 
         for (CauHoiDTO ch : danhSachCauHoi) {
@@ -697,11 +728,11 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
             danhSachMaCH.add(maCH);
         }
 
-        boolean success = giangVienBUS.themNhieuCauHoiVaoDeThi(maDeThi, danhSachMaCH);
+        boolean success = chiTietDeThiBUS.themNhieuCauHoiVaoDeThi(maDeThi, danhSachMaCH);
         if (success) {
             // Cập nhật số câu hỏi trong đề thi
             int soCauMoi = modelCauHoiTrongDeThi.getRowCount() + danhSachMaCH.size();
-            giangVienBUS.capNhatSoCauHoi(maDeThi, soCauMoi);
+            deThiBUS.capNhatSoCauHoi(maDeThi, soCauMoi);
 
             JOptionPane.showMessageDialog(this, "Đã thêm " + danhSachMaCH.size() + " câu hỏi vào đề thi!");
             loadData();
@@ -727,14 +758,14 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
         int successCount = 0;
         for (int row : selectedRows) {
             int maCH = (int) modelCauHoiTrongDeThi.getValueAt(row, 0);
-            if (giangVienBUS.xoaCauHoiKhoiDeThi(maDeThi, maCH)) {
+            if (chiTietDeThiBUS.xoaCauHoiKhoiDeThi(maDeThi, maCH)) {
                 successCount++;
             }
         }
 
         // Cập nhật số câu hỏi trong đề thi
         int soCauMoi = modelCauHoiTrongDeThi.getRowCount() - successCount;
-        giangVienBUS.capNhatSoCauHoi(maDeThi, soCauMoi);
+        deThiBUS.capNhatSoCauHoi(maDeThi, soCauMoi);
 
         JOptionPane.showMessageDialog(this, "Đã xóa " + successCount + " câu hỏi khỏi đề thi!");
         loadData();

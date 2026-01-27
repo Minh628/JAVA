@@ -4,7 +4,7 @@
  */
 package gui.login;
 
-import bus.AuthBUS;
+import bus.DangNhapBUS;
 import config.Constants;
 import dto.GiangVienDTO;
 import dto.SinhVienDTO;
@@ -14,19 +14,17 @@ import gui.student.StudentDashboard;
 import gui.teacher.TeacherDashboard;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.RoundRectangle2D;
 import javax.swing.*;
-import javax.swing.border.*;
 
 public class LoginFrame extends JFrame {
     private JTextField txtTenDangNhap;
     private JPasswordField txtMatKhau;
     private JButton btnDangNhap;
     private JComboBox<String> cboVaiTro;
-    private AuthBUS authBUS;
+    private DangNhapBUS dangNhapBUS;
 
     public LoginFrame() {
-        this.authBUS = new AuthBUS();
+        this.dangNhapBUS = new DangNhapBUS();
         initComponents();
     }
 
@@ -345,7 +343,7 @@ public class LoginFrame extends JFrame {
         }
 
         // Xác thực đăng nhập
-        Object user = authBUS.dangNhap(tenDangNhap, matKhau);
+        Object user = dangNhapBUS.dangNhap(tenDangNhap, matKhau);
         
         if (user == null) {
             JOptionPane.showMessageDialog(this, 
@@ -355,7 +353,7 @@ public class LoginFrame extends JFrame {
         }
 
         // Kiểm tra vai trò
-        int maVaiTro = authBUS.getVaiTro(user);
+        int maVaiTro = dangNhapBUS.getVaiTro(user);
         
         // vaiTroIndex: 0 = Sinh viên, 1 = Giảng viên, 2 = Trưởng khoa
         boolean vaiTroHopLe = false;
@@ -364,7 +362,7 @@ public class LoginFrame extends JFrame {
             vaiTroHopLe = true;
         } else if (vaiTroIndex == 1 && maVaiTro == VaiTroDTO.GIANG_VIEN) {
             vaiTroHopLe = true;
-        } else if (vaiTroIndex == 2 && maVaiTro == VaiTroDTO.TRUONG_KHOA) {
+        } else if (vaiTroIndex == 2 && maVaiTro == VaiTroDTO.ADMIN) {
             vaiTroHopLe = true;
         }
         
@@ -384,7 +382,7 @@ public class LoginFrame extends JFrame {
         
         // Mở dashboard tương ứng
         switch (maVaiTro) {
-            case VaiTroDTO.TRUONG_KHOA:
+            case VaiTroDTO.ADMIN:
                 new AdminDashboard((GiangVienDTO) user).setVisible(true);
                 break;
             case VaiTroDTO.GIANG_VIEN:

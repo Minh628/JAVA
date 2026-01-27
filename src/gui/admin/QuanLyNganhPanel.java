@@ -1,17 +1,19 @@
 package gui.admin;
 
-import bus.TruongKhoaBUS;
+import bus.KhoaBUS;
+import bus.NganhBUS;
+import bus.SinhVienBUS;
 import config.Constants;
 import dto.KhoaDTO;
 import dto.NganhDTO;
 import gui.components.BaseCrudPanel;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import javax.swing.*;
 
 public class QuanLyNganhPanel extends BaseCrudPanel {
-    private TruongKhoaBUS truongKhoaBUS = new TruongKhoaBUS();
+    private NganhBUS nganhBUS = new NganhBUS();
+    private KhoaBUS khoaBUS = new KhoaBUS();
     private JTextField txtTenNganh;
     private JComboBox<KhoaDTO> cboKhoa;
     private int selectedMaNganh = -1;
@@ -56,12 +58,12 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
     @Override
     protected void loadData() {
         cboKhoa.removeAllItems();
-        List<KhoaDTO> khoaList = truongKhoaBUS.getDanhSachKhoa();
+        List<KhoaDTO> khoaList = khoaBUS.getDanhSachKhoa();
         if (khoaList != null)
             khoaList.forEach(cboKhoa::addItem);
 
         tableModel.setRowCount(0);
-        List<NganhDTO> danhSach = truongKhoaBUS.getDanhSachNganh();
+        List<NganhDTO> danhSach = nganhBUS.getDanhSachNganh();
         if (danhSach != null) {
             danhSach.forEach(n -> tableModel.addRow(new Object[] {
                     n.getMaNganh(), n.getTenNganh(),
@@ -77,8 +79,8 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
         tableModel.setRowCount(0);
 
         List<NganhDTO> danhSach = keyword.isEmpty() || "Tất cả".equals(loai)
-                ? truongKhoaBUS.timKiemNganh(keyword)
-                : truongKhoaBUS.getDanhSachNganh();
+                ? nganhBUS.timKiem(keyword)
+                : nganhBUS.getDanhSachNganh();
 
         if (danhSach != null) {
             danhSach.stream().filter(n -> matchFilter(n, keyword, loai))
@@ -132,7 +134,7 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
         if (khoa != null)
             nganh.setMaKhoa(khoa.getMaKhoa());
 
-        if (truongKhoaBUS.themNganh(nganh)) {
+        if (nganhBUS.themNganh(nganh)) {
             showMessage("Thêm ngành thành công!");
             loadData();
             lamMoi();
@@ -156,7 +158,7 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
         if (khoa != null)
             nganh.setMaKhoa(khoa.getMaKhoa());
 
-        if (truongKhoaBUS.capNhatNganh(nganh)) {
+        if (nganhBUS.capNhatNganh(nganh)) {
             showMessage("Cập nhật ngành thành công!");
             loadData();
             lamMoi();
@@ -171,7 +173,7 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
             return;
         }
         if (confirmDelete("ngành")) {
-            if (truongKhoaBUS.xoaNganh(selectedMaNganh)) {
+            if (nganhBUS.xoaNganh(selectedMaNganh)) {
                 showMessage("Xóa ngành thành công!");
                 loadData();
                 lamMoi();

@@ -172,6 +172,25 @@ public class BaiThiDAO {
             return pstmt.executeUpdate() > 0;
         }
     }
+
+    /**
+     * Đếm số bài thi theo đề thi
+     */
+    public int countByDeThi(int maDeThi) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM BaiThi WHERE ma_de_thi = ?";
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, maDeThi);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
     
     /**
      * Map ResultSet sang DTO

@@ -6,7 +6,7 @@ package dto;
 
 public class VaiTroDTO {
     // Hằng số vai trò
-    public static final int TRUONG_KHOA = 1;
+    public static final int ADMIN = 1;
     public static final int GIANG_VIEN = 2;
     public static final int SINH_VIEN = 3;
     

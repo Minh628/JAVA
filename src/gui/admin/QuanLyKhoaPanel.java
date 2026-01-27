@@ -5,19 +5,21 @@
  */
 package gui.admin;
 
-import bus.TruongKhoaBUS;
+import bus.KhoaBUS;
+import bus.NganhBUS;
 import config.Constants;
 import dto.KhoaDTO;
 import dto.NganhDTO;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class QuanLyKhoaPanel extends JPanel {
-    private TruongKhoaBUS truongKhoaBUS;
+    private KhoaBUS khoaBUS;
+    private NganhBUS nganhBUS;
 
     // Table Khoa
     private CustomTable tblKhoa;
@@ -40,7 +42,8 @@ public class QuanLyKhoaPanel extends JPanel {
     private int selectedMaKhoa = -1;
 
     public QuanLyKhoaPanel() {
-        this.truongKhoaBUS = new TruongKhoaBUS();
+        this.khoaBUS = new KhoaBUS();
+        this.nganhBUS = new NganhBUS();
         initComponents();
         loadData();
     }
@@ -205,11 +208,11 @@ public class QuanLyKhoaPanel extends JPanel {
 
     private void loadData() {
         modelKhoa.setRowCount(0);
-        List<KhoaDTO> danhSach = truongKhoaBUS.getDanhSachKhoa();
+        List<KhoaDTO> danhSach = khoaBUS.getDanhSachKhoa();
         if (danhSach != null) {
             for (KhoaDTO khoa : danhSach) {
                 // Đếm số ngành thuộc khoa
-                int soNganh = truongKhoaBUS.demNganhTheoKhoa(khoa.getMaKhoa());
+                int soNganh = nganhBUS.getNganhTheoKhoa(khoa.getMaKhoa()).size();
                 modelKhoa.addRow(new Object[] {
                         khoa.getMaKhoa(), khoa.getTenKhoa(), soNganh
                 });
@@ -226,9 +229,9 @@ public class QuanLyKhoaPanel extends JPanel {
 
         List<KhoaDTO> danhSach;
         if (keyword.isEmpty() || loaiTimKiem.equals("Tất cả")) {
-            danhSach = truongKhoaBUS.timKiemKhoa(keyword);
+            danhSach = khoaBUS.timKiem(keyword);
         } else {
-            danhSach = truongKhoaBUS.getDanhSachKhoa();
+            danhSach = khoaBUS.getDanhSachKhoa();
         }
 
         if (danhSach != null) {
@@ -246,7 +249,7 @@ public class QuanLyKhoaPanel extends JPanel {
                     }
                 }
                 if (match) {
-                    int soNganh = truongKhoaBUS.demNganhTheoKhoa(khoa.getMaKhoa());
+                    int soNganh = nganhBUS.getNganhTheoKhoa(khoa.getMaKhoa()).size();
                     modelKhoa.addRow(new Object[] {
                             khoa.getMaKhoa(), khoa.getTenKhoa(), soNganh
                     });
@@ -265,7 +268,7 @@ public class QuanLyKhoaPanel extends JPanel {
             return;
         }
 
-        List<NganhDTO> danhSachNganh = truongKhoaBUS.getNganhTheoKhoa(selectedMaKhoa);
+        List<NganhDTO> danhSachNganh = nganhBUS.getNganhTheoKhoa(selectedMaKhoa);
         if (danhSachNganh != null) {
             for (NganhDTO nganh : danhSachNganh) {
                 modelNganh.addRow(new Object[] {
@@ -290,7 +293,7 @@ public class QuanLyKhoaPanel extends JPanel {
         KhoaDTO khoa = new KhoaDTO();
         khoa.setTenKhoa(txtTenKhoa.getText().trim());
 
-        if (truongKhoaBUS.themKhoa(khoa)) {
+        if (khoaBUS.themKhoa(khoa)) {
             JOptionPane.showMessageDialog(this, "Thêm khoa thành công!");
             loadData();
             lamMoi();
@@ -311,7 +314,7 @@ public class QuanLyKhoaPanel extends JPanel {
         khoa.setMaKhoa(selectedMaKhoa);
         khoa.setTenKhoa(txtTenKhoa.getText().trim());
 
-        if (truongKhoaBUS.capNhatKhoa(khoa)) {
+        if (khoaBUS.capNhatKhoa(khoa)) {
             JOptionPane.showMessageDialog(this, "Cập nhật khoa thành công!");
             loadData();
             lamMoi();
@@ -329,21 +332,20 @@ public class QuanLyKhoaPanel extends JPanel {
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Bạn có chắc muốn xóa khoa này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            // Sử dụng xoaKhoaAnToan để kiểm tra ràng buộc
-            int ketQua = truongKhoaBUS.xoaKhoaAnToan(selectedMaKhoa);
-            switch (ketQua) {
-                case 1:
-                    JOptionPane.showMessageDialog(this, "Xóa khoa thành công!");
-                    loadData();
-                    lamMoi();
-                    break;
-                case -1:
-                    JOptionPane.showMessageDialog(this,
-                            "Không thể xóa khoa!\nKhoa này đang có ngành học thuộc về. Vui lòng xóa các ngành trước.",
-                            "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-                    break;
-                default:
-                    JOptionPane.showMessageDialog(this, "Xóa khoa thất bại!");
+            // Kiểm tra có ngành thuộc khoa không
+            if (!khoaBUS.coTheXoaKhoa(selectedMaKhoa)) {
+                JOptionPane.showMessageDialog(this,
+                        "Không thể xóa khoa!\nKhoa này đang có ngành học thuộc về. Vui lòng xóa các ngành trước.",
+                        "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            if (khoaBUS.xoaKhoa(selectedMaKhoa)) {
+                JOptionPane.showMessageDialog(this, "Xóa khoa thành công!");
+                loadData();
+                lamMoi();
+            } else {
+                JOptionPane.showMessageDialog(this, "Xóa khoa thất bại!");
             }
         }
     }

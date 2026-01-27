@@ -1,17 +1,18 @@
 package gui.admin;
 
-import bus.TruongKhoaBUS;
+import bus.NganhBUS;
+import bus.SinhVienBUS;
 import config.Constants;
 import dto.NganhDTO;
 import dto.SinhVienDTO;
 import gui.components.BaseCrudPanel;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import javax.swing.*;
 
 public class QuanLySinhVienPanel extends BaseCrudPanel {
-    private TruongKhoaBUS truongKhoaBUS = new TruongKhoaBUS();
+    private SinhVienBUS sinhVienBUS = new SinhVienBUS();
+    private NganhBUS nganhBUS = new NganhBUS();
     private JTextField txtMaSV, txtTenDangNhap, txtHo, txtTen, txtEmail;
     private JPasswordField txtMatKhau;
     private JComboBox<NganhDTO> cboNganh;
@@ -91,12 +92,12 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
     @Override
     protected void loadData() {
         cboNganh.removeAllItems();
-        List<NganhDTO> nganhList = truongKhoaBUS.getDanhSachNganh();
+        List<NganhDTO> nganhList = nganhBUS.getDanhSachNganh();
         if (nganhList != null)
             nganhList.forEach(cboNganh::addItem);
 
         tableModel.setRowCount(0);
-        List<SinhVienDTO> danhSach = truongKhoaBUS.getDanhSachSinhVien();
+        List<SinhVienDTO> danhSach = sinhVienBUS.getDanhSachSinhVien();
         if (danhSach != null) {
             danhSach.forEach(sv -> tableModel.addRow(new Object[] {
                     sv.getMaSV(), sv.getHo(), sv.getTen(), sv.getTenDangNhap(),
@@ -114,8 +115,8 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
         tableModel.setRowCount(0);
 
         List<SinhVienDTO> danhSach = keyword.isEmpty() || "Tất cả".equals(loai)
-                ? truongKhoaBUS.timKiemSinhVien(keyword)
-                : truongKhoaBUS.getDanhSachSinhVien();
+                ? sinhVienBUS.timKiem(keyword)
+                : sinhVienBUS.getDanhSachSinhVien();
 
         if (danhSach != null) {
             danhSach.stream().filter(sv -> matchFilter(sv, keyword, loai))
@@ -175,7 +176,7 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
         if (nganh != null)
             sv.setMaNganh(nganh.getMaNganh());
 
-        if (truongKhoaBUS.themSinhVien(sv)) {
+        if (sinhVienBUS.themSinhVien(sv)) {
             showMessage("Thêm sinh viên thành công!");
             loadData();
             lamMoi();
@@ -206,7 +207,7 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
         if (!matKhauMoi.isEmpty())
             sv.setMatKhau(matKhauMoi);
 
-        if (truongKhoaBUS.capNhatSinhVien(sv)) {
+        if (sinhVienBUS.capNhatSinhVien(sv)) {
             showMessage("Cập nhật sinh viên thành công!");
             loadData();
         } else
@@ -220,7 +221,7 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
             return;
         }
         if (confirmDelete("sinh viên")) {
-            if (truongKhoaBUS.xoaSinhVien(Integer.parseInt(txtMaSV.getText()))) {
+            if (sinhVienBUS.xoaSinhVien(Integer.parseInt(txtMaSV.getText()))) {
                 showMessage("Xóa sinh viên thành công!");
                 loadData();
                 lamMoi();

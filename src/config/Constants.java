@@ -45,7 +45,7 @@ public class Constants {
     public static final Font BUTTON_FONT = new Font("Segoe UI", Font.BOLD, 13);
 
     // Vai trò người dùng
-    public static final int VAI_TRO_TRUONG_KHOA = 1;
+    public static final int VAI_TRO_ADMIN = 1;
     public static final int VAI_TRO_GIANG_VIEN = 2;
     public static final int VAI_TRO_SINH_VIEN = 3;
 
