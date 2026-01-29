@@ -98,8 +98,6 @@ public class DangNhapDAO {
         gv.setEmail(rs.getString("email"));
         gv.setNgayTao(rs.getTimestamp("ngay_tao"));
         gv.setTrangThai(rs.getBoolean("trang_thai"));
-        gv.setTenKhoa(rs.getString("ten_khoa"));
-        gv.setTenVaiTro(rs.getString("ten_vai_tro"));
         return gv;
     }
 
@@ -115,10 +113,6 @@ public class DangNhapDAO {
         sv.setEmail(rs.getString("email"));
         sv.setNgayTao(rs.getTimestamp("ngay_tao"));
         sv.setTrangThai(rs.getBoolean("trang_thai"));
-        sv.setTenNganh(rs.getString("ten_nganh"));
-        sv.setMaKhoa(rs.getInt("ma_khoa"));
-        sv.setTenKhoa(rs.getString("ten_khoa"));
-        sv.setTenVaiTro(rs.getString("ten_vai_tro"));
         return sv;
     }
 }

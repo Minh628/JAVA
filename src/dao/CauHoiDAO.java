@@ -19,12 +19,10 @@ public class CauHoiDAO {
      */
     public List<CauHoiDTO> getAll() throws SQLException {
         List<CauHoiDTO> danhSachCH = new ArrayList<>();
-        String sql = "SELECT ch.*, hp.ten_mon, CONCAT(gv.ho, ' ', gv.ten) AS ten_gv, " +
+        String sql = "SELECT ch.*, " +
                      "mc.noi_dung_A, mc.noi_dung_B, mc.noi_dung_C, mc.noi_dung_D, mc.noi_dung_dung AS dap_an_mc, " +
                      "dk.danh_sach_tu, dk.noi_dung_dung AS dap_an_dk " +
                      "FROM CauHoi ch " +
-                     "LEFT JOIN HocPhan hp ON ch.ma_mon = hp.ma_hoc_phan " +
-                     "LEFT JOIN GiangVien gv ON ch.ma_gv = gv.ma_gv " +
                      "LEFT JOIN CauHoiMC mc ON ch.ma_cau_hoi = mc.ma_cau_hoi_MC " +
                      "LEFT JOIN CauHoiDK dk ON ch.ma_cau_hoi = dk.ma_cau_hoi_DK " +
                      "ORDER BY ch.ma_cau_hoi";
@@ -45,12 +43,10 @@ public class CauHoiDAO {
      */
     public List<CauHoiDTO> getByMon(int maMon) throws SQLException {
         List<CauHoiDTO> danhSachCH = new ArrayList<>();
-        String sql = "SELECT ch.*, hp.ten_mon, CONCAT(gv.ho, ' ', gv.ten) AS ten_gv, " +
+        String sql = "SELECT ch.*, " +
                      "mc.noi_dung_A, mc.noi_dung_B, mc.noi_dung_C, mc.noi_dung_D, mc.noi_dung_dung AS dap_an_mc, " +
                      "dk.danh_sach_tu, dk.noi_dung_dung AS dap_an_dk " +
                      "FROM CauHoi ch " +
-                     "LEFT JOIN HocPhan hp ON ch.ma_mon = hp.ma_hoc_phan " +
-                     "LEFT JOIN GiangVien gv ON ch.ma_gv = gv.ma_gv " +
                      "LEFT JOIN CauHoiMC mc ON ch.ma_cau_hoi = mc.ma_cau_hoi_MC " +
                      "LEFT JOIN CauHoiDK dk ON ch.ma_cau_hoi = dk.ma_cau_hoi_DK " +
                      "WHERE ch.ma_mon = ? ORDER BY ch.ma_cau_hoi";
@@ -73,12 +69,10 @@ public class CauHoiDAO {
      */
     public List<CauHoiDTO> getByGiangVien(int maGV) throws SQLException {
         List<CauHoiDTO> danhSachCH = new ArrayList<>();
-        String sql = "SELECT ch.*, hp.ten_mon, CONCAT(gv.ho, ' ', gv.ten) AS ten_gv, " +
+        String sql = "SELECT ch.*, " +
                      "mc.noi_dung_A, mc.noi_dung_B, mc.noi_dung_C, mc.noi_dung_D, mc.noi_dung_dung AS dap_an_mc, " +
                      "dk.danh_sach_tu, dk.noi_dung_dung AS dap_an_dk " +
                      "FROM CauHoi ch " +
-                     "LEFT JOIN HocPhan hp ON ch.ma_mon = hp.ma_hoc_phan " +
-                     "LEFT JOIN GiangVien gv ON ch.ma_gv = gv.ma_gv " +
                      "LEFT JOIN CauHoiMC mc ON ch.ma_cau_hoi = mc.ma_cau_hoi_MC " +
                      "LEFT JOIN CauHoiDK dk ON ch.ma_cau_hoi = dk.ma_cau_hoi_DK " +
                      "WHERE ch.ma_gv = ? ORDER BY ch.ma_cau_hoi";
@@ -101,12 +95,10 @@ public class CauHoiDAO {
      */
     public List<CauHoiDTO> getByMucDo(int maMon, String mucDo) throws SQLException {
         List<CauHoiDTO> danhSachCH = new ArrayList<>();
-        String sql = "SELECT ch.*, hp.ten_mon, CONCAT(gv.ho, ' ', gv.ten) AS ten_gv, " +
+        String sql = "SELECT ch.*, " +
                      "mc.noi_dung_A, mc.noi_dung_B, mc.noi_dung_C, mc.noi_dung_D, mc.noi_dung_dung AS dap_an_mc, " +
                      "dk.danh_sach_tu, dk.noi_dung_dung AS dap_an_dk " +
                      "FROM CauHoi ch " +
-                     "LEFT JOIN HocPhan hp ON ch.ma_mon = hp.ma_hoc_phan " +
-                     "LEFT JOIN GiangVien gv ON ch.ma_gv = gv.ma_gv " +
                      "LEFT JOIN CauHoiMC mc ON ch.ma_cau_hoi = mc.ma_cau_hoi_MC " +
                      "LEFT JOIN CauHoiDK dk ON ch.ma_cau_hoi = dk.ma_cau_hoi_DK " +
                      "WHERE ch.ma_mon = ? AND ch.muc_do = ? ORDER BY RAND()";
@@ -129,12 +121,10 @@ public class CauHoiDAO {
      * Lấy câu hỏi theo mã
      */
     public CauHoiDTO getById(int maCauHoi) throws SQLException {
-        String sql = "SELECT ch.*, hp.ten_mon, CONCAT(gv.ho, ' ', gv.ten) AS ten_gv, " +
+        String sql = "SELECT ch.*, " +
                      "mc.noi_dung_A, mc.noi_dung_B, mc.noi_dung_C, mc.noi_dung_D, mc.noi_dung_dung AS dap_an_mc, " +
                      "dk.danh_sach_tu, dk.noi_dung_dung AS dap_an_dk " +
                      "FROM CauHoi ch " +
-                     "LEFT JOIN HocPhan hp ON ch.ma_mon = hp.ma_hoc_phan " +
-                     "LEFT JOIN GiangVien gv ON ch.ma_gv = gv.ma_gv " +
                      "LEFT JOIN CauHoiMC mc ON ch.ma_cau_hoi = mc.ma_cau_hoi_MC " +
                      "LEFT JOIN CauHoiDK dk ON ch.ma_cau_hoi = dk.ma_cau_hoi_DK " +
                      "WHERE ch.ma_cau_hoi = ?";
@@ -337,8 +327,6 @@ public class CauHoiDAO {
         ch.setMaGV(rs.getInt("ma_gv"));
         ch.setNoiDungCauHoi(rs.getString("noi_dung_cau_hoi"));
         ch.setMucDo(rs.getString("muc_do"));
-        ch.setTenMon(rs.getString("ten_mon"));
-        ch.setTenGV(rs.getString("ten_gv"));
         
         return ch;
     }

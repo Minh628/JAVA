@@ -1,6 +1,7 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * Util: PDFExporter - Xuất báo cáo PDF
+ * Lưu ý: Các method cần thông tin bổ sung (tên SV, tên đề thi, etc.) phải được truyền vào
  */
 package util;
 
@@ -16,8 +17,17 @@ public class PDFExporter {
     
     /**
      * Xuất kết quả thi ra file HTML (có thể in thành PDF)
+     * @param baiThi thông tin bài thi
+     * @param chiTiet danh sách chi tiết bài thi (mã bài thi, mã câu hỏi, đáp án SV)
+     * @param danhSachCauHoi danh sách câu hỏi tương ứng để lấy nội dung và đáp án đúng
+     * @param sinhVien thông tin sinh viên
+     * @param deThi thông tin đề thi
+     * @param hocPhan thông tin học phần
+     * @param filePath đường dẫn file xuất
      */
-    public static boolean exportKetQuaThi(BaiThiDTO baiThi, List<ChiTietBaiThiDTO> chiTiet, String filePath) {
+    public static boolean exportKetQuaThi(BaiThiDTO baiThi, List<ChiTietBaiThiDTO> chiTiet,
+            List<CauHoiDTO> danhSachCauHoi, SinhVienDTO sinhVien, DeThiDTO deThi,
+            HocPhanDTO hocPhan, String filePath) {
         try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(
                 new FileOutputStream(filePath), "UTF-8"))) {
             
@@ -45,15 +55,21 @@ public class PDFExporter {
             writer.println("<h1>KẾT QUẢ BÀI THI</h1>");
             
             // Thông tin bài thi
+            String tenSV = sinhVien != null ? sinhVien.getHo() + " " + sinhVien.getTen() : "";
+            String maSoSV = sinhVien != null ? String.valueOf(sinhVien.getMaSV()) : "";
+            String tenDeThi = deThi != null ? deThi.getTenDeThi() : "";
+            String tenHocPhan = hocPhan != null ? hocPhan.getTenMon() : "";
+            int tongSoCau = chiTiet.size();
+            
             writer.println("<div class='info'>");
-            writer.printf("<p><strong>Họ tên:</strong> %s</p>%n", baiThi.getTenSV());
-            writer.printf("<p><strong>Mã số SV:</strong> %s</p>%n", baiThi.getMaSoSV());
-            writer.printf("<p><strong>Đề thi:</strong> %s</p>%n", baiThi.getTenDeThi());
-            writer.printf("<p><strong>Môn học:</strong> %s</p>%n", baiThi.getTenHocPhan());
+            writer.printf("<p><strong>Họ tên:</strong> %s</p>%n", tenSV);
+            writer.printf("<p><strong>Mã số SV:</strong> %s</p>%n", maSoSV);
+            writer.printf("<p><strong>Đề thi:</strong> %s</p>%n", tenDeThi);
+            writer.printf("<p><strong>Môn học:</strong> %s</p>%n", tenHocPhan);
             writer.printf("<p><strong>Ngày thi:</strong> %s</p>%n", 
                 baiThi.getNgayThi() != null ? baiThi.getNgayThi().toString() : "");
             writer.printf("<p><strong>Số câu đúng:</strong> %d/%d</p>%n", 
-                baiThi.getSoCauDung(), baiThi.getTongSoCau());
+                baiThi.getSoCauDung(), tongSoCau);
             writer.printf("<p><strong>Điểm số:</strong> <span style='font-size: 1.5em; font-weight: bold;'>%.2f/10</span></p>%n", 
                 baiThi.getDiemSo());
             writer.println("</div>");
@@ -64,12 +80,25 @@ public class PDFExporter {
             
             int stt = 1;
             for (ChiTietBaiThiDTO ct : chiTiet) {
-                String ketQua = ct.isLaDung() ? "<span class='dung'>Đúng</span>" : "<span class='sai'>Sai</span>";
+                // Tìm câu hỏi tương ứng
+                CauHoiDTO cauHoi = null;
+                for (CauHoiDTO ch : danhSachCauHoi) {
+                    if (ch.getMaCauHoi() == ct.getMaCauHoi()) {
+                        cauHoi = ch;
+                        break;
+                    }
+                }
+                
+                String noiDungCauHoi = cauHoi != null ? cauHoi.getNoiDungCauHoi() : "";
+                String dapAnDung = cauHoi != null ? cauHoi.getDapAnDung() : "";
+                boolean laDung = kiemTraDapAn(cauHoi, ct.getDapAnSV());
+                
+                String ketQua = laDung ? "<span class='dung'>Đúng</span>" : "<span class='sai'>Sai</span>";
                 writer.printf("<tr><td>%d</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>%n",
                     stt++,
-                    ct.getNoiDungCauHoi(),
+                    noiDungCauHoi,
                     ct.getDapAnSV() != null ? ct.getDapAnSV() : "-",
-                    ct.getDapAnDung(),
+                    dapAnDung,
                     ketQua
                 );
             }
@@ -89,9 +118,43 @@ public class PDFExporter {
     }
     
     /**
-     * Xuất bảng điểm lớp ra file HTML
+     * Kiểm tra đáp án
      */
-    public static boolean exportBangDiem(List<BaiThiDTO> danhSach, String tenDeThi, String filePath) {
+    private static boolean kiemTraDapAn(CauHoiDTO cauHoi, String dapAnSV) {
+        if (cauHoi == null || dapAnSV == null || dapAnSV.trim().isEmpty()) {
+            return false;
+        }
+        
+        if (cauHoi instanceof CauHoiMCDTO) {
+            CauHoiMCDTO mc = (CauHoiMCDTO) cauHoi;
+            String dapAnDung = mc.getNoiDungDung();
+            String noiDungDapAnSV = null;
+            switch (dapAnSV.toUpperCase()) {
+                case "A": noiDungDapAnSV = mc.getNoiDungA(); break;
+                case "B": noiDungDapAnSV = mc.getNoiDungB(); break;
+                case "C": noiDungDapAnSV = mc.getNoiDungC(); break;
+                case "D": noiDungDapAnSV = mc.getNoiDungD(); break;
+            }
+            return noiDungDapAnSV != null && dapAnDung != null && 
+                   noiDungDapAnSV.trim().equalsIgnoreCase(dapAnDung.trim());
+        } else if (cauHoi instanceof CauHoiDKDTO) {
+            CauHoiDKDTO dk = (CauHoiDKDTO) cauHoi;
+            String dapAnDung = dk.getNoiDungDung();
+            return dapAnDung != null && dapAnSV.trim().equalsIgnoreCase(dapAnDung.trim());
+        }
+        return false;
+    }
+    
+    /**
+     * Xuất bảng điểm lớp ra file HTML
+     * @param danhSach danh sách bài thi
+     * @param danhSachSinhVien danh sách sinh viên tương ứng
+     * @param tenDeThi tên đề thi
+     * @param tongSoCau tổng số câu hỏi trong đề thi
+     * @param filePath đường dẫn file xuất
+     */
+    public static boolean exportBangDiem(List<BaiThiDTO> danhSach, List<SinhVienDTO> danhSachSinhVien,
+            String tenDeThi, int tongSoCau, String filePath) {
         try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(
                 new FileOutputStream(filePath), "UTF-8"))) {
             
@@ -121,14 +184,24 @@ public class PDFExporter {
             
             int stt = 1;
             for (BaiThiDTO bt : danhSach) {
+                // Tìm sinh viên tương ứng
+                SinhVienDTO sv = null;
+                for (SinhVienDTO s : danhSachSinhVien) {
+                    if (s.getMaSV() == bt.getMaSV()) {
+                        sv = s;
+                        break;
+                    }
+                }
+                String tenSV = sv != null ? sv.getHo() + " " + sv.getTen() : "";
+                
                 String ketQua = bt.getDiemSo() >= 5 ? 
                     "<span class='dat'>Đạt</span>" : "<span class='truot'>Không đạt</span>";
-                writer.printf("<tr><td>%d</td><td>%s</td><td>%s</td><td>%d/%d</td><td>%.2f</td><td>%s</td></tr>%n",
+                writer.printf("<tr><td>%d</td><td>%d</td><td>%s</td><td>%d/%d</td><td>%.2f</td><td>%s</td></tr>%n",
                     stt++,
-                    bt.getMaSoSV(),
-                    bt.getTenSV(),
+                    bt.getMaSV(),
+                    tenSV,
                     bt.getSoCauDung(),
-                    bt.getTongSoCau(),
+                    tongSoCau,
                     bt.getDiemSo(),
                     ketQua
                 );
@@ -141,7 +214,7 @@ public class PDFExporter {
             
             writer.println("<div class='footer'>");
             writer.printf("<p>Tổng số sinh viên: %d</p>%n", tongSV);
-            writer.printf("<p>Số sinh viên đạt: %d (%.1f%%)</p>%n", soDat, (float)soDat/tongSV*100);
+            writer.printf("<p>Số sinh viên đạt: %d (%.1f%%)</p>%n", soDat, tongSV > 0 ? (float)soDat/tongSV*100 : 0);
             writer.printf("<p>Xuất ngày: %s</p>%n", DATE_FORMAT.format(new Date()));
             writer.println("</div>");
             

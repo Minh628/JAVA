@@ -5,7 +5,11 @@
  */
 package bus;
 
+import dao.CauHoiDAO;
 import dao.ChiTietBaiThiDAO;
+import dto.CauHoiDKDTO;
+import dto.CauHoiDTO;
+import dto.CauHoiMCDTO;
 import dto.ChiTietBaiThiDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,9 +17,11 @@ import java.util.List;
 
 public class ChiTietBaiThiBUS {
     private ChiTietBaiThiDAO chiTietBaiThiDAO;
+    private CauHoiDAO cauHoiDAO;
 
     public ChiTietBaiThiBUS() {
         this.chiTietBaiThiDAO = new ChiTietBaiThiDAO();
+        this.cauHoiDAO = new CauHoiDAO();
     }
 
     /**
@@ -88,9 +94,15 @@ public class ChiTietBaiThiBUS {
         int soCauSai = 0;
 
         for (ChiTietBaiThiDTO ct : chiTiet) {
-            if (ct.isLaDung()) {
-                soCauDung++;
-            } else {
+            try {
+                CauHoiDTO cauHoi = cauHoiDAO.getById(ct.getMaCauHoi());
+                if (cauHoi != null && kiemTraDapAn(cauHoi, ct.getDapAnSV())) {
+                    soCauDung++;
+                } else {
+                    soCauSai++;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
                 soCauSai++;
             }
         }
@@ -99,5 +111,34 @@ public class ChiTietBaiThiBUS {
         float diemSo = tongSoCau > 0 ? (float) soCauDung / tongSoCau * 10 : 0;
 
         return new float[]{soCauDung, soCauSai, diemSo};
+    }
+
+    /**
+     * Kiểm tra đáp án sinh viên so với đáp án đúng
+     */
+    private boolean kiemTraDapAn(CauHoiDTO cauHoi, String dapAnSV) {
+        if (dapAnSV == null || dapAnSV.trim().isEmpty()) {
+            return false;
+        }
+
+        if (cauHoi instanceof CauHoiMCDTO) {
+            CauHoiMCDTO mc = (CauHoiMCDTO) cauHoi;
+            String dapAnDung = mc.getNoiDungDung();
+            // Lấy nội dung đáp án tương ứng với lựa chọn A/B/C/D
+            String noiDungDapAnSV = null;
+            switch (dapAnSV.toUpperCase()) {
+                case "A": noiDungDapAnSV = mc.getNoiDungA(); break;
+                case "B": noiDungDapAnSV = mc.getNoiDungB(); break;
+                case "C": noiDungDapAnSV = mc.getNoiDungC(); break;
+                case "D": noiDungDapAnSV = mc.getNoiDungD(); break;
+            }
+            return noiDungDapAnSV != null && dapAnDung != null && 
+                   noiDungDapAnSV.trim().equalsIgnoreCase(dapAnDung.trim());
+        } else if (cauHoi instanceof CauHoiDKDTO) {
+            CauHoiDKDTO dk = (CauHoiDKDTO) cauHoi;
+            String dapAnDung = dk.getNoiDungDung();
+            return dapAnDung != null && dapAnSV.trim().equalsIgnoreCase(dapAnDung.trim());
+        }
+        return false;
     }
 }

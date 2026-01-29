@@ -24,11 +24,7 @@ public class HocPhanDAO {
                 ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                HocPhanDTO hp = new HocPhanDTO();
-                hp.setMaHocPhan(rs.getInt("ma_hoc_phan"));
-                hp.setTenMon(rs.getString("ten_mon"));
-                hp.setSoTin(rs.getInt("so_tin"));
-                danhSachHP.add(hp);
+                danhSachHP.add(mapResultSetToDTO(rs));
             }
         }
         return danhSachHP;
@@ -47,27 +43,36 @@ public class HocPhanDAO {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                HocPhanDTO hp = new HocPhanDTO();
-                hp.setMaHocPhan(rs.getInt("ma_hoc_phan"));
-                hp.setTenMon(rs.getString("ten_mon"));
-                hp.setSoTin(rs.getInt("so_tin"));
-                return hp;
+                return mapResultSetToDTO(rs);
             }
         }
         return null;
     }
 
     /**
+     * Map ResultSet thành DTO
+     */
+    private HocPhanDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
+        HocPhanDTO hp = new HocPhanDTO();
+        hp.setMaHocPhan(rs.getInt("ma_hoc_phan"));
+        hp.setMaKhoa(rs.getInt("ma_khoa"));
+        hp.setTenMon(rs.getString("ten_mon"));
+        hp.setSoTin(rs.getInt("so_tin"));
+        return hp;
+    }
+
+    /**
      * Thêm học phần mới
      */
     public boolean insert(HocPhanDTO hocPhan) throws SQLException {
-        String sql = "INSERT INTO HocPhan (ten_mon, so_tin) VALUES (?, ?)";
+        String sql = "INSERT INTO HocPhan (ma_khoa, ten_mon, so_tin) VALUES (?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            pstmt.setString(1, hocPhan.getTenMon());
-            pstmt.setInt(2, hocPhan.getSoTin());
+            pstmt.setInt(1, hocPhan.getMaKhoa());
+            pstmt.setString(2, hocPhan.getTenMon());
+            pstmt.setInt(3, hocPhan.getSoTin());
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
@@ -85,14 +90,15 @@ public class HocPhanDAO {
      * Cập nhật học phần
      */
     public boolean update(HocPhanDTO hocPhan) throws SQLException {
-        String sql = "UPDATE HocPhan SET ten_mon = ?, so_tin = ? WHERE ma_hoc_phan = ?";
+        String sql = "UPDATE HocPhan SET ma_khoa = ?, ten_mon = ?, so_tin = ? WHERE ma_hoc_phan = ?";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, hocPhan.getTenMon());
-            pstmt.setInt(2, hocPhan.getSoTin());
-            pstmt.setInt(3, hocPhan.getMaHocPhan());
+            pstmt.setInt(1, hocPhan.getMaKhoa());
+            pstmt.setString(2, hocPhan.getTenMon());
+            pstmt.setInt(3, hocPhan.getSoTin());
+            pstmt.setInt(4, hocPhan.getMaHocPhan());
 
             return pstmt.executeUpdate() > 0;
         }
@@ -129,11 +135,7 @@ public class HocPhanDAO {
 
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                HocPhanDTO hp = new HocPhanDTO();
-                hp.setMaHocPhan(rs.getInt("ma_hoc_phan"));
-                hp.setTenMon(rs.getString("ten_mon"));
-                hp.setSoTin(rs.getInt("so_tin"));
-                danhSachHP.add(hp);
+                danhSachHP.add(mapResultSetToDTO(rs));
             }
         }
         return danhSachHP;

@@ -17,9 +17,7 @@ public class NganhDAO {
      */
     public List<NganhDTO> getAll() throws SQLException {
         List<NganhDTO> danhSachNganh = new ArrayList<>();
-        String sql = "SELECT n.*, k.ten_khoa FROM Nganh n " +
-                "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
-                "ORDER BY n.ten_nganh";
+        String sql = "SELECT * FROM Nganh ORDER BY ten_nganh";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 Statement stmt = conn.createStatement();
@@ -37,9 +35,7 @@ public class NganhDAO {
      */
     public List<NganhDTO> getByKhoa(int maKhoa) throws SQLException {
         List<NganhDTO> danhSachNganh = new ArrayList<>();
-        String sql = "SELECT n.*, k.ten_khoa FROM Nganh n " +
-                "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
-                "WHERE n.ma_khoa = ? ORDER BY n.ten_nganh";
+        String sql = "SELECT * FROM Nganh WHERE ma_khoa = ? ORDER BY ten_nganh";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -58,9 +54,7 @@ public class NganhDAO {
      * Lấy ngành theo mã
      */
     public NganhDTO getById(int maNganh) throws SQLException {
-        String sql = "SELECT n.*, k.ten_khoa FROM Nganh n " +
-                "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
-                "WHERE n.ma_nganh = ?";
+        String sql = "SELECT * FROM Nganh WHERE ma_nganh = ?";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -132,14 +126,13 @@ public class NganhDAO {
 
     /**
      * Tìm kiếm ngành theo từ khóa
-     * Tìm trong: mã ngành, tên ngành, tên khoa
+     * Tìm trong: mã ngành, tên ngành
      */
     public List<NganhDTO> search(String keyword) throws SQLException {
         List<NganhDTO> danhSachNganh = new ArrayList<>();
-        String sql = "SELECT n.*, k.ten_khoa FROM Nganh n " +
-                "LEFT JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
-                "WHERE n.ma_nganh LIKE ? OR n.ten_nganh LIKE ? OR k.ten_khoa LIKE ? " +
-                "ORDER BY n.ten_nganh";
+        String sql = "SELECT * FROM Nganh " +
+                "WHERE ma_nganh LIKE ? OR ten_nganh LIKE ? " +
+                "ORDER BY ten_nganh";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -147,7 +140,6 @@ public class NganhDAO {
             String searchPattern = "%" + keyword + "%";
             pstmt.setString(1, searchPattern);
             pstmt.setString(2, searchPattern);
-            pstmt.setString(3, searchPattern);
 
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -182,7 +174,6 @@ public class NganhDAO {
         nganh.setMaNganh(rs.getInt("ma_nganh"));
         nganh.setMaKhoa(rs.getInt("ma_khoa"));
         nganh.setTenNganh(rs.getString("ten_nganh"));
-        nganh.setTenKhoa(rs.getString("ten_khoa"));
         return nganh;
     }
 }

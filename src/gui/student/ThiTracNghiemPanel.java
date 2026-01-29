@@ -6,11 +6,15 @@ package gui.student;
 
 import bus.BaiThiBUS;
 import bus.DeThiBUS;
+import bus.HocPhanBUS;
 import bus.KyThiBUS;
+import bus.NganhBUS;
 import bus.SinhVienBUS;
 import config.Constants;
 import dto.DeThiDTO;
+import dto.HocPhanDTO;
 import dto.KyThiDTO;
+import dto.NganhDTO;
 import dto.SinhVienDTO;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
@@ -25,6 +29,8 @@ public class ThiTracNghiemPanel extends JPanel {
     private BaiThiBUS baiThiBUS;
     private KyThiBUS kyThiBUS;
     private DeThiBUS deThiBUS;
+    private HocPhanBUS hocPhanBUS;
+    private NganhBUS nganhBUS;
     private StudentDashboard parentFrame;
 
     private CustomTable tblDeThi;
@@ -38,6 +44,8 @@ public class ThiTracNghiemPanel extends JPanel {
         this.baiThiBUS = new BaiThiBUS();
         this.kyThiBUS = new KyThiBUS();
         this.deThiBUS = new DeThiBUS();
+        this.hocPhanBUS = new HocPhanBUS();
+        this.nganhBUS = new NganhBUS();
         initComponents();
         loadData();
     }
@@ -121,14 +129,16 @@ public class ThiTracNghiemPanel extends JPanel {
         if (kyThiChon == null)
             return;
 
+        // Lấy mã khoa từ mã ngành của sinh viên
+        int maKhoa = getMaKhoaFromMaNganh(nguoiDung.getMaNganh());
         // Lấy đề thi theo khoa của sinh viên - gọi DeThiBUS
-        List<DeThiDTO> danhSach = deThiBUS.getDeThiTheoKyThiVaKhoa(kyThiChon.getMaKyThi(), nguoiDung.getMaKhoa());
+        List<DeThiDTO> danhSach = deThiBUS.getDeThiTheoKyThiVaKhoa(kyThiChon.getMaKyThi(), maKhoa);
         if (danhSach != null) {
             for (DeThiDTO dt : danhSach) {
                 // Kiểm tra đã thi chưa - gọi BaiThiBUS
                 boolean daThi = baiThiBUS.daDuThi(dt.getMaDeThi(), nguoiDung.getMaSV());
                 modelDeThi.addRow(new Object[] {
-                        dt.getMaDeThi(), dt.getTenDeThi(), dt.getTenHocPhan(),
+                        dt.getMaDeThi(), dt.getTenDeThi(), getTenHocPhan(dt.getMaHocPhan()),
                         dt.getSoCauHoi(), dt.getThoiGianLam(),
                         daThi ? "Đã thi" : "Chưa thi"
                 });
@@ -169,5 +179,15 @@ public class ThiTracNghiemPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "Không thể bắt đầu thi. Vui lòng thử lại!");
             }
         }
+    }
+
+    private int getMaKhoaFromMaNganh(int maNganh) {
+        NganhDTO nganh = nganhBUS.getById(maNganh);
+        return nganh != null ? nganh.getMaKhoa() : 0;
+    }
+
+    private String getTenHocPhan(int maHocPhan) {
+        HocPhanDTO hocPhan = hocPhanBUS.getById(maHocPhan);
+        return hocPhan != null ? hocPhan.getTenMon() : "";
     }
 }

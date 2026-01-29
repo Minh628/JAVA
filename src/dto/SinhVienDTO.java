@@ -1,26 +1,23 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * DTO: SinhVien - Data Transfer Object
+ * Tương ứng với bảng SinhVien trong database
  */
 package dto;
 
 import java.sql.Timestamp;
 
 public class SinhVienDTO {
-    private int maSV; // ma_sv - Mã sinh viên (PK)
-    private int maVaiTro; // ma_vai_tro - Mã vai trò (FK -> VaiTro, luôn = 3)
-    private int maNganh; // ma_nganh - Mã ngành học (FK -> Nganh)
-    private int maKhoa; // ma_khoa - Mã khoa (từ Nganh JOIN Khoa)
-    private String tenDangNhap; // ten_dang_nhap - Mã số sinh viên
-    private String matKhau; // mat_khau - Mật khẩu (MD5)
-    private String ho; // ho - Họ và tên đệm
-    private String ten; // ten - Tên
-    private String email; // email - Email liên hệ
-    private Timestamp ngayTao; // ngay_tao - Ngày tạo tài khoản
-    private boolean trangThai; // trang_thai - Trạng thái (true=hoạt động)
-    private String tenNganh; // Tên ngành (JOIN)
-    private String tenKhoa; // Tên khoa (JOIN)
-    private String tenVaiTro; // Tên vai trò (JOIN)
+    private int maSV;            // ma_sv - Mã sinh viên (PK)
+    private int maVaiTro;        // ma_vai_tro - Mã vai trò (FK -> VaiTro)
+    private int maNganh;         // ma_nganh - Mã ngành học (FK -> Nganh)
+    private String tenDangNhap;  // ten_dang_nhap - Mã số sinh viên
+    private String matKhau;      // mat_khau - Mật khẩu (MD5)
+    private String ho;           // ho - Họ và tên đệm
+    private String ten;          // ten - Tên
+    private String email;        // email - Email liên hệ
+    private Timestamp ngayTao;   // ngay_tao - Ngày tạo tài khoản
+    private boolean trangThai;   // trang_thai - Trạng thái (true=hoạt động)
 
     public SinhVienDTO() {
         this.maVaiTro = 3; // Mặc định là Sinh viên
@@ -122,38 +119,6 @@ public class SinhVienDTO {
 
     public void setTrangThai(boolean trangThai) {
         this.trangThai = trangThai;
-    }
-
-    public String getTenNganh() {
-        return this.tenNganh;
-    }
-
-    public void setTenNganh(String tenNganh) {
-        this.tenNganh = tenNganh;
-    }
-
-    public String getTenVaiTro() {
-        return this.tenVaiTro;
-    }
-
-    public void setTenVaiTro(String tenVaiTro) {
-        this.tenVaiTro = tenVaiTro;
-    }
-
-    public int getMaKhoa() {
-        return this.maKhoa;
-    }
-
-    public void setMaKhoa(int maKhoa) {
-        this.maKhoa = maKhoa;
-    }
-
-    public String getTenKhoa() {
-        return this.tenKhoa;
-    }
-
-    public void setTenKhoa(String tenKhoa) {
-        this.tenKhoa = tenKhoa;
     }
 
     @Override

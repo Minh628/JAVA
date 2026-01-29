@@ -46,6 +46,10 @@ public class QuanLyDeThiPanel extends JPanel {
     private BaiThiBUS baiThiBUS;
     private ChiTietDeThiBUS chiTietDeThiBUS;
 
+    // Cache để lookup tên từ mã
+    private List<HocPhanDTO> danhSachHocPhan;
+    private List<KyThiDTO> danhSachKyThi;
+
     private CustomTable tblDeThi;
     private DefaultTableModel modelDeThi;
 
@@ -242,9 +246,9 @@ public class QuanLyDeThiPanel extends JPanel {
 
     private void loadHocPhan() {
         cboHocPhan.removeAllItems();
-        List<HocPhanDTO> danhSach = hocPhanBUS.getDanhSachHocPhan();
-        if (danhSach != null) {
-            for (HocPhanDTO hp : danhSach) {
+        danhSachHocPhan = hocPhanBUS.getDanhSachHocPhan();
+        if (danhSachHocPhan != null) {
+            for (HocPhanDTO hp : danhSachHocPhan) {
                 cboHocPhan.addItem(hp);
             }
         }
@@ -252,12 +256,35 @@ public class QuanLyDeThiPanel extends JPanel {
 
     private void loadKyThi() {
         cboKyThi.removeAllItems();
-        List<KyThiDTO> danhSach = kyThiBUS.getDanhSachKyThi();
-        if (danhSach != null) {
-            for (KyThiDTO kt : danhSach) {
+        danhSachKyThi = kyThiBUS.getDanhSachKyThi();
+        if (danhSachKyThi != null) {
+            for (KyThiDTO kt : danhSachKyThi) {
                 cboKyThi.addItem(kt);
             }
         }
+    }
+
+    // Helper methods để lookup tên từ mã
+    private String getTenHocPhanByMa(int maHocPhan) {
+        if (danhSachHocPhan != null) {
+            for (HocPhanDTO hp : danhSachHocPhan) {
+                if (hp.getMaHocPhan() == maHocPhan) {
+                    return hp.getTenMon();
+                }
+            }
+        }
+        return "";
+    }
+
+    private String getTenKyThiByMa(int maKyThi) {
+        if (danhSachKyThi != null) {
+            for (KyThiDTO kt : danhSachKyThi) {
+                if (kt.getMaKyThi() == maKyThi) {
+                    return kt.getTenKyThi();
+                }
+            }
+        }
+        return "";
     }
 
     private void loadDeThi() {
@@ -265,9 +292,11 @@ public class QuanLyDeThiPanel extends JPanel {
         List<DeThiDTO> danhSach = deThiBUS.getDanhSachDeThi(nguoiDung.getMaGV());
         if (danhSach != null) {
             for (DeThiDTO dt : danhSach) {
+                String tenHocPhan = getTenHocPhanByMa(dt.getMaHocPhan());
+                String tenKyThi = getTenKyThiByMa(dt.getMaKyThi());
                 modelDeThi.addRow(new Object[] {
-                        dt.getMaDeThi(), dt.getTenDeThi(), dt.getTenHocPhan(),
-                        dt.getTenKyThi(), dt.getSoCauHoi(), dt.getThoiGianLam() + " phút"
+                        dt.getMaDeThi(), dt.getTenDeThi(), tenHocPhan,
+                        tenKyThi, dt.getSoCauHoi(), dt.getThoiGianLam() + " phút"
                 });
             }
         }
@@ -281,6 +310,8 @@ public class QuanLyDeThiPanel extends JPanel {
         List<DeThiDTO> danhSach = deThiBUS.getDanhSachDeThi(nguoiDung.getMaGV());
         if (danhSach != null) {
             for (DeThiDTO dt : danhSach) {
+                String tenHocPhan = getTenHocPhanByMa(dt.getMaHocPhan());
+                String tenKyThi = getTenKyThiByMa(dt.getMaKyThi());
                 boolean match = true;
                 if (!keyword.isEmpty() && !loaiTimKiem.equals("Tất cả")) {
                     String keyLower = keyword.toLowerCase();
@@ -292,23 +323,23 @@ public class QuanLyDeThiPanel extends JPanel {
                             match = dt.getTenDeThi() != null && dt.getTenDeThi().toLowerCase().contains(keyLower);
                             break;
                         case "Học phần":
-                            match = dt.getTenHocPhan() != null && dt.getTenHocPhan().toLowerCase().contains(keyLower);
+                            match = tenHocPhan != null && tenHocPhan.toLowerCase().contains(keyLower);
                             break;
                         case "Kỳ thi":
-                            match = dt.getTenKyThi() != null && dt.getTenKyThi().toLowerCase().contains(keyLower);
+                            match = tenKyThi != null && tenKyThi.toLowerCase().contains(keyLower);
                             break;
                     }
                 } else if (!keyword.isEmpty()) {
                     String keyLower = keyword.toLowerCase();
                     match = String.valueOf(dt.getMaDeThi()).contains(keyword)
                             || (dt.getTenDeThi() != null && dt.getTenDeThi().toLowerCase().contains(keyLower))
-                            || (dt.getTenHocPhan() != null && dt.getTenHocPhan().toLowerCase().contains(keyLower))
-                            || (dt.getTenKyThi() != null && dt.getTenKyThi().toLowerCase().contains(keyLower));
+                            || (tenHocPhan != null && tenHocPhan.toLowerCase().contains(keyLower))
+                            || (tenKyThi != null && tenKyThi.toLowerCase().contains(keyLower));
                 }
                 if (match) {
                     modelDeThi.addRow(new Object[] {
-                            dt.getMaDeThi(), dt.getTenDeThi(), dt.getTenHocPhan(),
-                            dt.getTenKyThi(), dt.getSoCauHoi(), dt.getThoiGianLam() + " phút"
+                            dt.getMaDeThi(), dt.getTenDeThi(), tenHocPhan,
+                            tenKyThi, dt.getSoCauHoi(), dt.getThoiGianLam() + " phút"
                     });
                 }
             }

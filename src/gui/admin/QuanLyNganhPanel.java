@@ -2,13 +2,14 @@ package gui.admin;
 
 import bus.KhoaBUS;
 import bus.NganhBUS;
-import bus.SinhVienBUS;
 import config.Constants;
 import dto.KhoaDTO;
 import dto.NganhDTO;
 import gui.components.BaseCrudPanel;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 
 public class QuanLyNganhPanel extends BaseCrudPanel {
@@ -17,6 +18,7 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
     private JTextField txtTenNganh;
     private JComboBox<KhoaDTO> cboKhoa;
     private int selectedMaNganh = -1;
+    private Map<Integer, String> khoaMap = new HashMap<>();
 
     public QuanLyNganhPanel() {
         super("QUẢN LÝ NGÀNH",
@@ -58,18 +60,27 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
     @Override
     protected void loadData() {
         cboKhoa.removeAllItems();
+        khoaMap.clear();
         List<KhoaDTO> khoaList = khoaBUS.getDanhSachKhoa();
-        if (khoaList != null)
-            khoaList.forEach(cboKhoa::addItem);
+        if (khoaList != null) {
+            khoaList.forEach(k -> {
+                cboKhoa.addItem(k);
+                khoaMap.put(k.getMaKhoa(), k.getTenKhoa());
+            });
+        }
 
         tableModel.setRowCount(0);
         List<NganhDTO> danhSach = nganhBUS.getDanhSachNganh();
         if (danhSach != null) {
             danhSach.forEach(n -> tableModel.addRow(new Object[] {
                     n.getMaNganh(), n.getTenNganh(),
-                    n.getTenKhoa() != null ? n.getTenKhoa() : String.valueOf(n.getMaKhoa())
+                    getTenKhoa(n.getMaKhoa())
             }));
         }
+    }
+
+    private String getTenKhoa(int maKhoa) {
+        return khoaMap.getOrDefault(maKhoa, String.valueOf(maKhoa));
     }
 
     @Override
@@ -86,7 +97,7 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
             danhSach.stream().filter(n -> matchFilter(n, keyword, loai))
                     .forEach(n -> tableModel.addRow(new Object[] {
                             n.getMaNganh(), n.getTenNganh(),
-                            n.getTenKhoa() != null ? n.getTenKhoa() : String.valueOf(n.getMaKhoa())
+                            getTenKhoa(n.getMaKhoa())
                     }));
         }
     }
@@ -94,10 +105,11 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
     private boolean matchFilter(NganhDTO n, String keyword, String loai) {
         if (keyword.isEmpty() || "Tất cả".equals(loai))
             return true;
+        String tenKhoa = getTenKhoa(n.getMaKhoa());
         return switch (loai) {
             case "Mã Ngành" -> String.valueOf(n.getMaNganh()).contains(keyword);
             case "Tên Ngành" -> n.getTenNganh() != null && n.getTenNganh().toLowerCase().contains(keyword);
-            case "Thuộc Khoa" -> n.getTenKhoa() != null && n.getTenKhoa().toLowerCase().contains(keyword);
+            case "Thuộc Khoa" -> tenKhoa != null && tenKhoa.toLowerCase().contains(keyword);
             default -> true;
         };
     }

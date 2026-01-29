@@ -17,12 +17,7 @@ public class DeThiDAO {
      */
     public List<DeThiDTO> getAll() throws SQLException {
         List<DeThiDTO> danhSachDT = new ArrayList<>();
-        String sql = "SELECT dt.*, hp.ten_mon, kt.ten_ky_thi, CONCAT(gv.ho, ' ', gv.ten) AS ten_gv " +
-                "FROM DeThi dt " +
-                "LEFT JOIN HocPhan hp ON dt.ma_hoc_phan = hp.ma_hoc_phan " +
-                "LEFT JOIN KyThi kt ON dt.ma_ky_thi = kt.ma_ky_thi " +
-                "LEFT JOIN GiangVien gv ON dt.ma_gv = gv.ma_gv " +
-                "ORDER BY dt.ngay_tao DESC";
+        String sql = "SELECT * FROM DeThi ORDER BY ngay_tao DESC";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 Statement stmt = conn.createStatement();
@@ -40,12 +35,7 @@ public class DeThiDAO {
      */
     public List<DeThiDTO> getByKyThi(int maKyThi) throws SQLException {
         List<DeThiDTO> danhSachDT = new ArrayList<>();
-        String sql = "SELECT dt.*, hp.ten_mon, kt.ten_ky_thi, CONCAT(gv.ho, ' ', gv.ten) AS ten_gv " +
-                "FROM DeThi dt " +
-                "LEFT JOIN HocPhan hp ON dt.ma_hoc_phan = hp.ma_hoc_phan " +
-                "LEFT JOIN KyThi kt ON dt.ma_ky_thi = kt.ma_ky_thi " +
-                "LEFT JOIN GiangVien gv ON dt.ma_gv = gv.ma_gv " +
-                "WHERE dt.ma_ky_thi = ? ORDER BY dt.ten_de_thi";
+        String sql = "SELECT * FROM DeThi WHERE ma_ky_thi = ? ORDER BY ten_de_thi";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -65,11 +55,8 @@ public class DeThiDAO {
      */
     public List<DeThiDTO> getByKyThiAndKhoa(int maKyThi, int maKhoa) throws SQLException {
         List<DeThiDTO> danhSachDT = new ArrayList<>();
-        String sql = "SELECT dt.*, hp.ten_mon, kt.ten_ky_thi, CONCAT(gv.ho, ' ', gv.ten) AS ten_gv " +
-                "FROM DeThi dt " +
-                "LEFT JOIN HocPhan hp ON dt.ma_hoc_phan = hp.ma_hoc_phan " +
-                "LEFT JOIN KyThi kt ON dt.ma_ky_thi = kt.ma_ky_thi " +
-                "LEFT JOIN GiangVien gv ON dt.ma_gv = gv.ma_gv " +
+        String sql = "SELECT dt.* FROM DeThi dt " +
+                "INNER JOIN HocPhan hp ON dt.ma_hoc_phan = hp.ma_hoc_phan " +
                 "WHERE dt.ma_ky_thi = ? AND hp.ma_khoa = ? ORDER BY dt.ten_de_thi";
 
         try (Connection conn = DatabaseHelper.getConnection();
@@ -91,12 +78,7 @@ public class DeThiDAO {
      */
     public List<DeThiDTO> getByGiangVien(int maGV) throws SQLException {
         List<DeThiDTO> danhSachDT = new ArrayList<>();
-        String sql = "SELECT dt.*, hp.ten_mon, kt.ten_ky_thi, CONCAT(gv.ho, ' ', gv.ten) AS ten_gv " +
-                "FROM DeThi dt " +
-                "LEFT JOIN HocPhan hp ON dt.ma_hoc_phan = hp.ma_hoc_phan " +
-                "LEFT JOIN KyThi kt ON dt.ma_ky_thi = kt.ma_ky_thi " +
-                "LEFT JOIN GiangVien gv ON dt.ma_gv = gv.ma_gv " +
-                "WHERE dt.ma_gv = ? ORDER BY dt.ngay_tao DESC";
+        String sql = "SELECT * FROM DeThi WHERE ma_gv = ? ORDER BY ngay_tao DESC";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -115,12 +97,7 @@ public class DeThiDAO {
      * Lấy đề thi theo mã
      */
     public DeThiDTO getById(int maDeThi) throws SQLException {
-        String sql = "SELECT dt.*, hp.ten_mon, kt.ten_ky_thi, CONCAT(gv.ho, ' ', gv.ten) AS ten_gv " +
-                "FROM DeThi dt " +
-                "LEFT JOIN HocPhan hp ON dt.ma_hoc_phan = hp.ma_hoc_phan " +
-                "LEFT JOIN KyThi kt ON dt.ma_ky_thi = kt.ma_ky_thi " +
-                "LEFT JOIN GiangVien gv ON dt.ma_gv = gv.ma_gv " +
-                "WHERE dt.ma_de_thi = ?";
+        String sql = "SELECT * FROM DeThi WHERE ma_de_thi = ?";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -325,9 +302,6 @@ public class DeThiDAO {
         dt.setThoiGianLam(rs.getInt("thoi_gian_lam"));
         dt.setNgayTao(rs.getTimestamp("ngay_tao"));
         dt.setSoCauHoi(rs.getInt("so_cau_hoi"));
-        dt.setTenHocPhan(rs.getString("ten_mon"));
-        dt.setTenKyThi(rs.getString("ten_ky_thi"));
-        dt.setTenGV(rs.getString("ten_gv"));
         return dt;
     }
 }

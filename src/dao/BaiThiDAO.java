@@ -17,13 +17,7 @@ public class BaiThiDAO {
      */
     public List<BaiThiDTO> getBySinhVien(int maSV) throws SQLException {
         List<BaiThiDTO> danhSachBT = new ArrayList<>();
-        String sql = "SELECT bt.*, dt.ten_de_thi, dt.so_cau_hoi AS tong_so_cau, dt.thoi_gian_lam, " +
-                     "hp.ten_mon AS ten_hoc_phan, CONCAT(sv.ho, ' ', sv.ten) AS ten_sv, sv.ten_dang_nhap AS ma_so_sv " +
-                     "FROM BaiThi bt " +
-                     "LEFT JOIN DeThi dt ON bt.ma_de_thi = dt.ma_de_thi " +
-                     "LEFT JOIN HocPhan hp ON dt.ma_hoc_phan = hp.ma_hoc_phan " +
-                     "LEFT JOIN SinhVien sv ON bt.ma_sv = sv.ma_sv " +
-                     "WHERE bt.ma_sv = ? ORDER BY bt.thoi_gian_bat_dau DESC";
+        String sql = "SELECT * FROM BaiThi WHERE ma_sv = ? ORDER BY thoi_gian_bat_dau DESC";
         
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -43,13 +37,7 @@ public class BaiThiDAO {
      */
     public List<BaiThiDTO> getByDeThi(int maDeThi) throws SQLException {
         List<BaiThiDTO> danhSachBT = new ArrayList<>();
-        String sql = "SELECT bt.*, dt.ten_de_thi, dt.so_cau_hoi AS tong_so_cau, dt.thoi_gian_lam, " +
-                     "hp.ten_mon AS ten_hoc_phan, CONCAT(sv.ho, ' ', sv.ten) AS ten_sv, sv.ten_dang_nhap AS ma_so_sv " +
-                     "FROM BaiThi bt " +
-                     "LEFT JOIN DeThi dt ON bt.ma_de_thi = dt.ma_de_thi " +
-                     "LEFT JOIN HocPhan hp ON dt.ma_hoc_phan = hp.ma_hoc_phan " +
-                     "LEFT JOIN SinhVien sv ON bt.ma_sv = sv.ma_sv " +
-                     "WHERE bt.ma_de_thi = ? ORDER BY bt.diem_so DESC";
+        String sql = "SELECT * FROM BaiThi WHERE ma_de_thi = ? ORDER BY diem_so DESC";
         
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -68,13 +56,7 @@ public class BaiThiDAO {
      * Lấy bài thi theo mã
      */
     public BaiThiDTO getById(int maBaiThi) throws SQLException {
-        String sql = "SELECT bt.*, dt.ten_de_thi, dt.so_cau_hoi AS tong_so_cau, dt.thoi_gian_lam, " +
-                     "hp.ten_mon AS ten_hoc_phan, CONCAT(sv.ho, ' ', sv.ten) AS ten_sv, sv.ten_dang_nhap AS ma_so_sv " +
-                     "FROM BaiThi bt " +
-                     "LEFT JOIN DeThi dt ON bt.ma_de_thi = dt.ma_de_thi " +
-                     "LEFT JOIN HocPhan hp ON dt.ma_hoc_phan = hp.ma_hoc_phan " +
-                     "LEFT JOIN SinhVien sv ON bt.ma_sv = sv.ma_sv " +
-                     "WHERE bt.ma_bai_thi = ?";
+        String sql = "SELECT * FROM BaiThi WHERE ma_bai_thi = ?";
         
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -206,12 +188,6 @@ public class BaiThiDAO {
         bt.setSoCauDung(rs.getInt("so_cau_dung"));
         bt.setSoCauSai(rs.getInt("so_cau_sai"));
         bt.setDiemSo(rs.getFloat("diem_so"));
-        bt.setTenDeThi(rs.getString("ten_de_thi"));
-        bt.setTenSV(rs.getString("ten_sv"));
-        bt.setMaSoSV(rs.getString("ma_so_sv"));
-        bt.setTenHocPhan(rs.getString("ten_hoc_phan"));
-        bt.setTongSoCau(rs.getInt("tong_so_cau"));
-        bt.setThoiGianLam(rs.getInt("thoi_gian_lam"));
         return bt;
     }
 }

@@ -4,8 +4,10 @@
  */
 package gui.student;
 
+import bus.NganhBUS;
 import bus.SinhVienBUS;
 import config.Constants;
+import dto.NganhDTO;
 import dto.SinhVienDTO;
 import gui.components.*;
 import java.awt.*;
@@ -14,10 +16,12 @@ import javax.swing.*;
 public class ThongTinSinhVienPanel extends JPanel {
     private SinhVienDTO nguoiDung;
     private SinhVienBUS sinhVienBUS;
+    private NganhBUS nganhBUS;
 
     public ThongTinSinhVienPanel(SinhVienDTO nguoiDung) {
         this.nguoiDung = nguoiDung;
         this.sinhVienBUS = new SinhVienBUS();
+        this.nganhBUS = new NganhBUS();
         initComponents();
     }
 
@@ -37,7 +41,7 @@ public class ThongTinSinhVienPanel extends JPanel {
             {"Họ:", nguoiDung.getHo()},
             {"Tên:", nguoiDung.getTen()},
             {"Email:", nguoiDung.getEmail() != null ? nguoiDung.getEmail() : ""},
-            {"Ngành:", nguoiDung.getTenNganh() != null ? nguoiDung.getTenNganh() : ""}
+            {"Ngành:", getTenNganh(nguoiDung.getMaNganh())}
         };
         
         add(InfoDisplayPanel.createWrapper(new InfoDisplayPanel(info)), BorderLayout.CENTER);
@@ -57,5 +61,10 @@ public class ThongTinSinhVienPanel extends JPanel {
         ChangePasswordDialog.show(this, (oldPwd, newPwd) -> 
             sinhVienBUS.doiMatKhau(nguoiDung.getMaSV(), oldPwd, newPwd)
         );
+    }
+
+    private String getTenNganh(int maNganh) {
+        NganhDTO nganh = nganhBUS.getById(maNganh);
+        return nganh != null ? nganh.getTenNganh() : "";
     }
 }

@@ -254,28 +254,34 @@ INSERT INTO HocPhan (ma_hoc_phan, ma_khoa, ten_mon, so_tin) VALUES
 -- ========== 5. INSERT GiangVien ==========
 -- Password mặc định: 123456 (plain text - code hỗ trợ cả plain text và SHA-256)
 -- Admin cho tất cả các khoa (ma_vai_tro = 1)
-INSERT INTO GiangVien (ma_gv, ma_khoa, ma_vai_tro, ten_dang_nhap, mat_khau, ho, ten, email, ngay_tao) VALUES 
-(1, , 1, 'admin', '123456', 'Lương Kiện', 'Minh', 'admin@edu.vn', NOW()),
+INSERT INTO GiangVien (ma_gv,ma_vai_tro, ten_dang_nhap, mat_khau, ho, ten, email, ngay_tao) VALUES 
+(1, 1, 'admin', '123456', 'Lương Kiện', 'Minh', 'admin@edu.vn', NOW());
 
 -- Giảng viên thuộc Khoa CNTT (ma_vai_tro = 2)
 INSERT INTO GiangVien (ma_gv, ma_khoa, ma_vai_tro, ten_dang_nhap, mat_khau, ho, ten, email, ngay_tao) VALUES 
-(5, 1, 2, 'giangvien1', '123456', 'Lê Văn', 'Đông', 'giangvien1@edu.vn', NOW()),
-(6, 1, 2, 'giangvien2', '123456', 'Võ Thị', 'Minh', 'giangvien2@edu.vn', NOW()),
-(7, 1, 2, 'giangvien3', '123456', 'Dương Văn', 'Hà', 'giangvien3@edu.vn', NOW()),
-(8, 1, 2, 'giangvien4', '123456', 'Bùi Thị', 'Thu', 'giangvien4@edu.vn', NOW());
+(2, 1, 2, 'giangvien1', '123456', 'Lê Văn', 'Đông', 'giangvien1@edu.vn', NOW()),
+(3, 1, 2, 'giangvien2', '123456', 'Võ Thị', 'Minh', 'giangvien2@edu.vn', NOW()),
+(4, 1, 2, 'giangvien3', '123456', 'Dương Văn', 'Hà', 'giangvien3@edu.vn', NOW()),
+(5, 1, 2, 'giangvien4', '123456', 'Bùi Thị', 'Thu', 'giangvien4@edu.vn', NOW()),
+(6, 1, 2, 'giangvien5', '123456', 'Trần Văn', 'Tiến', 'giangvien5@edu.vn', NOW()),
+(7, 1, 2, 'giangvien6', '123456', 'Đinh Thị', 'Hương', 'giangvien6@edu.vn', NOW()),
+(8, 1, 2, 'giangvien7', '123456', 'Tạ Văn', 'Lâm', 'giangvien7@edu.vn', NOW());
 
 -- Giảng viên thuộc Khoa Kinh tế
 INSERT INTO GiangVien (ma_gv, ma_khoa, ma_vai_tro, ten_dang_nhap, mat_khau, ho, ten, email, ngay_tao) VALUES 
 (9, 2, 2, 'gv_ke_01', '123456', 'Bùi Thanh', 'Tùng', 'bt_tung@edu.vn', NOW()),
-(10, 2, 2, 'gv_mk_01', '123456', 'Cô Thị', 'Yến', 'ct_yen@edu.vn', NOW());
+(10, 2, 2, 'gv_ke_02', '123456', 'Cô Thị', 'Yến', 'ct_yen@edu.vn', NOW()),
+(11, 2, 2, 'gv_mk_01', '123456', 'Phạm Văn', 'Sáng', 'pv_sang@edu.vn', NOW());
 
 -- Giảng viên thuộc Khoa Ngoại ngữ
 INSERT INTO GiangVien (ma_gv, ma_khoa, ma_vai_tro, ten_dang_nhap, mat_khau, ho, ten, email, ngay_tao) VALUES 
-(11, 3, 2, 'gv_anh_01', '123456', 'Ngô Minh', 'Anh', 'ngominh@edu.vn', NOW());
+(12, 3, 2, 'gv_anh_01', '123456', 'Ngô Minh', 'Anh', 'ngominh@edu.vn', NOW()),
+(13, 3, 2, 'gv_anh_02', '123456', 'Lý Thị', 'Hồng', 'lt_hong@edu.vn', NOW());
 
 -- Giảng viên thuộc Khoa Điện
 INSERT INTO GiangVien (ma_gv, ma_khoa, ma_vai_tro, ten_dang_nhap, mat_khau, ho, ten, email, ngay_tao) VALUES 
-(12, 4, 2, 'gv_dien_01', '123456', 'Vương Tuấn', 'Anh', 'vta_anh@edu.vn', NOW());
+(14, 4, 2, 'gv_dien_01', '123456', 'Vương Tuấn', 'Anh', 'vta_anh@edu.vn', NOW()),
+(15, 4, 2, 'gv_dien_02', '123456', 'Trịnh Văn', 'Hoàng', 'tv_hoang@edu.vn', NOW());
 
 -- ========== 6. INSERT SinhVien ==========
 -- Sinh viên các ngành (ma_vai_tro = 3)
@@ -341,7 +347,7 @@ INSERT INTO KyThi (ma_ky_thi, ten_ky_thi, thoi_gian_bat_dau, thoi_gian_ket_thuc)
 (5, 'Kỳ thi Cuối kỳ HK2 2025-2026', '2026-05-15 00:00:00', '2026-05-30 23:59:59');
 
 -- ========== 8. INSERT CauHoi - Môn Lập trình Java ==========
--- Câu hỏi trắc nghiệm môn Java (ma_mon = 1, ma_gv = 2)
+-- Câu hỏi trắc nghiệm môn Java (ma_mon = 1, ma_gv = 2,3,4)
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
 -- Câu hỏi DỄ
 (1, 1, 2, 'Java là ngôn ngữ lập trình có đặc điểm nào sau đây?', 'De', 'MC'),
@@ -352,15 +358,15 @@ INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_ca
 -- Câu hỏi TRUNG BÌNH
 (6, 1, 2, 'Vòng lặp nào sẽ thực hiện ít nhất một lần?', 'TrungBinh', 'MC'),
 (7, 1, 2, 'Tính đa hình (Polymorphism) trong OOP là gì?', 'TrungBinh', 'MC'),
-(8, 1, 2, 'Interface trong Java có thể chứa những gì?', 'TrungBinh', 'MC'),
+(8, 1, 3, 'Interface trong Java có thể chứa những gì?', 'TrungBinh', 'MC'),
 (9, 1, 3, 'Sự khác biệt giữa == và equals() trong Java?', 'TrungBinh', 'MC'),
 (10, 1, 3, 'ArrayList và LinkedList khác nhau ở điểm nào?', 'TrungBinh', 'MC'),
 -- Câu hỏi KHÓ
-(11, 1, 2, 'Abstract class khác với Interface ở điểm nào chính?', 'Kho', 'MC'),
-(12, 1, 2, 'Design Pattern nào đảm bảo chỉ có một instance duy nhất?', 'Kho', 'MC'),
-(13, 1, 3, 'Garbage Collection trong Java hoạt động như thế nào?', 'Kho', 'MC'),
-(14, 1, 3, 'Thread-safe là gì? Làm sao để đảm bảo thread-safe?', 'Kho', 'MC'),
-(15, 1, 3, 'Giải thích cơ chế Reflection trong Java?', 'Kho', 'MC');
+(11, 1, 4, 'Abstract class khác với Interface ở điểm nào chính?', 'Kho', 'MC'),
+(12, 1, 4, 'Design Pattern nào đảm bảo chỉ có một instance duy nhất?', 'Kho', 'MC'),
+(13, 1, 5, 'Garbage Collection trong Java hoạt động như thế nào?', 'Kho', 'MC'),
+(14, 1, 5, 'Thread-safe là gì? Làm sao để đảm bảo thread-safe?', 'Kho', 'MC'),
+(15, 1, 5, 'Giải thích cơ chế Reflection trong Java?', 'Kho', 'MC');
 
 -- ========== 9. INSERT CauHoiMC - Đáp án trắc nghiệm Java ==========
 INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dung_D, noi_dung_dung) VALUES 
@@ -383,86 +389,86 @@ INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dun
 -- ========== 10. INSERT CauHoi - Môn CSDL ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
 -- Câu hỏi DỄ
-(16, 2, 4, 'SQL là viết tắt của?', 'De', 'MC'),
-(17, 2, 4, 'Lệnh nào dùng để lấy dữ liệu từ bảng?', 'De', 'MC'),
-(18, 2, 4, 'PRIMARY KEY có đặc điểm gì?', 'De', 'MC'),
-(19, 2, 4, 'Lệnh nào dùng để thêm dữ liệu vào bảng?', 'De', 'MC'),
-(20, 2, 4, 'Kiểu dữ liệu VARCHAR dùng để lưu gì?', 'De', 'MC'),
+(16, 2, 6, 'SQL là viết tắt của?', 'De', 'MC'),
+(17, 2, 6, 'Lệnh nào dùng để lấy dữ liệu từ bảng?', 'De', 'MC'),
+(18, 2, 6, 'PRIMARY KEY có đặc điểm gì?', 'De', 'MC'),
+(19, 2, 6, 'Lệnh nào dùng để thêm dữ liệu vào bảng?', 'De', 'MC'),
+(20, 2, 6, 'Kiểu dữ liệu VARCHAR dùng để lưu gì?', 'De', 'MC'),
 -- Câu hỏi TRUNG BÌNH
-(21, 2, 4, 'FOREIGN KEY dùng để làm gì?', 'TrungBinh', 'MC'),
-(22, 2, 4, 'Lệnh JOIN nào trả về tất cả bản ghi từ cả hai bảng?', 'TrungBinh', 'MC'),
-(23, 2, 4, 'INDEX trong database có tác dụng gì?', 'TrungBinh', 'MC'),
-(24, 2, 5, 'Sự khác biệt giữa WHERE và HAVING?', 'TrungBinh', 'MC'),
-(25, 2, 5, 'DISTINCT trong SQL dùng để làm gì?', 'TrungBinh', 'MC'),
+(21, 2, 6, 'FOREIGN KEY dùng để làm gì?', 'TrungBinh', 'MC'),
+(22, 2, 7, 'Lệnh JOIN nào trả về tất cả bản ghi từ cả hai bảng?', 'TrungBinh', 'MC'),
+(23, 2, 7, 'INDEX trong database có tác dụng gì?', 'TrungBinh', 'MC'),
+(24, 2, 7, 'Sự khác biệt giữa WHERE và HAVING?', 'TrungBinh', 'MC'),
+(25, 2, 7, 'DISTINCT trong SQL dùng để làm gì?', 'TrungBinh', 'MC'),
 -- Câu hỏi KHÓ
-(26, 2, 4, 'Giải thích các cấp độ cô lập transaction (Isolation Level)?', 'Kho', 'MC'),
-(27, 2, 4, 'Normalization là gì? Các dạng chuẩn hóa?', 'Kho', 'MC'),
-(28, 2, 5, 'Deadlock là gì? Cách phòng tránh?', 'Kho', 'MC'),
-(29, 2, 5, 'Stored Procedure và Function khác nhau như thế nào?', 'Kho', 'MC'),
-(30, 2, 5, 'Sharding và Partitioning khác nhau ở điểm nào?', 'Kho', 'MC');
+(26, 2, 8, 'Giải thích các cấp độ cô lập transaction (Isolation Level)?', 'Kho', 'MC'),
+(27, 2, 8, 'Normalization là gì? Các dạng chuẩn hóa?', 'Kho', 'MC'),
+(28, 2, 8, 'Deadlock là gì? Cách phòng tránh?', 'Kho', 'MC'),
+(29, 2, 8, 'Stored Procedure và Function khác nhau như thế nào?', 'Kho', 'MC'),
+(30, 2, 8, 'Sharding và Partitioning khác nhau ở điểm nào?', 'Kho', 'MC');
 
--- ========== 10. INSERT CauHoi - Môn Nguyên lý Kinh tế (Khoa Kinh tế, ma_mon = 9, ma_gv = 5) ==========
+-- ========== 10. INSERT CauHoi - Môn Nguyên lý Kinh tế (Khoa Kinh tế, ma_mon = 9, ma_gv = 9,10,11) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
 -- Câu hỏi DỄ
-(36, 9, 5, 'Kinh tế học là khoa học nghiên cứu?', 'De', 'MC'),
-(37, 9, 5, 'Cung và cầu ảnh hưởng đến giá như thế nào?', 'De', 'MC'),
-(38, 9, 5, 'GDP là viết tắt của?', 'De', 'MC'),
-(39, 9, 5, 'Lạm phát là gì?', 'De', 'MC'),
-(40, 9, 5, 'Thị trường cạnh tranh hoàn toàn có bao nhiêu người bán?', 'De', 'MC'),
+(36, 9, 9, 'Kinh tế học là khoa học nghiên cứu?', 'De', 'MC'),
+(37, 9, 9, 'Cung và cầu ảnh hưởng đến giá như thế nào?', 'De', 'MC'),
+(38, 9, 9, 'GDP là viết tắt của?', 'De', 'MC'),
+(39, 9, 9, 'Lạm phát là gì?', 'De', 'MC'),
+(40, 9, 9, 'Thị trường cạnh tranh hoàn toàn có bao nhiêu người bán?', 'De', 'MC'),
 -- Câu hỏi TRUNG BÌNH
-(41, 9, 6, 'Lợi suất cân bằng thị trường được xác định bởi?', 'TrungBinh', 'MC'),
-(42, 9, 6, 'Độ co giãn của cầu theo giá là gì?', 'TrungBinh', 'MC'),
-(43, 9, 6, 'Chi phí cơ hội là gì?', 'TrungBinh', 'MC'),
-(44, 9, 7, 'Tỷ lệ thất nghiệp tự nhiên là gì?', 'TrungBinh', 'MC'),
-(45, 9, 7, 'Tiền lương thực tế và danh nghĩa khác nhau?', 'TrungBinh', 'MC'),
+(41, 9, 10, 'Lợi suất cân bằng thị trường được xác định bởi?', 'TrungBinh', 'MC'),
+(42, 9, 10, 'Độ co giãn của cầu theo giá là gì?', 'TrungBinh', 'MC'),
+(43, 9, 10, 'Chi phí cơ hội là gì?', 'TrungBinh', 'MC'),
+(44, 9, 10, 'Tỷ lệ thất nghiệp tự nhiên là gì?', 'TrungBinh', 'MC'),
+(45, 9, 10, 'Tiền lương thực tế và danh nghĩa khác nhau?', 'TrungBinh', 'MC'),
 -- Câu hỏi KHÓ
-(46, 9, 6, 'Chính sách tiền tệ có tác dụng gì?', 'Kho', 'MC'),
-(47, 9, 6, 'Đường IS-LM biểu diễn mối quan hệ gì?', 'Kho', 'MC'),
-(48, 9, 7, 'Tăng trưởng kinh tế ngoài khung sản xuất có nghĩa là gì?', 'Kho', 'MC'),
-(49, 9, 7, 'Tỷ giá hối đoái ảnh hưởng đến xuất khẩu như thế nào?', 'Kho', 'MC'),
-(50, 9, 7, 'Chỉ số Gini đo lường cái gì?', 'Kho', 'MC');
+(46, 9, 11, 'Chính sách tiền tệ có tác dụng gì?', 'Kho', 'MC'),
+(47, 9, 11, 'Đường IS-LM biểu diễn mối quan hệ gì?', 'Kho', 'MC'),
+(48, 9, 11, 'Tăng trưởng kinh tế ngoài khung sản xuất có nghĩa là gì?', 'Kho', 'MC'),
+(49, 9, 11, 'Tỷ giá hối đoái ảnh hưởng đến xuất khẩu như thế nào?', 'Kho', 'MC'),
+(50, 9, 11, 'Chỉ số Gini đo lường cái gì?', 'Kho', 'MC');
 
--- ========== 11. INSERT CauHoi - Môn Kỹ năng Giao tiếp Tiếng Anh (Khoa Ngoại ngữ, ma_mon = 13, ma_gv = 8) ==========
+-- ========== 11. INSERT CauHoi - Môn Kỹ năng Giao tiếp Tiếng Anh (Khoa Ngoại ngữ, ma_mon = 13, ma_gv = 12,13) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
 -- Câu hỏi DỄ
-(51, 13, 8, 'Câu chào hỏi tiếng Anh chuẩn là gì?', 'De', 'MC'),
-(52, 13, 8, 'Phát âm của từ "pronunciation" là gì?', 'De', 'MC'),
-(53, 13, 8, 'Present Simple Tense dùng để?', 'De', 'MC'),
-(54, 13, 8, 'Tenses nào được sử dụng phổ biến nhất?', 'De', 'MC'),
-(55, 13, 8, 'Cách đặt câu hỏi "Have you been there?" là gì?', 'De', 'MC'),
+(51, 13, 12, 'Câu chào hỏi tiếng Anh chuẩn là gì?', 'De', 'MC'),
+(52, 13, 12, 'Phát âm của từ "pronunciation" là gì?', 'De', 'MC'),
+(53, 13, 12, 'Present Simple Tense dùng để?', 'De', 'MC'),
+(54, 13, 12, 'Tenses nào được sử dụng phổ biến nhất?', 'De', 'MC'),
+(55, 13, 12, 'Cách đặt câu hỏi "Have you been there?" là gì?', 'De', 'MC'),
 -- Câu hỏi TRUNG BÌNH
-(56, 13, 9, 'Past Perfect dùng để diễn tả?', 'TrungBinh', 'MC'),
-(57, 13, 9, 'Conditional Clause Type 1 dùng khi?', 'TrungBinh', 'MC'),
-(58, 13, 9, 'Phrasal verb "come up with" có nghĩa là?', 'TrungBinh', 'MC'),
-(59, 13, 10, 'Collocation là gì?', 'TrungBinh', 'MC'),
-(60, 13, 10, 'Discourse marker "nevertheless" được dùng để?', 'TrungBinh', 'MC'),
+(56, 13, 13, 'Past Perfect dùng để diễn tả?', 'TrungBinh', 'MC'),
+(57, 13, 13, 'Conditional Clause Type 1 dùng khi?', 'TrungBinh', 'MC'),
+(58, 13, 13, 'Phrasal verb "come up with" có nghĩa là?', 'TrungBinh', 'MC'),
+(59, 13, 13, 'Collocation là gì?', 'TrungBinh', 'MC'),
+(60, 13, 13, 'Discourse marker "nevertheless" được dùng để?', 'TrungBinh', 'MC'),
 -- Câu hỏi KHÓ
-(61, 13, 9, 'Reported Speech dùng để làm gì?', 'Kho', 'MC'),
-(62, 13, 9, 'Mixed Conditional dùng trong tình huống nào?', 'Kho', 'MC'),
-(63, 13, 10, 'Idiomatic expression nào có ý nghĩa "rất khó"?', 'Kho', 'MC'),
-(64, 13, 10, 'Register shift có tác dụng gì trong giao tiếp?', 'Kho', 'MC'),
-(65, 13, 10, 'Tone of voice ảnh hưởng đến sự hiểu lầm như thế nào?', 'Kho', 'MC');
+(61, 13, 12, 'Reported Speech dùng để làm gì?', 'Kho', 'MC'),
+(62, 13, 12, 'Mixed Conditional dùng trong tình huống nào?', 'Kho', 'MC'),
+(63, 13, 13, 'Idiomatic expression nào có ý nghĩa "rất khó"?', 'Kho', 'MC'),
+(64, 13, 13, 'Register shift có tác dụng gì trong giao tiếp?', 'Kho', 'MC'),
+(65, 13, 13, 'Tone of voice ảnh hưởng đến sự hiểu lầm như thế nào?', 'Kho', 'MC');
 
--- ========== 12. INSERT CauHoi - Môn Lý thuyết Điện (Khoa Điện, ma_mon = 17, ma_gv = 11) ==========
+-- ========== 12. INSERT CauHoi - Môn Lý thuyết Điện (Khoa Điện, ma_mon = 17, ma_gv = 14,15) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
 -- Câu hỏi DỄ
-(66, 17, 11, 'Định luật Ohm phát biểu rằng?', 'De', 'MC'),
-(67, 17, 11, 'Dòng điện tính bằng?', 'De', 'MC'),
-(68, 17, 11, 'Điện trở được ký hiệu bằng chữ nào?', 'De', 'MC'),
-(69, 17, 11, 'Định luật Kirchhoff nói về?', 'De', 'MC'),
-(70, 17, 11, 'AC là viết tắt của?', 'De', 'MC'),
+(66, 17, 14, 'Định luật Ohm phát biểu rằng?', 'De', 'MC'),
+(67, 17, 14, 'Dòng điện tính bằng?', 'De', 'MC'),
+(68, 17, 14, 'Điện trở được ký hiệu bằng chữ nào?', 'De', 'MC'),
+(69, 17, 14, 'Định luật Kirchhoff nói về?', 'De', 'MC'),
+(70, 17, 14, 'AC là viết tắt của?', 'De', 'MC'),
 -- Câu hỏi TRUNG BÌNH
-(71, 17, 12, 'Điện cảm là gì?', 'TrungBinh', 'MC'),
-(72, 17, 12, 'Công suất điện tính bằng công thức nào?', 'TrungBinh', 'MC'),
-(73, 17, 12, 'Hệ số công suất ảnh hưởng đến?', 'TrungBinh', 'MC'),
-(74, 17, 12, 'Transformator là thiết bị dùng để?', 'TrungBinh', 'MC'),
-(75, 17, 12, 'Sự cộng hưởng trong mạch LC xảy ra khi?', 'TrungBinh', 'MC'),
+(71, 17, 15, 'Điện cảm là gì?', 'TrungBinh', 'MC'),
+(72, 17, 15, 'Công suất điện tính bằng công thức nào?', 'TrungBinh', 'MC'),
+(73, 17, 15, 'Hệ số công suất ảnh hưởng đến?', 'TrungBinh', 'MC'),
+(74, 17, 15, 'Transformator là thiết bị dùng để?', 'TrungBinh', 'MC'),
+(75, 17, 15, 'Sự cộng hưởng trong mạch LC xảy ra khi?', 'TrungBinh', 'MC'),
 -- Câu hỏi KHÓ
-(76, 17, 11, 'Phương trình Maxwell đôi mục?', 'Kho', 'MC'),
-(77, 17, 11, 'Phương pháp phân tích mạch phức tạp là gì?', 'Kho', 'MC'),
-(78, 17, 12, 'Tổn hao tĩnh điện là gì?', 'Kho', 'MC'),
-(79, 17, 12, 'Độ nhạy từ của vật liệu ảnh hưởng đến?', 'Kho', 'MC'),
-(80, 17, 12, 'Lực điện từ trong dây dẫn mang dòng điện tính như thế nào?', 'Kho', 'MC');
+(76, 17, 14, 'Phương trình Maxwell đôi mục?', 'Kho', 'MC'),
+(77, 17, 14, 'Phương pháp phân tích mạch phức tạp là gì?', 'Kho', 'MC'),
+(78, 17, 15, 'Tổn hao tĩnh điện là gì?', 'Kho', 'MC'),
+(79, 17, 15, 'Độ nhạy từ của vật liệu ảnh hưởng đến?', 'Kho', 'MC'),
+(80, 17, 15, 'Lực điện từ trong dây dẫn mang dòng điện tính như thế nào?', 'Kho', 'MC');
 
 -- ========== 11. INSERT CauHoiMC - Đáp án trắc nghiệm CSDL ==========
 INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dung_D, noi_dung_dung) VALUES 
@@ -556,33 +562,33 @@ INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES
 INSERT INTO DeThi (ma_de_thi, ma_hoc_phan, ma_ky_thi, ma_gv, ten_de_thi, thoi_gian_lam, ngay_tao, so_cau_hoi) VALUES 
 (1, 1, 1, 2, 'Đề thi Giữa kỳ - Lập trình Java - Đề 01', 45, NOW(), 10),
 (2, 1, 1, 3, 'Đề thi Giữa kỳ - Lập trình Java - Đề 02', 45, NOW(), 10),
-(3, 2, 1, 4, 'Đề thi Giữa kỳ - Cơ sở dữ liệu - Đề 01', 60, NOW(), 10),
-(4, 2, 2, 4, 'Đề thi Cuối kỳ - Cơ sở dữ liệu - Đề 01', 90, NOW(), 15),
+(3, 2, 1, 6, 'Đề thi Giữa kỳ - Cơ sở dữ liệu - Đề 01', 60, NOW(), 10),
+(4, 2, 2, 6, 'Đề thi Cuối kỳ - Cơ sở dữ liệu - Đề 01', 90, NOW(), 15),
 (5, 1, 2, 2, 'Đề thi Cuối kỳ - Lập trình Java - Đề 01', 90, NOW(), 15),
 -- Đề thi Khoa Kinh tế
-(6, 9, 1, 5, 'Đề thi Giữa kỳ - Nguyên lý Kinh tế - Đề 01', 60, NOW(), 10),
-(7, 9, 2, 5, 'Đề thi Cuối kỳ - Nguyên lý Kinh tế - Đề 01', 90, NOW(), 15),
-(8, 10, 1, 6, 'Đề thi Giữa kỳ - Quản lý Dự án - Đề 01', 60, NOW(), 10),
-(9, 10, 2, 6, 'Đề thi Cuối kỳ - Quản lý Dự án - Đề 01', 90, NOW(), 15),
+(6, 9, 1, 9, 'Đề thi Giữa kỳ - Nguyên lý Kinh tế - Đề 01', 60, NOW(), 10),
+(7, 9, 2, 9, 'Đề thi Cuối kỳ - Nguyên lý Kinh tế - Đề 01', 90, NOW(), 15),
+(8, 10, 1, 10, 'Đề thi Giữa kỳ - Quản lý Dự án - Đề 01', 60, NOW(), 10),
+(9, 10, 2, 10, 'Đề thi Cuối kỳ - Quản lý Dự án - Đề 01', 90, NOW(), 15),
 -- Đề thi Khoa Ngoại ngữ
-(10, 13, 1, 8, 'Đề thi Giữa kỳ - Kỹ năng Giao tiếp Tiếng Anh - Đề 01', 60, NOW(), 10),
-(11, 13, 2, 8, 'Đề thi Cuối kỳ - Kỹ năng Giao tiếp Tiếng Anh - Đề 01', 90, NOW(), 15),
-(12, 14, 1, 9, 'Đề thi Giữa kỳ - Ngữ pháp Tiếng Anh Nâng cao - Đề 01', 60, NOW(), 10),
-(13, 14, 2, 9, 'Đề thi Cuối kỳ - Ngữ pháp Tiếng Anh Nâng cao - Đề 01', 90, NOW(), 15),
+(10, 13, 1, 12, 'Đề thi Giữa kỳ - Kỹ năng Giao tiếp Tiếng Anh - Đề 01', 60, NOW(), 10),
+(11, 13, 2, 12, 'Đề thi Cuối kỳ - Kỹ năng Giao tiếp Tiếng Anh - Đề 01', 90, NOW(), 15),
+(12, 14, 1, 13, 'Đề thi Giữa kỳ - Ngữ pháp Tiếng Anh Nâng cao - Đề 01', 60, NOW(), 10),
+(13, 14, 2, 13, 'Đề thi Cuối kỳ - Ngữ pháp Tiếng Anh Nâng cao - Đề 01', 90, NOW(), 15),
 -- Đề thi Khoa Điện
-(14, 17, 1, 11, 'Đề thi Giữa kỳ - Lý thuyết Điện - Đề 01', 60, NOW(), 10),
-(15, 17, 2, 11, 'Đề thi Cuối kỳ - Lý thuyết Điện - Đề 01', 90, NOW(), 15),
-(16, 18, 1, 12, 'Đề thi Giữa kỳ - Điện tử Kỹ thuật - Đề 01', 60, NOW(), 10),
-(17, 18, 2, 12, 'Đề thi Cuối kỳ - Điện tử Kỹ thuật - Đề 01', 90, NOW(), 15),
+(14, 17, 1, 14, 'Đề thi Giữa kỳ - Lý thuyết Điện - Đề 01', 60, NOW(), 10),
+(15, 17, 2, 14, 'Đề thi Cuối kỳ - Lý thuyết Điện - Đề 01', 90, NOW(), 15),
+(16, 18, 1, 15, 'Đề thi Giữa kỳ - Điện tử Kỹ thuật - Đề 01', 60, NOW(), 10),
+(17, 18, 2, 15, 'Đề thi Cuối kỳ - Điện tử Kỹ thuật - Đề 01', 90, NOW(), 15),
 -- Đề thi Phụ (Kỳ thi Phụ HK1 - ma_ky_thi = 3)
 (18, 1, 3, 2, 'Đề thi Phụ HK1 - Lập trình Java - Đề 01', 60, NOW(), 10),
-(19, 2, 3, 4, 'Đề thi Phụ HK1 - Cơ sở dữ liệu - Đề 01', 60, NOW(), 10),
-(20, 9, 3, 5, 'Đề thi Phụ HK1 - Nguyên lý Kinh tế - Đề 01', 60, NOW(), 10),
-(21, 10, 3, 6, 'Đề thi Phụ HK1 - Quản lý Dự án - Đề 01', 60, NOW(), 10),
-(22, 13, 3, 8, 'Đề thi Phụ HK1 - Kỹ năng Giao tiếp Tiếng Anh - Đề 01', 60, NOW(), 10),
-(23, 14, 3, 9, 'Đề thi Phụ HK1 - Ngữ pháp Tiếng Anh Nâng cao - Đề 01', 60, NOW(), 10),
-(24, 17, 3, 11, 'Đề thi Phụ HK1 - Lý thuyết Điện - Đề 01', 60, NOW(), 10),
-(25, 18, 3, 12, 'Đề thi Phụ HK1 - Điện tử Kỹ thuật - Đề 01', 60, NOW(), 10);
+(19, 2, 3, 6, 'Đề thi Phụ HK1 - Cơ sở dữ liệu - Đề 01', 60, NOW(), 10),
+(20, 9, 3, 9, 'Đề thi Phụ HK1 - Nguyên lý Kinh tế - Đề 01', 60, NOW(), 10),
+(21, 10, 3, 10, 'Đề thi Phụ HK1 - Quản lý Dự án - Đề 01', 60, NOW(), 10),
+(22, 13, 3, 12, 'Đề thi Phụ HK1 - Kỹ năng Giao tiếp Tiếng Anh - Đề 01', 60, NOW(), 10),
+(23, 14, 3, 13, 'Đề thi Phụ HK1 - Ngữ pháp Tiếng Anh Nâng cao - Đề 01', 60, NOW(), 10),
+(24, 17, 3, 14, 'Đề thi Phụ HK1 - Lý thuyết Điện - Đề 01', 60, NOW(), 10),
+(25, 18, 3, 15, 'Đề thi Phụ HK1 - Điện tử Kỹ thuật - Đề 01', 60, NOW(), 10);
 
 -- ========== 15. INSERT ChiTietDeThi ==========
 -- Đề thi Java 1: 10 câu (1-10)

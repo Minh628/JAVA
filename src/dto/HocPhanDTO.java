@@ -1,15 +1,15 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * DTO: HocPhan - Data Transfer Object
+ * Tương ứng với bảng HocPhan trong database
  */
 package dto;
 
 public class HocPhanDTO {
-    private int maHocPhan; // ma_hoc_phan - Mã học phần (PK)
-    private int maKhoa; // ma_khoa - Mã khoa (FK)
-    private String tenMon; // ten_mon - Tên môn học
-    private int soTin; // so_tin - Số tín chỉ
-    private String tenKhoa; // Tên khoa (JOIN)
+    private int maHocPhan;  // ma_hoc_phan - Mã học phần (PK)
+    private int maKhoa;     // ma_khoa - Mã khoa (FK)
+    private String tenMon;  // ten_mon - Tên môn học
+    private int soTin;      // so_tin - Số tín chỉ
 
     public HocPhanDTO() {
     }
@@ -51,14 +51,6 @@ public class HocPhanDTO {
 
     public void setSoTin(int soTin) {
         this.soTin = soTin;
-    }
-
-    public String getTenKhoa() {
-        return this.tenKhoa;
-    }
-
-    public void setTenKhoa(String tenKhoa) {
-        this.tenKhoa = tenKhoa;
     }
 
     @Override

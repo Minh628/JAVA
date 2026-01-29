@@ -1,6 +1,7 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * DTO: BaiThi - Data Transfer Object
+ * Tương ứng với bảng BaiThi trong database
  */
 package dto;
 
@@ -17,14 +18,6 @@ public class BaiThiDTO {
     private int soCauDung;           // so_cau_dung - Số câu trả lời đúng
     private int soCauSai;            // so_cau_sai - Số câu trả lời sai
     private float diemSo;            // diem_so - Điểm số (thang 10)
-    
-    // Các trường JOIN/bổ sung
-    private String tenDeThi;         // Tên đề thi
-    private String tenSV;            // Tên sinh viên
-    private String maSoSV;           // Mã số sinh viên
-    private String tenHocPhan;       // Tên học phần
-    private int tongSoCau;           // Tổng số câu hỏi
-    private int thoiGianLam;         // Thời gian làm bài (phút)
 
     public BaiThiDTO() {
     }
@@ -122,61 +115,6 @@ public class BaiThiDTO {
 
     public void setDiemSo(float diemSo) {
         this.diemSo = diemSo;
-    }
-
-    public String getTenDeThi() {
-        return this.tenDeThi;
-    }
-
-    public void setTenDeThi(String tenDeThi) {
-        this.tenDeThi = tenDeThi;
-    }
-
-    public String getTenSV() {
-        return this.tenSV;
-    }
-
-    public void setTenSV(String tenSV) {
-        this.tenSV = tenSV;
-    }
-
-    public String getMaSoSV() {
-        return this.maSoSV;
-    }
-
-    public void setMaSoSV(String maSoSV) {
-        this.maSoSV = maSoSV;
-    }
-
-    public String getTenHocPhan() {
-        return this.tenHocPhan;
-    }
-
-    public void setTenHocPhan(String tenHocPhan) {
-        this.tenHocPhan = tenHocPhan;
-    }
-
-    public int getTongSoCau() {
-        return this.tongSoCau;
-    }
-
-    public void setTongSoCau(int tongSoCau) {
-        this.tongSoCau = tongSoCau;
-    }
-
-    public int getThoiGianLam() {
-        return this.thoiGianLam;
-    }
-
-    public void setThoiGianLam(int thoiGianLam) {
-        this.thoiGianLam = thoiGianLam;
-    }
-
-    // Tính điểm dựa trên số câu đúng
-    public void tinhDiem() {
-        if (this.tongSoCau > 0) {
-            this.diemSo = (float) this.soCauDung * 10 / this.tongSoCau;
-        }
     }
 
     @Override

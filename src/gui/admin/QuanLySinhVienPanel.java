@@ -7,7 +7,9 @@ import dto.NganhDTO;
 import dto.SinhVienDTO;
 import gui.components.BaseCrudPanel;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 
 public class QuanLySinhVienPanel extends BaseCrudPanel {
@@ -16,6 +18,7 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
     private JTextField txtMaSV, txtTenDangNhap, txtHo, txtTen, txtEmail;
     private JPasswordField txtMatKhau;
     private JComboBox<NganhDTO> cboNganh;
+    private Map<Integer, String> nganhMap = new HashMap<>();
 
     public QuanLySinhVienPanel() {
         super("QUẢN LÝ SINH VIÊN",
@@ -92,9 +95,14 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
     @Override
     protected void loadData() {
         cboNganh.removeAllItems();
+        nganhMap.clear();
         List<NganhDTO> nganhList = nganhBUS.getDanhSachNganh();
-        if (nganhList != null)
-            nganhList.forEach(cboNganh::addItem);
+        if (nganhList != null) {
+            nganhList.forEach(n -> {
+                cboNganh.addItem(n);
+                nganhMap.put(n.getMaNganh(), n.getTenNganh());
+            });
+        }
 
         tableModel.setRowCount(0);
         List<SinhVienDTO> danhSach = sinhVienBUS.getDanhSachSinhVien();
@@ -102,10 +110,14 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
             danhSach.forEach(sv -> tableModel.addRow(new Object[] {
                     sv.getMaSV(), sv.getHo(), sv.getTen(), sv.getTenDangNhap(),
                     sv.getMatKhau() != null ? sv.getMatKhau() : "",
-                    sv.getEmail(), sv.getTenNganh(),
+                    sv.getEmail(), getTenNganh(sv.getMaNganh()),
                     sv.isTrangThai() ? "Hoạt động" : "Khóa"
             }));
         }
+    }
+
+    private String getTenNganh(int maNganh) {
+        return nganhMap.getOrDefault(maNganh, String.valueOf(maNganh));
     }
 
     @Override
@@ -123,7 +135,7 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
                     .forEach(sv -> tableModel.addRow(new Object[] {
                             sv.getMaSV(), sv.getHo(), sv.getTen(), sv.getTenDangNhap(),
                             sv.getMatKhau() != null ? sv.getMatKhau() : "",
-                            sv.getEmail(), sv.getTenNganh(), sv.isTrangThai() ? "Hoạt động" : "Khóa"
+                            sv.getEmail(), getTenNganh(sv.getMaNganh()), sv.isTrangThai() ? "Hoạt động" : "Khóa"
                     }));
         }
     }
@@ -131,12 +143,13 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
     private boolean matchFilter(SinhVienDTO sv, String keyword, String loai) {
         if (keyword.isEmpty() || "Tất cả".equals(loai))
             return true;
+        String tenNganh = getTenNganh(sv.getMaNganh());
         return switch (loai) {
             case "Mã SV" -> String.valueOf(sv.getMaSV()).contains(keyword);
             case "Tên đăng nhập" -> sv.getTenDangNhap() != null && sv.getTenDangNhap().toLowerCase().contains(keyword);
             case "Họ tên" -> (sv.getHo() + " " + sv.getTen()).toLowerCase().contains(keyword);
             case "Email" -> sv.getEmail() != null && sv.getEmail().toLowerCase().contains(keyword);
-            case "Ngành" -> sv.getTenNganh() != null && sv.getTenNganh().toLowerCase().contains(keyword);
+            case "Ngành" -> tenNganh != null && tenNganh.toLowerCase().contains(keyword);
             default -> true;
         };
     }

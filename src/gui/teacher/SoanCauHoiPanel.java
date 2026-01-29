@@ -272,12 +272,21 @@ public class SoanCauHoiPanel extends JPanel {
                 if (noiDung.length() > 60) {
                     noiDung = noiDung.substring(0, 60) + "...";
                 }
+                String tenMon = getTenMonByMa(ch.getMaMon());
                 modelCauHoi.addRow(new Object[] {
-                        ch.getMaCauHoi(), noiDung, ch.getTenMon(),
+                        ch.getMaCauHoi(), noiDung, tenMon,
                         ch.getMucDo(), ch.getDapAnDung()
                 });
             }
         }
+    }
+
+    /**
+     * Lấy tên môn học theo mã môn
+     */
+    private String getTenMonByMa(int maMon) {
+        HocPhanDTO hp = hocPhanBUS.getById(maMon);
+        return hp != null ? hp.getTenMon() : "";
     }
 
     private void timKiem() {
@@ -289,6 +298,7 @@ public class SoanCauHoiPanel extends JPanel {
         if (danhSach != null) {
             for (CauHoiDTO ch : danhSach) {
                 boolean match = true;
+                String tenMon = getTenMonByMa(ch.getMaMon());
                 if (!keyword.isEmpty() && !loaiTimKiem.equals("Tất cả")) {
                     String keyLower = keyword.toLowerCase();
                     switch (loaiTimKiem) {
@@ -300,7 +310,7 @@ public class SoanCauHoiPanel extends JPanel {
                                     && ch.getNoiDungCauHoi().toLowerCase().contains(keyLower);
                             break;
                         case "Môn học":
-                            match = ch.getTenMon() != null && ch.getTenMon().toLowerCase().contains(keyLower);
+                            match = tenMon.toLowerCase().contains(keyLower);
                             break;
                         case "Mức độ":
                             match = ch.getMucDo() != null && ch.getMucDo().toLowerCase().contains(keyLower);
@@ -310,7 +320,7 @@ public class SoanCauHoiPanel extends JPanel {
                     String keyLower = keyword.toLowerCase();
                     match = String.valueOf(ch.getMaCauHoi()).contains(keyword)
                             || (ch.getNoiDungCauHoi() != null && ch.getNoiDungCauHoi().toLowerCase().contains(keyLower))
-                            || (ch.getTenMon() != null && ch.getTenMon().toLowerCase().contains(keyLower))
+                            || tenMon.toLowerCase().contains(keyLower)
                             || (ch.getMucDo() != null && ch.getMucDo().toLowerCase().contains(keyLower));
                 }
                 if (match) {
@@ -319,7 +329,7 @@ public class SoanCauHoiPanel extends JPanel {
                         noiDung = noiDung.substring(0, 60) + "...";
                     }
                     modelCauHoi.addRow(new Object[] {
-                            ch.getMaCauHoi(), noiDung, ch.getTenMon(),
+                            ch.getMaCauHoi(), noiDung, tenMon,
                             ch.getMucDo(), ch.getDapAnDung()
                     });
                 }

@@ -1,6 +1,7 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * DTO: GiangVien - Data Transfer Object
+ * Tương ứng với bảng GiangVien trong database
  */
 package dto;
 
@@ -17,8 +18,6 @@ public class GiangVienDTO {
     private String email;        // email - Email liên hệ
     private Timestamp ngayTao;   // ngay_tao - Ngày tạo tài khoản
     private boolean trangThai;   // trang_thai - Trạng thái (true=hoạt động)
-    private String tenKhoa;      // Tên khoa (JOIN)
-    private String tenVaiTro;    // Tên vai trò (JOIN)
 
     public GiangVienDTO() {
         this.maVaiTro = 2;  // Mặc định là Giảng viên
@@ -118,32 +117,8 @@ public class GiangVienDTO {
         return this.trangThai;
     }
 
-    public int getTrangThai() {
-        return this.trangThai ? 1 : 0;
-    }
-
     public void setTrangThai(boolean trangThai) {
         this.trangThai = trangThai;
-    }
-
-    public String getTenKhoa() {
-        return this.tenKhoa;
-    }
-
-    public void setTenKhoa(String tenKhoa) {
-        this.tenKhoa = tenKhoa;
-    }
-
-    public String getTenVaiTro() {
-        return this.tenVaiTro;
-    }
-
-    public void setTenVaiTro(String tenVaiTro) {
-        this.tenVaiTro = tenVaiTro;
-    }
-
-    public boolean isTruongKhoa() {
-        return this.maVaiTro == 1;
     }
 
     @Override

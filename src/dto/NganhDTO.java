@@ -1,6 +1,7 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * DTO: Nganh - Data Transfer Object
+ * Tương ứng với bảng Nganh trong database
  */
 package dto;
 
@@ -8,7 +9,6 @@ public class NganhDTO {
     private int maNganh;     // ma_nganh - Mã ngành (PK)
     private int maKhoa;      // ma_khoa - Mã khoa (FK -> Khoa)
     private String tenNganh; // ten_nganh - Tên ngành
-    private String tenKhoa;  // Tên khoa (JOIN)
 
     public NganhDTO() {
     }
@@ -17,13 +17,6 @@ public class NganhDTO {
         this.maNganh = maNganh;
         this.maKhoa = maKhoa;
         this.tenNganh = tenNganh;
-    }
-
-    public NganhDTO(int maNganh, int maKhoa, String tenNganh, String tenKhoa) {
-        this.maNganh = maNganh;
-        this.maKhoa = maKhoa;
-        this.tenNganh = tenNganh;
-        this.tenKhoa = tenKhoa;
     }
 
     public NganhDTO(int maKhoa, String tenNganh) {
@@ -53,14 +46,6 @@ public class NganhDTO {
 
     public void setTenNganh(String tenNganh) {
         this.tenNganh = tenNganh;
-    }
-
-    public String getTenKhoa() {
-        return this.tenKhoa;
-    }
-
-    public void setTenKhoa(String tenKhoa) {
-        this.tenKhoa = tenKhoa;
     }
 
     @Override

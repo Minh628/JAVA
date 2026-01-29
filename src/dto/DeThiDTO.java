@@ -1,6 +1,7 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * DTO: DeThi - Data Transfer Object
+ * Tương ứng với bảng DeThi trong database
  */
 package dto;
 
@@ -15,11 +16,6 @@ public class DeThiDTO {
     private int thoiGianLam;     // thoi_gian_lam - Thời gian làm bài (phút)
     private Timestamp ngayTao;   // ngay_tao - Ngày tạo đề
     private int soCauHoi;        // so_cau_hoi - Tổng số câu hỏi
-    
-    // Các trường JOIN
-    private String tenHocPhan;   // Tên học phần
-    private String tenKyThi;     // Tên kỳ thi
-    private String tenGV;        // Tên giảng viên
 
     public DeThiDTO() {
     }
@@ -98,30 +94,6 @@ public class DeThiDTO {
 
     public void setSoCauHoi(int soCauHoi) {
         this.soCauHoi = soCauHoi;
-    }
-
-    public String getTenHocPhan() {
-        return this.tenHocPhan;
-    }
-
-    public void setTenHocPhan(String tenHocPhan) {
-        this.tenHocPhan = tenHocPhan;
-    }
-
-    public String getTenKyThi() {
-        return this.tenKyThi;
-    }
-
-    public void setTenKyThi(String tenKyThi) {
-        this.tenKyThi = tenKyThi;
-    }
-
-    public String getTenGV() {
-        return this.tenGV;
-    }
-
-    public void setTenGV(String tenGV) {
-        this.tenGV = tenGV;
     }
 
     @Override

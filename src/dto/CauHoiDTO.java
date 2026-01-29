@@ -1,6 +1,7 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * DTO: CauHoi - Data Transfer Object (Base class)
+ * Tương ứng với bảng CauHoi trong database
  * Các class con: CauHoiMCDTO, CauHoiDKDTO
  */
 package dto;
@@ -15,17 +16,13 @@ public abstract class CauHoiDTO {
     public static final String LOAI_TRAC_NGHIEM = "MC";  // Multiple Choice
     public static final String LOAI_DIEN_KHUYET = "DK";  // Điền khuyết
     
-    // Các trường chung cho tất cả câu hỏi
+    // Các trường chung cho tất cả câu hỏi - tương ứng bảng CauHoi
     private int maCauHoi;         // ma_cau_hoi - Mã câu hỏi (PK)
     private int maMon;            // ma_mon - Mã học phần (FK -> HocPhan)
     private int maGV;             // ma_gv - Mã GV soạn thảo (FK -> GiangVien)
     private String noiDungCauHoi; // noi_dung_cau_hoi - Nội dung câu hỏi
     private String mucDo;         // muc_do - Mức độ (De, TrungBinh, Kho)
     private String loaiCauHoi;    // loai_cau_hoi - Loại câu hỏi (MC, DK)
-    
-    // Các trường JOIN
-    private String tenMon;        // Tên môn học
-    private String tenGV;         // Tên giảng viên
 
     public CauHoiDTO() {
         this.mucDo = MUC_DO_TRUNG_BINH;
@@ -102,22 +99,6 @@ public abstract class CauHoiDTO {
     public abstract void setDapAnDung(String dapAnDung);
     public abstract String getDanhSachTu();
     public abstract void setDanhSachTu(String danhSachTu);
-
-    public String getTenMon() {
-        return this.tenMon;
-    }
-
-    public void setTenMon(String tenMon) {
-        this.tenMon = tenMon;
-    }
-
-    public String getTenGV() {
-        return this.tenGV;
-    }
-
-    public void setTenGV(String tenGV) {
-        this.tenGV = tenGV;
-    }
 
     public boolean isTracNghiem() {
         return LOAI_TRAC_NGHIEM.equals(this.loaiCauHoi);

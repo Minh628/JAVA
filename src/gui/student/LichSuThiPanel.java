@@ -5,21 +5,27 @@
 package gui.student;
 
 import bus.BaiThiBUS;
+import bus.DeThiBUS;
+import bus.HocPhanBUS;
 import bus.SinhVienBUS;
 import config.Constants;
 import dto.BaiThiDTO;
+import dto.DeThiDTO;
+import dto.HocPhanDTO;
 import dto.SinhVienDTO;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class LichSuThiPanel extends JPanel {
     private SinhVienDTO nguoiDung;
     private SinhVienBUS sinhVienBUS;
     private BaiThiBUS baiThiBUS;
+    private DeThiBUS deThiBUS;
+    private HocPhanBUS hocPhanBUS;
 
     private CustomTable tblLichSu;
     private DefaultTableModel modelLichSu;
@@ -32,6 +38,8 @@ public class LichSuThiPanel extends JPanel {
         this.nguoiDung = nguoiDung;
         this.sinhVienBUS = new SinhVienBUS();
         this.baiThiBUS = new BaiThiBUS();
+        this.deThiBUS = new DeThiBUS();
+        this.hocPhanBUS = new HocPhanBUS();
         initComponents();
     }
 
@@ -117,9 +125,13 @@ public class LichSuThiPanel extends JPanel {
         List<BaiThiDTO> danhSach = baiThiBUS.getLichSuBaiThi(nguoiDung.getMaSV());
         if (danhSach != null) {
             for (BaiThiDTO bt : danhSach) {
+                DeThiDTO deThi = deThiBUS.getById(bt.getMaDeThi());
+                String tenDeThi = deThi != null ? deThi.getTenDeThi() : "";
+                String tenHocPhan = deThi != null ? getTenHocPhan(deThi.getMaHocPhan()) : "";
+                int tongSoCau = deThi != null ? deThi.getSoCauHoi() : 0;
                 modelLichSu.addRow(new Object[] {
-                        bt.getMaBaiThi(), bt.getTenDeThi(), bt.getTenHocPhan(),
-                        bt.getNgayThi(), bt.getSoCauDung() + "/" + bt.getTongSoCau(),
+                        bt.getMaBaiThi(), tenDeThi, tenHocPhan,
+                        bt.getNgayThi(), bt.getSoCauDung() + "/" + tongSoCau,
                         String.format("%.2f", bt.getDiemSo())
                 });
             }
@@ -135,6 +147,11 @@ public class LichSuThiPanel extends JPanel {
         List<BaiThiDTO> danhSach = baiThiBUS.getLichSuBaiThi(nguoiDung.getMaSV());
         if (danhSach != null) {
             for (BaiThiDTO bt : danhSach) {
+                DeThiDTO deThi = deThiBUS.getById(bt.getMaDeThi());
+                String tenDeThi = deThi != null ? deThi.getTenDeThi() : "";
+                String tenHocPhan = deThi != null ? getTenHocPhan(deThi.getMaHocPhan()) : "";
+                int tongSoCau = deThi != null ? deThi.getSoCauHoi() : 0;
+
                 boolean match = true;
                 if (!keyword.isEmpty() && !loaiTimKiem.equals("Tất cả")) {
                     String keyLower = keyword.toLowerCase();
@@ -143,22 +160,22 @@ public class LichSuThiPanel extends JPanel {
                             match = String.valueOf(bt.getMaBaiThi()).contains(keyword);
                             break;
                         case "Đề thi":
-                            match = bt.getTenDeThi() != null && bt.getTenDeThi().toLowerCase().contains(keyLower);
+                            match = tenDeThi.toLowerCase().contains(keyLower);
                             break;
                         case "Môn học":
-                            match = bt.getTenHocPhan() != null && bt.getTenHocPhan().toLowerCase().contains(keyLower);
+                            match = tenHocPhan.toLowerCase().contains(keyLower);
                             break;
                     }
                 } else if (!keyword.isEmpty()) {
                     String keyLower = keyword.toLowerCase();
                     match = String.valueOf(bt.getMaBaiThi()).contains(keyword)
-                            || (bt.getTenDeThi() != null && bt.getTenDeThi().toLowerCase().contains(keyLower))
-                            || (bt.getTenHocPhan() != null && bt.getTenHocPhan().toLowerCase().contains(keyLower));
+                            || tenDeThi.toLowerCase().contains(keyLower)
+                            || tenHocPhan.toLowerCase().contains(keyLower);
                 }
                 if (match) {
                     modelLichSu.addRow(new Object[] {
-                            bt.getMaBaiThi(), bt.getTenDeThi(), bt.getTenHocPhan(),
-                            bt.getNgayThi(), bt.getSoCauDung() + "/" + bt.getTongSoCau(),
+                            bt.getMaBaiThi(), tenDeThi, tenHocPhan,
+                            bt.getNgayThi(), bt.getSoCauDung() + "/" + tongSoCau,
                             String.format("%.2f", bt.getDiemSo())
                     });
                 }
@@ -187,5 +204,10 @@ public class LichSuThiPanel extends JPanel {
                         "(Chức năng xem chi tiết câu trả lời đang phát triển)",
                 tenDeThi, soCauDung, diem);
         JOptionPane.showMessageDialog(this, message, "Chi tiết bài thi", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private String getTenHocPhan(int maHocPhan) {
+        HocPhanDTO hocPhan = hocPhanBUS.getById(maHocPhan);
+        return hocPhan != null ? hocPhan.getTenMon() : "";
     }
 }

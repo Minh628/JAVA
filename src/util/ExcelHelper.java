@@ -13,21 +13,22 @@ public class ExcelHelper {
     
     /**
      * Xuất danh sách sinh viên ra file CSV
+     * Lưu ý: Cần truyền thêm thông tin ngành nếu muốn hiển thị tên ngành
      */
     public static boolean exportSinhVienToCSV(List<SinhVienDTO> danhSach, String filePath) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
             // Header
-            writer.println("Mã SV,Họ,Tên,Tên đăng nhập,Email,Ngành,Trạng thái");
+            writer.println("Mã SV,Họ,Tên,Tên đăng nhập,Email,Mã Ngành,Trạng thái");
             
             // Data
             for (SinhVienDTO sv : danhSach) {
-                writer.printf("%d,%s,%s,%s,%s,%s,%s%n",
+                writer.printf("%d,%s,%s,%s,%s,%d,%s%n",
                     sv.getMaSV(),
                     sv.getHo(),
                     sv.getTen(),
                     sv.getTenDangNhap(),
                     sv.getEmail(),
-                    sv.getTenNganh(),
+                    sv.getMaNganh(),
                     sv.isTrangThai() ? "Hoạt động" : "Khóa"
                 );
             }
@@ -44,18 +45,18 @@ public class ExcelHelper {
     public static boolean exportGiangVienToCSV(List<GiangVienDTO> danhSach, String filePath) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
             // Header
-            writer.println("Mã GV,Họ,Tên,Tên đăng nhập,Email,Khoa,Vai trò,Trạng thái");
+            writer.println("Mã GV,Họ,Tên,Tên đăng nhập,Email,Mã Khoa,Mã Vai trò,Trạng thái");
             
             // Data
             for (GiangVienDTO gv : danhSach) {
-                writer.printf("%d,%s,%s,%s,%s,%s,%s,%s%n",
+                writer.printf("%d,%s,%s,%s,%s,%d,%d,%s%n",
                     gv.getMaGV(),
                     gv.getHo(),
                     gv.getTen(),
                     gv.getTenDangNhap(),
                     gv.getEmail(),
-                    gv.getTenKhoa(),
-                    gv.getTenVaiTro(),
+                    gv.getMaKhoa(),
+                    gv.getMaVaiTro(),
                     gv.isTrangThai() ? "Hoạt động" : "Khóa"
                 );
             }
@@ -72,15 +73,14 @@ public class ExcelHelper {
     public static boolean exportKetQuaThiToCSV(List<BaiThiDTO> danhSach, String filePath) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
             // Header
-            writer.println("Mã bài thi,Mã SV,Tên sinh viên,Đề thi,Ngày thi,Số câu đúng,Số câu sai,Điểm số");
+            writer.println("Mã bài thi,Mã SV,Mã đề thi,Ngày thi,Số câu đúng,Số câu sai,Điểm số");
             
             // Data
             for (BaiThiDTO bt : danhSach) {
-                writer.printf("%d,%s,%s,%s,%s,%d,%d,%.2f%n",
+                writer.printf("%d,%d,%d,%s,%d,%d,%.2f%n",
                     bt.getMaBaiThi(),
-                    bt.getMaSoSV(),
-                    bt.getTenSV(),
-                    bt.getTenDeThi(),
+                    bt.getMaSV(),
+                    bt.getMaDeThi(),
                     bt.getNgayThi() != null ? bt.getNgayThi().toString() : "",
                     bt.getSoCauDung(),
                     bt.getSoCauSai(),

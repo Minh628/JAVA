@@ -1,6 +1,6 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: AdminDashboard - Trưởng khoa
+ * GUI: AdminDashboard - ADMIN
  * Refactored: Tách Khoa và Ngành, thêm thông tin cá nhân
  */
 package gui.admin;
@@ -41,7 +41,7 @@ public class AdminDashboard extends BaseDashboardFrame {
     
     @Override
     protected String getRoleName() {
-        return "Trưởng Khoa";
+        return "ADMIN";
     }
     
     @Override
@@ -144,14 +144,19 @@ public class AdminDashboard extends BaseDashboardFrame {
         // Tiêu đề - sử dụng HeaderLabel
         panel.add(HeaderLabel.createWithIcon("👤", "THÔNG TIN CÁ NHÂN"), BorderLayout.NORTH);
         
+        // Lấy tên khoa
+        String tenKhoa = "";
+        KhoaDTO khoa = khoaBUS.getById(nguoiDung.getMaKhoa());
+        if (khoa != null) tenKhoa = khoa.getTenKhoa();
+        
         // Panel thông tin - sử dụng InfoDisplayPanel
         String[][] info = {
             {"Mã giảng viên:", String.valueOf(nguoiDung.getMaGV())},
             {"Họ:", nguoiDung.getHo()},
             {"Tên:", nguoiDung.getTen()},
             {"Email:", nguoiDung.getEmail() != null ? nguoiDung.getEmail() : ""},
-            {"Khoa:", nguoiDung.getTenKhoa() != null ? nguoiDung.getTenKhoa() : ""},
-            {"Vai trò:", "Trưởng khoa"}
+            {"Khoa:", tenKhoa},
+            {"Vai trò:", "ADMIN"}
         };
         
         panel.add(InfoDisplayPanel.createWrapper(new InfoDisplayPanel(info)), BorderLayout.CENTER);

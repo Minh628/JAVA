@@ -17,10 +17,7 @@ public class GiangVienDAO {
      */
     public List<GiangVienDTO> getAll() throws SQLException {
         List<GiangVienDTO> danhSachGV = new ArrayList<>();
-        String sql = "SELECT gv.*, k.ten_khoa, vt.ten_vai_tro FROM GiangVien gv " +
-                "LEFT JOIN Khoa k ON gv.ma_khoa = k.ma_khoa " +
-                "LEFT JOIN VaiTro vt ON gv.ma_vai_tro = vt.ma_vai_tro " +
-                "ORDER BY gv.ho, gv.ten";
+        String sql = "SELECT * FROM GiangVien ORDER BY ho, ten";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 Statement stmt = conn.createStatement();
@@ -34,14 +31,11 @@ public class GiangVienDAO {
     }
 
     /**
-     * Lấy tất cả giảng viên (không bao gồm trưởng khoa)
+     * Lấy tất cả giảng viên (không bao gồm ADMIN)
      */
     public List<GiangVienDTO> getAllGiangVien() throws SQLException {
         List<GiangVienDTO> danhSachGV = new ArrayList<>();
-        String sql = "SELECT gv.*, k.ten_khoa, vt.ten_vai_tro FROM GiangVien gv " +
-                "LEFT JOIN Khoa k ON gv.ma_khoa = k.ma_khoa " +
-                "LEFT JOIN VaiTro vt ON gv.ma_vai_tro = vt.ma_vai_tro " +
-                "WHERE gv.ma_vai_tro = ? ORDER BY gv.ho, gv.ten";
+        String sql = "SELECT * FROM GiangVien WHERE ma_vai_tro = ? ORDER BY ho, ten";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -61,10 +55,7 @@ public class GiangVienDAO {
      */
     public List<GiangVienDTO> getByKhoa(int maKhoa) throws SQLException {
         List<GiangVienDTO> danhSachGV = new ArrayList<>();
-        String sql = "SELECT gv.*, k.ten_khoa, vt.ten_vai_tro FROM GiangVien gv " +
-                "LEFT JOIN Khoa k ON gv.ma_khoa = k.ma_khoa " +
-                "LEFT JOIN VaiTro vt ON gv.ma_vai_tro = vt.ma_vai_tro " +
-                "WHERE gv.ma_khoa = ? ORDER BY gv.ho, gv.ten";
+        String sql = "SELECT * FROM GiangVien WHERE ma_khoa = ? ORDER BY ho, ten";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -83,10 +74,7 @@ public class GiangVienDAO {
      * Lấy giảng viên theo mã
      */
     public GiangVienDTO getById(int maGV) throws SQLException {
-        String sql = "SELECT gv.*, k.ten_khoa, vt.ten_vai_tro FROM GiangVien gv " +
-                "LEFT JOIN Khoa k ON gv.ma_khoa = k.ma_khoa " +
-                "LEFT JOIN VaiTro vt ON gv.ma_vai_tro = vt.ma_vai_tro " +
-                "WHERE gv.ma_gv = ?";
+        String sql = "SELECT * FROM GiangVien WHERE ma_gv = ?";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -105,10 +93,7 @@ public class GiangVienDAO {
      * Lấy giảng viên theo tên đăng nhập
      */
     public GiangVienDTO getByTenDangNhap(String tenDangNhap) throws SQLException {
-        String sql = "SELECT gv.*, k.ten_khoa, vt.ten_vai_tro FROM GiangVien gv " +
-                "LEFT JOIN Khoa k ON gv.ma_khoa = k.ma_khoa " +
-                "LEFT JOIN VaiTro vt ON gv.ma_vai_tro = vt.ma_vai_tro " +
-                "WHERE gv.ten_dang_nhap = ?";
+        String sql = "SELECT * FROM GiangVien WHERE ten_dang_nhap = ?";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -230,12 +215,10 @@ public class GiangVienDAO {
      */
     public List<GiangVienDTO> search(String keyword) throws SQLException {
         List<GiangVienDTO> danhSachGV = new ArrayList<>();
-        String sql = "SELECT gv.*, k.ten_khoa, vt.ten_vai_tro FROM GiangVien gv " +
-                "LEFT JOIN Khoa k ON gv.ma_khoa = k.ma_khoa " +
-                "LEFT JOIN VaiTro vt ON gv.ma_vai_tro = vt.ma_vai_tro " +
-                "WHERE gv.ma_gv LIKE ? OR gv.ten_dang_nhap LIKE ? OR gv.ho LIKE ? " +
-                "OR gv.ten LIKE ? OR gv.email LIKE ? OR CONCAT(gv.ho, ' ', gv.ten) LIKE ? " +
-                "ORDER BY gv.ho, gv.ten";
+        String sql = "SELECT * FROM GiangVien " +
+                "WHERE ma_gv LIKE ? OR ten_dang_nhap LIKE ? OR ho LIKE ? " +
+                "OR ten LIKE ? OR email LIKE ? OR CONCAT(ho, ' ', ten) LIKE ? " +
+                "ORDER BY ho, ten";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -285,8 +268,6 @@ public class GiangVienDAO {
         gv.setEmail(rs.getString("email"));
         gv.setNgayTao(rs.getTimestamp("ngay_tao"));
         gv.setTrangThai(rs.getBoolean("trang_thai"));
-        gv.setTenKhoa(rs.getString("ten_khoa"));
-        gv.setTenVaiTro(rs.getString("ten_vai_tro"));
         return gv;
     }
 }

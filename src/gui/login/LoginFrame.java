@@ -145,7 +145,7 @@ public class LoginFrame extends JFrame {
         formContainer.add(lblVaiTro);
         formContainer.add(Box.createVerticalStrut(8));
         
-        cboVaiTro = new JComboBox<>(new String[]{"👨‍🎓  Sinh viên", "👨‍🏫  Giảng viên", "👔  Trưởng khoa"});
+        cboVaiTro = new JComboBox<>(new String[]{"👨‍🎓  Sinh viên", "👨‍🏫  Giảng viên", "👔  Admin"});
         cboVaiTro.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         cboVaiTro.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         cboVaiTro.setPreferredSize(new Dimension(300, 50));
@@ -355,7 +355,7 @@ public class LoginFrame extends JFrame {
         // Kiểm tra vai trò
         int maVaiTro = dangNhapBUS.getVaiTro(user);
         
-        // vaiTroIndex: 0 = Sinh viên, 1 = Giảng viên, 2 = Trưởng khoa
+        // vaiTroIndex: 0 = Sinh viên, 1 = Giảng viên, 2 = ADMIN
         boolean vaiTroHopLe = false;
         
         if (vaiTroIndex == 0 && maVaiTro == VaiTroDTO.SINH_VIEN) {
