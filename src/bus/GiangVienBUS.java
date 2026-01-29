@@ -17,7 +17,6 @@ import dto.VaiTroDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import util.PasswordEncoder;
 
 public class GiangVienBUS {
     private GiangVienDAO giangVienDAO;
@@ -164,13 +163,12 @@ public class GiangVienBUS {
             if (gv == null) return false;
             
             // Kiểm tra mật khẩu cũ
-            String hashedOld = PasswordEncoder.encode(matKhauCu);
-            if (!hashedOld.equals(gv.getMatKhau())) {
+            if (!matKhauCu.equals(gv.getMatKhau())) {
                 return false;
             }
             
             // Cập nhật mật khẩu mới
-            return giangVienDAO.updatePassword(maGV, PasswordEncoder.encode(matKhauMoi));
+            return giangVienDAO.updatePassword(maGV, matKhauMoi);
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

@@ -5,8 +5,8 @@
 package gui.components;
 
 import config.Constants;
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class ChangePasswordDialog {
     
