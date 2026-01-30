@@ -1,0 +1,99 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║            KIẾN TRÚC 3 TẦNG - TRƯỚC VÀ SAU KHI SỬA               ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    TRƯỚC KHI SỬA (SAI)                          │
+└─────────────────────────────────────────────────────────────────┘
+
+    ┌────────────────┐
+    │   GUI LAYER    │  (LoginFrame, AdminDashboard, etc.)
+    └────────┬───────┘
+             │ calls
+             ▼
+    ┌────────────────┐
+    │   BUS LAYER    │  ChiTietBaiThiBUS
+    └─┬──────────┬───┘
+      │          │ 
+      │          └────────────────┐
+      │ calls                     │ ❌ VI PHẠM: Gọi CauHoiDAO
+      ▼                           ▼
+    ┌─────────────────┐     ┌──────────────┐
+    │ChiTietBaiThiDAO │     │  CauHoiDAO   │
+    └─────────────────┘     └──────────────┘
+              │                     │
+              └──────────┬──────────┘
+                         ▼
+                  ┌──────────────┐
+                  │   DATABASE   │
+                  └──────────────┘
+
+    Vấn đề:
+    ❌ BUS gọi nhiều DAO (vi phạm Single Responsibility)
+    ❌ SQLException được in ra console (không xử lý đúng)
+    ❌ Không có phân tách rõ ràng giữa các tầng
+
+
+┌─────────────────────────────────────────────────────────────────┐
+│                     SAU KHI SỬA (ĐÚNG)                          │
+└─────────────────────────────────────────────────────────────────┘
+
+    ┌────────────────┐
+    │   GUI LAYER    │  (LoginFrame, AdminDashboard, etc.)
+    └────────┬───────┘
+             │ calls
+             ▼
+    ┌────────────────────────────────────────────┐
+    │          BUS LAYER                         │
+    │  ┌──────────────────┐  ┌────────────────┐ │
+    │  │ChiTietBaiThiBUS  │  │   CauHoiBUS    │ │
+    │  └────┬─────────────┘  └────────┬───────┘ │
+    │       │ calls BUS ✅            │         │
+    │       └─────────────────────────┘         │
+    └───────────┬──────────────────────┬─────────┘
+                │                      │
+                │ wraps SQLException   │
+                │ in BusinessException │
+                ▼                      ▼
+    ┌─────────────────┐     ┌──────────────┐
+    │ChiTietBaiThiDAO │     │  CauHoiDAO   │
+    └─────────────────┘     └──────────────┘
+              │                     │
+              └──────────┬──────────┘
+                         ▼
+                  ┌──────────────┐
+                  │   DATABASE   │
+                  └──────────────┘
+
+    Cải thiện:
+    ✅ BUS chỉ gọi BUS khác (tuân thủ kiến trúc)
+    ✅ BusinessException tách biệt business logic khỏi database
+    ✅ Message lỗi rõ ràng bằng tiếng Việt
+    ✅ Dễ bảo trì và mở rộng
+
+
+╔═══════════════════════════════════════════════════════════════════╗
+║                    EXCEPTION HANDLING                             ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+TRƯỚC:
+┌─────────────────────────────────────────────────────┐
+│ try {                                               │
+│     return cauHoiDAO.getById(id);                   │
+│ } catch (SQLException e) {                          │
+│     e.printStackTrace();  ❌ In ra console         │
+│     return null;          ❌ Mất thông tin lỗi     │
+│ }                                                   │
+└─────────────────────────────────────────────────────┘
+
+SAU:
+┌─────────────────────────────────────────────────────┐
+│ try {                                               │
+│     return cauHoiDAO.getById(id);                   │
+│ } catch (SQLException e) {                          │
+│     throw new BusinessException(                    │
+│         "Lỗi lấy câu hỏi: " + e.getMessage(), e     │
+│     ); ✅ Message tiếng Việt, giữ nguyên cause     │
+│ }                                                   │
+└─────────────────────────────────────────────────────┘
+
