@@ -28,8 +28,7 @@ public class KhoaBUS {
             try {
                 danhSachKhoa = new ArrayList<>(khoaDAO.getAll());
             } catch (SQLException e) {
-                e.printStackTrace();
-                return new ArrayList<>();
+                throw new BusinessException("Lỗi lấy danh sách khoa: " + e.getMessage(), e);
             }
         }
         return danhSachKhoa;
@@ -57,10 +56,10 @@ public class KhoaBUS {
                 danhSachKhoa = new ArrayList<>(khoaDAO.getAll());
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi thêm khoa mới: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -78,10 +77,10 @@ public class KhoaBUS {
                 }
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi cập nhật khoa: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -98,10 +97,10 @@ public class KhoaBUS {
                 danhSachKhoa.removeIf(k -> k.getMaKhoa() == maKhoa);
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi xóa khoa: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -111,8 +110,7 @@ public class KhoaBUS {
         try {
             return khoaDAO.countNganhByKhoa(maKhoa) == 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi kiểm tra khả năng xóa khoa: " + e.getMessage(), e);
         }
     }
 
@@ -123,8 +121,7 @@ public class KhoaBUS {
         try {
             return khoaDAO.search(keyword);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi tìm kiếm khoa: " + e.getMessage(), e);
         }
     }
 

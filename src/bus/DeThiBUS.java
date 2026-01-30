@@ -31,8 +31,7 @@ public class DeThiBUS {
                 danhSachDeThi = new ArrayList<>(deThiDAO.getByGiangVien(maGV));
                 lastMaGV = maGV;
             } catch (SQLException e) {
-                e.printStackTrace();
-                return new ArrayList<>();
+                throw new BusinessException("Lỗi lấy danh sách đề thi theo giảng viên: " + e.getMessage(), e);
             }
         }
         return danhSachDeThi;
@@ -45,8 +44,7 @@ public class DeThiBUS {
         try {
             return deThiDAO.getAll();
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy tất cả đề thi: " + e.getMessage(), e);
         }
     }
 
@@ -57,8 +55,7 @@ public class DeThiBUS {
         try {
             return deThiDAO.getByKyThi(maKyThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy đề thi theo kỳ thi: " + e.getMessage(), e);
         }
     }
 
@@ -69,8 +66,7 @@ public class DeThiBUS {
         try {
             return deThiDAO.getByKyThiAndKhoa(maKyThi, maKhoa);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy đề thi theo kỳ thi và khoa: " + e.getMessage(), e);
         }
     }
 
@@ -81,8 +77,7 @@ public class DeThiBUS {
         try {
             return deThiDAO.getById(maDeThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new BusinessException("Lỗi lấy đề thi theo mã: " + e.getMessage(), e);
         }
     }
 
@@ -97,10 +92,10 @@ public class DeThiBUS {
                 }
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi thêm đề thi mới: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -120,10 +115,10 @@ public class DeThiBUS {
                 }
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi cập nhật đề thi: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -137,10 +132,10 @@ public class DeThiBUS {
                 }
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi xóa đề thi: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -155,8 +150,7 @@ public class DeThiBUS {
             }
             return false;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi cập nhật số câu hỏi: " + e.getMessage(), e);
         }
     }
 

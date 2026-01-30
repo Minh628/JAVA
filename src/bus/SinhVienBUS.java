@@ -29,8 +29,7 @@ public class SinhVienBUS {
             try {
                 danhSachSinhVien = new ArrayList<>(sinhVienDAO.getAll());
             } catch (SQLException e) {
-                e.printStackTrace();
-                return new ArrayList<>();
+                throw new BusinessException("Lỗi lấy danh sách sinh viên: " + e.getMessage(), e);
             }
         }
         return danhSachSinhVien;
@@ -59,8 +58,7 @@ public class SinhVienBUS {
         try {
             return sinhVienDAO.getById(maSV);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new BusinessException("Lỗi lấy sinh viên theo mã: " + e.getMessage(), e);
         }
     }
 
@@ -83,10 +81,10 @@ public class SinhVienBUS {
                 danhSachSinhVien = new ArrayList<>(sinhVienDAO.getAll());
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi thêm sinh viên mới: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -106,10 +104,10 @@ public class SinhVienBUS {
                 }
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi cập nhật sinh viên: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -130,10 +128,10 @@ public class SinhVienBUS {
                 }
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi xóa sinh viên: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -143,8 +141,7 @@ public class SinhVienBUS {
         try {
             return sinhVienDAO.updatePassword(maSV, matKhauMoi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi reset mật khẩu sinh viên: " + e.getMessage(), e);
         }
     }
 
@@ -159,8 +156,7 @@ public class SinhVienBUS {
             }
             return sinhVienDAO.updatePassword(maSV, matKhauMoi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi đổi mật khẩu sinh viên: " + e.getMessage(), e);
         }
     }
 
@@ -171,8 +167,7 @@ public class SinhVienBUS {
         try {
             return sinhVienDAO.search(keyword);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi tìm kiếm sinh viên: " + e.getMessage(), e);
         }
     }
 

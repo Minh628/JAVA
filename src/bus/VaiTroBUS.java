@@ -32,8 +32,7 @@ public class VaiTroBUS {
             try {
                 danhSachVaiTro = new ArrayList<>(vaiTroDAO.getAll());
             } catch (SQLException e) {
-                e.printStackTrace();
-                return new ArrayList<>();
+                throw new BusinessException("Lỗi lấy danh sách vai trò: " + e.getMessage(), e);
             }
         }
         return danhSachVaiTro;
@@ -46,8 +45,7 @@ public class VaiTroBUS {
         try {
             return vaiTroDAO.getById(maVaiTro);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new BusinessException("Lỗi lấy vai trò theo mã: " + e.getMessage(), e);
         }
     }
 
