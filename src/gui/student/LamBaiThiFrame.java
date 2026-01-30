@@ -6,8 +6,7 @@ package gui.student;
 
 import bus.BaiThiBUS;
 import bus.CauHoiBUS;
-import bus.ChiTietBaiThiBUS;
-import bus.ChiTietDeThiBUS;
+import bus.DeThiBUS;
 import config.Constants;
 import dto.*;
 import gui.components.CustomButton;
@@ -18,8 +17,6 @@ import java.util.List;
 import javax.swing.*;
 
 public class LamBaiThiFrame extends JFrame {
-    private int maSV;
-    private int maDeThi;
     private int maBaiThi;
     private List<CauHoiDTO> danhSachCauHoi;
     private List<String> dapAnChon;
@@ -39,25 +36,22 @@ public class LamBaiThiFrame extends JFrame {
     
     private Timer timer;
     private BaiThiBUS baiThiBUS;
-    private ChiTietDeThiBUS chiTietDeThiBUS;
+    private DeThiBUS deThiBUS;
     private CauHoiBUS cauHoiBUS;
-    private ChiTietBaiThiBUS chiTietBaiThiBUS;
     private StudentDashboard parentDashboard;
 
     // Constructor đơn giản - tự động load câu hỏi
     public LamBaiThiFrame(StudentDashboard parent, int maBaiThi, int maDeThi, int thoiGianPhut) {
         this.parentDashboard = parent;
         this.maBaiThi = maBaiThi;
-        this.maDeThi = maDeThi;
         this.thoiGianConLai = thoiGianPhut * 60;
         this.baiThiBUS = new BaiThiBUS();
-        this.chiTietDeThiBUS = new ChiTietDeThiBUS();
+        this.deThiBUS = new DeThiBUS();
         this.cauHoiBUS = new CauHoiBUS();
-        this.chiTietBaiThiBUS = new ChiTietBaiThiBUS();
         
         // GUI tự load câu hỏi: Lấy ID từ ChiTietDeThi -> Lấy nội dung từ CauHoi
         this.danhSachCauHoi = new ArrayList<>();
-        List<Integer> listMaCauHoi = chiTietDeThiBUS.getMaCauHoiByDeThi(maDeThi);
+        List<Integer> listMaCauHoi = deThiBUS.getMaCauHoiByDeThi(maDeThi);
         for (int maCH : listMaCauHoi) {
             CauHoiDTO ch = cauHoiBUS.getById(maCH);
             if (ch != null) this.danhSachCauHoi.add(ch);
@@ -82,13 +76,10 @@ public class LamBaiThiFrame extends JFrame {
     public LamBaiThiFrame(StudentDashboard parent, int maSV, int maDeThi, 
                           int maBaiThi, List<CauHoiDTO> danhSachCauHoi, int thoiGianPhut) {
         this.parentDashboard = parent;
-        this.maSV = maSV;
-        this.maDeThi = maDeThi;
         this.maBaiThi = maBaiThi;
         this.danhSachCauHoi = danhSachCauHoi;
         this.thoiGianConLai = thoiGianPhut * 60;
         this.baiThiBUS = new BaiThiBUS();
-        this.chiTietBaiThiBUS = new ChiTietBaiThiBUS();
         
         // Khởi tạo danh sách đáp án
         this.dapAnChon = new ArrayList<>();
@@ -344,11 +335,11 @@ public class LamBaiThiFrame extends JFrame {
             chiTiet.add(ct);
         }
         
-        // Lưu chi tiết bài thi - gọi ChiTietBaiThiBUS
-        chiTietBaiThiBUS.themBatch(chiTiet);
+        // Lưu chi tiết bài thi - gọi BaiThiBUS
+        baiThiBUS.themChiTietBatch(chiTiet);
         
-        // Tính điểm - gọi ChiTietBaiThiBUS
-        float[] ketQua = chiTietBaiThiBUS.tinhDiem(maBaiThi);
+        // Tính điểm - gọi BaiThiBUS
+        float[] ketQua = baiThiBUS.tinhDiem(maBaiThi);
         int soCauDung = (int) ketQua[0];
         int soCauSai = (int) ketQua[1];
         float diemSo = ketQua[2];

@@ -51,26 +51,6 @@ public class GiangVienDAO {
     }
 
     /**
-     * Lấy giảng viên theo khoa
-     */
-    public List<GiangVienDTO> getByKhoa(int maKhoa) throws SQLException {
-        List<GiangVienDTO> danhSachGV = new ArrayList<>();
-        String sql = "SELECT * FROM GiangVien WHERE ma_khoa = ? ORDER BY ho, ten";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, maKhoa);
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                danhSachGV.add(mapResultSetToDTO(rs));
-            }
-        }
-        return danhSachGV;
-    }
-
-    /**
      * Lấy giảng viên theo mã
      */
     public GiangVienDTO getById(int maGV) throws SQLException {
@@ -80,25 +60,6 @@ public class GiangVienDAO {
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, maGV);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return mapResultSetToDTO(rs);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Lấy giảng viên theo tên đăng nhập
-     */
-    public GiangVienDTO getByTenDangNhap(String tenDangNhap) throws SQLException {
-        String sql = "SELECT * FROM GiangVien WHERE ten_dang_nhap = ?";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, tenDangNhap);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -234,23 +195,6 @@ public class GiangVienDAO {
             }
         }
         return danhSachGV;
-    }
-
-    /**
-     * Lấy mã giảng viên tiếp theo (mã duy nhất)
-     */
-    public int getNextMaGV() throws SQLException {
-        String sql = "SELECT COALESCE(MAX(ma_gv), 0) + 1 AS next_ma FROM GiangVien";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-
-            if (rs.next()) {
-                return rs.getInt("next_ma");
-            }
-        }
-        return 1;
     }
 
     /**

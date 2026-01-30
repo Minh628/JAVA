@@ -332,20 +332,14 @@ public class QuanLyKhoaPanel extends JPanel {
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Bạn có chắc muốn xóa khoa này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            // Kiểm tra có ngành thuộc khoa không
-            if (!khoaBUS.coTheXoaKhoa(selectedMaKhoa)) {
-                JOptionPane.showMessageDialog(this,
-                        "Không thể xóa khoa!\nKhoa này đang có ngành học thuộc về. Vui lòng xóa các ngành trước.",
-                        "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            
             if (khoaBUS.xoaKhoa(selectedMaKhoa)) {
                 JOptionPane.showMessageDialog(this, "Xóa khoa thành công!");
                 loadData();
                 lamMoi();
             } else {
-                JOptionPane.showMessageDialog(this, "Xóa khoa thất bại!");
+                JOptionPane.showMessageDialog(this,
+                        "Không thể xóa khoa!\nKhoa này đang có ngành học thuộc về hoặc có lỗi xảy ra.",
+                        "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             }
         }
     }

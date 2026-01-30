@@ -1,11 +1,14 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * BUS: DeThiBUS - Xử lý logic nghiệp vụ Đề thi
- * CHỈ gọi DeThiDAO - tuân thủ nguyên tắc 1 BUS : 1 DAO
+ * Gọi DeThiDAO, ChiTietDeThiDAO và BaiThiDAO để quản lý đề thi, chi tiết đề thi và ràng buộc bài thi
  */
 package bus;
 
+import dao.BaiThiDAO;
+import dao.ChiTietDeThiDAO;
 import dao.DeThiDAO;
+import dto.ChiTietDeThiDTO;
 import dto.DeThiDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,6 +16,8 @@ import java.util.List;
 
 public class DeThiBUS {
     private DeThiDAO deThiDAO;
+    private ChiTietDeThiDAO chiTietDeThiDAO;
+    private BaiThiDAO baiThiDAO;
 
     // Cache theo giảng viên
     private static ArrayList<DeThiDTO> danhSachDeThi = null;
@@ -20,6 +25,8 @@ public class DeThiBUS {
 
     public DeThiBUS() {
         this.deThiDAO = new DeThiDAO();
+        this.chiTietDeThiDAO = new ChiTietDeThiDAO();
+        this.baiThiDAO = new BaiThiDAO();
     }
 
     /**
@@ -131,6 +138,10 @@ public class DeThiBUS {
      */
     public boolean xoaDeThi(int maDeThi) {
         try {
+            // Không cho xóa nếu đã có bài thi sử dụng đề thi này
+            if (baiThiDAO.countByDeThi(maDeThi) > 0) {
+                return false;
+            }
             if (deThiDAO.delete(maDeThi)) {
                 if (danhSachDeThi != null) {
                     danhSachDeThi.removeIf(dt -> dt.getMaDeThi() == maDeThi);
@@ -141,6 +152,18 @@ public class DeThiBUS {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * Kiểm tra có thể xóa đề thi không
+     */
+    public boolean coTheXoaDeThi(int maDeThi) {
+        try {
+            return baiThiDAO.countByDeThi(maDeThi) == 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -164,4 +187,125 @@ public class DeThiBUS {
         danhSachDeThi = null;
         lastMaGV = -1;
     }
+
+    // ============== Quản lý Chi tiết đề thi ==============
+
+    /**
+     * Lấy danh sách chi tiết đề thi theo mã đề thi
+     */
+    public List<ChiTietDeThiDTO> getChiTietByDeThi(int maDeThi) {
+        try {
+            return chiTietDeThiDAO.getByDeThi(maDeThi);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Lấy danh sách mã câu hỏi trong đề thi
+     */
+    public List<Integer> getMaCauHoiByDeThi(int maDeThi) {
+        try {
+            return chiTietDeThiDAO.getMaCauHoiByDeThi(maDeThi);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Thêm một câu hỏi vào đề thi
+     */
+    public boolean themCauHoiVaoDeThi(ChiTietDeThiDTO chiTiet) {
+        try {
+            return chiTietDeThiDAO.insert(chiTiet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Thêm nhiều câu hỏi vào đề thi
+     */
+    public boolean themNhieuCauHoiVaoDeThi(int maDeThi, List<Integer> danhSachMaCauHoi) {
+        try {
+            List<ChiTietDeThiDTO> chiTietList = new ArrayList<>();
+            int thuTu = chiTietDeThiDAO.getMaxThuTu(maDeThi) + 1;
+            for (int maCauHoi : danhSachMaCauHoi) {
+                ChiTietDeThiDTO ct = new ChiTietDeThiDTO();
+                ct.setMaDeThi(maDeThi);
+                ct.setMaCauHoi(maCauHoi);
+                ct.setThuTu(thuTu++);
+                chiTietList.add(ct);
+            }
+            return chiTietDeThiDAO.insertBatch(chiTietList);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Thêm batch chi tiết đề thi
+     */
+    public boolean themChiTietBatch(List<ChiTietDeThiDTO> danhSach) {
+        try {
+            return chiTietDeThiDAO.insertBatch(danhSach);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Xóa một câu hỏi khỏi đề thi
+     */
+    public boolean xoaCauHoiKhoiDeThi(int maDeThi, int maCauHoi) {
+        try {
+            return chiTietDeThiDAO.delete(maDeThi, maCauHoi);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Xóa tất cả câu hỏi trong đề thi
+     */
+    public boolean xoaTatCaCauHoiTrongDeThi(int maDeThi) {
+        try {
+            return chiTietDeThiDAO.deleteByDeThi(maDeThi);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Đếm số câu hỏi trong đề thi
+     */
+    public int demCauHoiTrongDeThi(int maDeThi) {
+        try {
+            return chiTietDeThiDAO.countByDeThi(maDeThi);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    /**
+     * Lấy thứ tự lớn nhất trong đề thi
+     */
+    public int getMaxThuTuChiTiet(int maDeThi) {
+        try {
+            return chiTietDeThiDAO.getMaxThuTu(maDeThi);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+
 }

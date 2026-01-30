@@ -31,7 +31,7 @@ public class AdminDashboard extends BaseDashboardFrame {
         this.kyThiBUS = new KyThiBUS();
         this.giangVienBUS = new GiangVienBUS();
         this.sinhVienBUS = new SinhVienBUS();
-        initUI();
+        initUI();     
     }
     
     @Override

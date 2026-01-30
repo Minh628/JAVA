@@ -150,20 +150,22 @@ public class NganhDAO {
     }
 
     /**
-     * Lấy mã ngành tiếp theo (mã duy nhất)
+     * Đếm số ngành thuộc khoa
      */
-    public int getNextMaNganh() throws SQLException {
-        String sql = "SELECT COALESCE(MAX(ma_nganh), 0) + 1 AS next_ma FROM Nganh";
+    public int countByKhoa(int maKhoa) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Nganh WHERE ma_khoa = ?";
 
         try (Connection conn = DatabaseHelper.getConnection();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, maKhoa);
+            ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                return rs.getInt("next_ma");
+                return rs.getInt(1);
             }
         }
-        return 1;
+        return 0;
     }
 
     /**

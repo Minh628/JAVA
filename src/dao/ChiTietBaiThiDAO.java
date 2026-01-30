@@ -138,4 +138,23 @@ public class ChiTietBaiThiDAO {
             return pstmt.executeUpdate() >= 0;
         }
     }
+
+    /**
+     * Đếm số lần câu hỏi xuất hiện trong các bài thi
+     */
+    public int countByCauHoi(int maCauHoi) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM ChiTietBaiThi WHERE ma_cau_hoi = ?";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, maCauHoi);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
 }

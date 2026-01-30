@@ -95,10 +95,10 @@ public class LoginFrame extends JFrame {
         
         // Features
         String[] features = {
-            "✓  Quản lý đề thi thông minh",
-            "✓  Thi trực tuyến an toàn",
-            "✓  Chấm điểm tự động",
-            "✓  Thống kê kết quả chi tiết"
+            "  Quản lý đề thi thông minh",
+            "  Thi trực tuyến an toàn",
+            "  Chấm điểm tự động",
+            "  Thống kê kết quả chi tiết"
         };
         
         for (String feature : features) {

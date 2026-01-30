@@ -9,6 +9,7 @@
 package gui.teacher;
 
 import bus.CauHoiBUS;
+import bus.DeThiBUS;
 import bus.HocPhanBUS;
 import config.Constants;
 import dto.CauHoiDTO;
@@ -26,6 +27,7 @@ public class SoanCauHoiPanel extends JPanel {
     private GiangVienDTO giangVien;
     private CauHoiBUS cauHoiBUS;
     private HocPhanBUS hocPhanBUS;
+    private DeThiBUS deThiBUS;
 
     private CustomTable tblCauHoi;
     private DefaultTableModel modelCauHoi;
@@ -53,6 +55,7 @@ public class SoanCauHoiPanel extends JPanel {
         this.giangVien = giangVien;
         this.cauHoiBUS = new CauHoiBUS();
         this.hocPhanBUS = new HocPhanBUS();
+        this.deThiBUS = new DeThiBUS();
         initComponents();
         loadData();
     }
@@ -436,16 +439,19 @@ public class SoanCauHoiPanel extends JPanel {
             return;
         }
 
+        int maCauHoi = Integer.parseInt(txtMaCauHoi.getText());
+        
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Bạn có chắc muốn xóa câu hỏi này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            int maCauHoi = Integer.parseInt(txtMaCauHoi.getText());
             if (cauHoiBUS.xoaCauHoi(maCauHoi)) {
                 JOptionPane.showMessageDialog(this, "Xóa câu hỏi thành công!");
                 loadCauHoi();
                 lamMoi();
             } else {
-                JOptionPane.showMessageDialog(this, "Xóa câu hỏi thất bại!");
+                JOptionPane.showMessageDialog(this,
+                        "Không thể xóa câu hỏi này!\nCâu hỏi đang được sử dụng trong đề thi hoặc đã được thi.",
+                        "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             }
         }
     }

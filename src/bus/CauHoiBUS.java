@@ -6,6 +6,8 @@
 package bus;
 
 import dao.CauHoiDAO;
+import dao.ChiTietBaiThiDAO;
+import dao.ChiTietDeThiDAO;
 import dto.CauHoiDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,6 +15,8 @@ import java.util.List;
 
 public class CauHoiBUS {
     private CauHoiDAO cauHoiDAO;
+    private ChiTietDeThiDAO chiTietDeThiDAO;
+    private ChiTietBaiThiDAO chiTietBaiThiDAO;
 
     // Cache theo giảng viên
     private static ArrayList<CauHoiDTO> danhSachCauHoi = null;
@@ -20,6 +24,8 @@ public class CauHoiBUS {
 
     public CauHoiBUS() {
         this.cauHoiDAO = new CauHoiDAO();
+        this.chiTietDeThiDAO = new ChiTietDeThiDAO();
+        this.chiTietBaiThiDAO = new ChiTietBaiThiDAO();
     }
 
     /**
@@ -149,6 +155,14 @@ public class CauHoiBUS {
      */
     public boolean xoaCauHoi(int maCauHoi) {
         try {
+            // Không cho xóa nếu câu hỏi đã nằm trong đề thi
+            if (chiTietDeThiDAO.isCauHoiInAnyDeThi(maCauHoi)) {
+                return false;
+            }
+            // Không cho xóa nếu câu hỏi đã xuất hiện trong bài thi
+            if (chiTietBaiThiDAO.countByCauHoi(maCauHoi) > 0) {
+                return false;
+            }
             if (cauHoiDAO.delete(maCauHoi)) {
                 if (danhSachCauHoi != null) {
                     danhSachCauHoi.removeIf(ch -> ch.getMaCauHoi() == maCauHoi);
@@ -156,6 +170,19 @@ public class CauHoiBUS {
                 return true;
             }
             return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Kiểm tra có thể xóa câu hỏi không
+     */
+    public boolean coTheXoaCauHoi(int maCauHoi) {
+        try {
+            return !chiTietDeThiDAO.isCauHoiInAnyDeThi(maCauHoi)
+                    && chiTietBaiThiDAO.countByCauHoi(maCauHoi) == 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

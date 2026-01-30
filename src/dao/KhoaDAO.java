@@ -109,25 +109,6 @@ public class KhoaDAO {
     }
 
     /**
-     * Đếm số ngành thuộc khoa
-     */
-    public int countNganhByKhoa(int maKhoa) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Nganh WHERE ma_khoa = ?";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, maKhoa);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        }
-        return 0;
-    }
-
-    /**
      * Tìm kiếm khoa theo từ khóa
      * Tìm trong: mã khoa, tên khoa
      */
@@ -153,20 +134,4 @@ public class KhoaDAO {
         return danhSachKhoa;
     }
 
-    /**
-     * Lấy mã khoa tiếp theo (mã duy nhất)
-     */
-    public int getNextMaKhoa() throws SQLException {
-        String sql = "SELECT COALESCE(MAX(ma_khoa), 0) + 1 AS next_ma FROM Khoa";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-
-            if (rs.next()) {
-                return rs.getInt("next_ma");
-            }
-        }
-        return 1;
-    }
 }

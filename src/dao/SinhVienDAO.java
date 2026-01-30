@@ -50,45 +50,6 @@ public class SinhVienDAO {
     }
 
     /**
-     * Lấy sinh viên theo tên đăng nhập
-     */
-    public SinhVienDTO getByTenDangNhap(String tenDangNhap) throws SQLException {
-        String sql = "SELECT * FROM SinhVien WHERE ten_dang_nhap = ?";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, tenDangNhap);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return mapResultSetToDTO(rs);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Lấy sinh viên theo ngành
-     */
-    public List<SinhVienDTO> getByNganh(int maNganh) throws SQLException {
-        List<SinhVienDTO> danhSachSV = new ArrayList<>();
-        String sql = "SELECT * FROM SinhVien WHERE ma_nganh = ? ORDER BY ho, ten";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, maNganh);
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                danhSachSV.add(mapResultSetToDTO(rs));
-            }
-        }
-        return danhSachSV;
-    }
-
-    /**
      * Thêm sinh viên mới
      */
     public boolean insert(SinhVienDTO sinhVien) throws SQLException {
@@ -214,23 +175,6 @@ public class SinhVienDAO {
             }
         }
         return danhSachSV;
-    }
-
-    /**
-     * Lấy mã sinh viên tiếp theo (mã duy nhất)
-     */
-    public int getNextMaSV() throws SQLException {
-        String sql = "SELECT COALESCE(MAX(ma_sv), 0) + 1 AS next_ma FROM SinhVien";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-
-            if (rs.next()) {
-                return rs.getInt("next_ma");
-            }
-        }
-        return 1;
     }
 
     /**

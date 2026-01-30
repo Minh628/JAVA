@@ -141,20 +141,4 @@ public class HocPhanDAO {
         return danhSachHP;
     }
 
-    /**
-     * Lấy mã học phần tiếp theo (mã duy nhất)
-     */
-    public int getNextMaHocPhan() throws SQLException {
-        String sql = "SELECT COALESCE(MAX(ma_hoc_phan), 0) + 1 AS next_ma FROM HocPhan";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-
-            if (rs.next()) {
-                return rs.getInt("next_ma");
-            }
-        }
-        return 1;
-    }
 }

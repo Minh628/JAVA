@@ -5,6 +5,7 @@
 package bus;
 
 import dao.KhoaDAO;
+import dao.NganhDAO;
 import dto.KhoaDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,12 +13,14 @@ import java.util.List;
 
 public class KhoaBUS {
     private KhoaDAO khoaDAO;
+    private NganhDAO nganhDAO;
     
     // Cache
     private static ArrayList<KhoaDTO> danhSachKhoa = null;
 
     public KhoaBUS() {
         this.khoaDAO = new KhoaDAO();
+        this.nganhDAO = new NganhDAO();
     }
 
     /**
@@ -90,7 +93,7 @@ public class KhoaBUS {
     public boolean xoaKhoa(int maKhoa) {
         try {
             // Kiểm tra còn ngành thuộc khoa không
-            if (khoaDAO.countNganhByKhoa(maKhoa) > 0) {
+            if (nganhDAO.countByKhoa(maKhoa) > 0) {
                 return false; // Không xóa được vì còn ngành
             }
             
@@ -109,7 +112,7 @@ public class KhoaBUS {
      */
     public boolean coTheXoaKhoa(int maKhoa) {
         try {
-            return khoaDAO.countNganhByKhoa(maKhoa) == 0;
+            return nganhDAO.countByKhoa(maKhoa) == 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

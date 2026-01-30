@@ -178,45 +178,6 @@ public class DeThiDAO {
     }
 
     /**
-     * Đếm số bài thi của đề thi (kiểm tra trước khi xóa)
-     */
-    public int countBaiThiByDeThi(int maDeThi) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM BaiThi WHERE ma_de_thi = ?";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, maDeThi);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * Lấy danh sách câu hỏi trong đề thi
-     */
-    public List<Integer> getCauHoiInDeThi(int maDeThi) throws SQLException {
-        List<Integer> danhSachMaCauHoi = new ArrayList<>();
-        String sql = "SELECT ma_cau_hoi FROM ChiTietDeThi WHERE ma_de_thi = ?";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, maDeThi);
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                danhSachMaCauHoi.add(rs.getInt("ma_cau_hoi"));
-            }
-        }
-        return danhSachMaCauHoi;
-    }
-
-    /**
      * Thêm câu hỏi vào đề thi
      */
     public boolean themCauHoiVaoDeThi(int maDeThi, int maCauHoi) throws SQLException {
@@ -270,21 +231,6 @@ public class DeThiDAO {
 
             pstmt.setInt(1, maDeThi);
             pstmt.setInt(2, maCauHoi);
-            return pstmt.executeUpdate() > 0;
-        }
-    }
-
-    /**
-     * Cập nhật số câu hỏi trong đề thi
-     */
-    public boolean updateSoCauHoi(int maDeThi, int soCauHoi) throws SQLException {
-        String sql = "UPDATE DeThi SET so_cau_hoi = ? WHERE ma_de_thi = ?";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, soCauHoi);
-            pstmt.setInt(2, maDeThi);
             return pstmt.executeUpdate() > 0;
         }
     }

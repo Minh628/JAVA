@@ -148,23 +148,6 @@ public class KyThiDAO {
     }
 
     /**
-     * Lấy mã kỳ thi tiếp theo (mã duy nhất)
-     */
-    public int getNextMaKyThi() throws SQLException {
-        String sql = "SELECT COALESCE(MAX(ma_ky_thi), 0) + 1 AS next_ma FROM KyThi";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-
-            if (rs.next()) {
-                return rs.getInt("next_ma");
-            }
-        }
-        return 1;
-    }
-
-    /**
      * Map ResultSet sang DTO
      */
     private KyThiDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
