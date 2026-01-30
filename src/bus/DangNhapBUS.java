@@ -36,7 +36,7 @@ public class DangNhapBUS {
                 return sinhVien;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi đăng nhập: " + e.getMessage(), e);
         }
         return null;
     }
@@ -108,7 +108,7 @@ public class DangNhapBUS {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi đổi mật khẩu: " + e.getMessage(), e);
         }
         return false;
     }

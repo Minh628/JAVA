@@ -1,11 +1,12 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * BUS: ChiTietBaiThiBUS - Xử lý logic nghiệp vụ Chi tiết bài thi
- * CHỈ gọi ChiTietBaiThiDAO - tuân thủ nguyên tắc 1 BUS : 1 DAO
+ * Tuân thủ nguyên tắc 3 tầng: BUS chỉ gọi BUS khác hoặc DAO tương ứng
+ * - ChiTietBaiThiDAO: truy cập dữ liệu chi tiết bài thi
+ * - CauHoiBUS: lấy thông tin câu hỏi (thay vì gọi CauHoiDAO trực tiếp)
  */
 package bus;
 
-import dao.CauHoiDAO;
 import dao.ChiTietBaiThiDAO;
 import dto.CauHoiDKDTO;
 import dto.CauHoiDTO;
@@ -17,11 +18,11 @@ import java.util.List;
 
 public class ChiTietBaiThiBUS {
     private ChiTietBaiThiDAO chiTietBaiThiDAO;
-    private CauHoiDAO cauHoiDAO;
+    private CauHoiBUS cauHoiBUS;
 
     public ChiTietBaiThiBUS() {
         this.chiTietBaiThiDAO = new ChiTietBaiThiDAO();
-        this.cauHoiDAO = new CauHoiDAO();
+        this.cauHoiBUS = new CauHoiBUS();
     }
 
     /**
@@ -31,8 +32,7 @@ public class ChiTietBaiThiBUS {
         try {
             return chiTietBaiThiDAO.getByBaiThi(maBaiThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy chi tiết bài thi: " + e.getMessage(), e);
         }
     }
 
@@ -43,8 +43,7 @@ public class ChiTietBaiThiBUS {
         try {
             return chiTietBaiThiDAO.insert(chiTiet);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi thêm chi tiết bài thi: " + e.getMessage(), e);
         }
     }
 
@@ -55,8 +54,7 @@ public class ChiTietBaiThiBUS {
         try {
             return chiTietBaiThiDAO.insertBatch(danhSach);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi thêm batch chi tiết bài thi: " + e.getMessage(), e);
         }
     }
 
@@ -67,8 +65,7 @@ public class ChiTietBaiThiBUS {
         try {
             return chiTietBaiThiDAO.updateDapAn(maBaiThi, maCauHoi, dapAnSV);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi cập nhật đáp án: " + e.getMessage(), e);
         }
     }
 
@@ -79,8 +76,7 @@ public class ChiTietBaiThiBUS {
         try {
             return chiTietBaiThiDAO.deleteByBaiThi(maBaiThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi xóa chi tiết bài thi: " + e.getMessage(), e);
         }
     }
 
@@ -94,15 +90,11 @@ public class ChiTietBaiThiBUS {
         int soCauSai = 0;
 
         for (ChiTietBaiThiDTO ct : chiTiet) {
-            try {
-                CauHoiDTO cauHoi = cauHoiDAO.getById(ct.getMaCauHoi());
-                if (cauHoi != null && kiemTraDapAn(cauHoi, ct.getDapAnSV())) {
-                    soCauDung++;
-                } else {
-                    soCauSai++;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            // Sử dụng CauHoiBUS thay vì CauHoiDAO để tuân thủ kiến trúc 3 tầng
+            CauHoiDTO cauHoi = cauHoiBUS.getById(ct.getMaCauHoi());
+            if (cauHoi != null && kiemTraDapAn(cauHoi, ct.getDapAnSV())) {
+                soCauDung++;
+            } else {
                 soCauSai++;
             }
         }

@@ -31,8 +31,7 @@ public class CauHoiBUS {
                 danhSachCauHoi = new ArrayList<>(cauHoiDAO.getByGiangVien(maGV));
                 lastMaGV = maGV;
             } catch (SQLException e) {
-                e.printStackTrace();
-                return new ArrayList<>();
+                throw new BusinessException("Lỗi lấy danh sách câu hỏi: " + e.getMessage(), e);
             }
         }
         return danhSachCauHoi;
@@ -45,8 +44,7 @@ public class CauHoiBUS {
         try {
             return cauHoiDAO.getAll();
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy tất cả câu hỏi: " + e.getMessage(), e);
         }
     }
 
@@ -57,8 +55,7 @@ public class CauHoiBUS {
         try {
             return cauHoiDAO.getByMon(maMon);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy câu hỏi theo môn: " + e.getMessage(), e);
         }
     }
 
@@ -69,8 +66,7 @@ public class CauHoiBUS {
         try {
             return cauHoiDAO.getByMucDo(maMon, mucDo);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy câu hỏi theo mức độ: " + e.getMessage(), e);
         }
     }
 
@@ -81,8 +77,7 @@ public class CauHoiBUS {
         try {
             return cauHoiDAO.getById(maCauHoi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new BusinessException("Lỗi lấy câu hỏi: " + e.getMessage(), e);
         }
     }
 
@@ -114,8 +109,7 @@ public class CauHoiBUS {
             }
             return false;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi thêm câu hỏi: " + e.getMessage(), e);
         }
     }
 
@@ -139,8 +133,7 @@ public class CauHoiBUS {
             }
             return false;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi cập nhật câu hỏi: " + e.getMessage(), e);
         }
     }
 
@@ -157,8 +150,7 @@ public class CauHoiBUS {
             }
             return false;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi xóa câu hỏi: " + e.getMessage(), e);
         }
     }
 
