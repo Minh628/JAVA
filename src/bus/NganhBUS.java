@@ -28,8 +28,7 @@ public class NganhBUS {
             try {
                 danhSachNganh = new ArrayList<>(nganhDAO.getAll());
             } catch (SQLException e) {
-                e.printStackTrace();
-                return new ArrayList<>();
+                throw new BusinessException("Lỗi lấy danh sách ngành: " + e.getMessage(), e);
             }
         }
         return danhSachNganh;
@@ -71,10 +70,10 @@ public class NganhBUS {
                 danhSachNganh = new ArrayList<>(nganhDAO.getAll());
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi thêm ngành mới: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -92,10 +91,10 @@ public class NganhBUS {
                 }
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi cập nhật ngành: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -107,10 +106,10 @@ public class NganhBUS {
                 danhSachNganh.removeIf(n -> n.getMaNganh() == maNganh);
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi xóa ngành: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -120,8 +119,7 @@ public class NganhBUS {
         try {
             return nganhDAO.search(keyword);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi tìm kiếm ngành: " + e.getMessage(), e);
         }
     }
 

@@ -37,8 +37,7 @@ public class GiangVienBUS {
             try {
                 danhSachGiangVien = new ArrayList<>(giangVienDAO.getAllGiangVien());
             } catch (SQLException e) {
-                e.printStackTrace();
-                return new ArrayList<>();
+                throw new BusinessException("Lỗi lấy danh sách giảng viên: " + e.getMessage(), e);
             }
         }
         return danhSachGiangVien;
@@ -51,8 +50,7 @@ public class GiangVienBUS {
         try {
             return giangVienDAO.getAll();
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy tất cả giảng viên: " + e.getMessage(), e);
         }
     }
 
@@ -79,8 +77,7 @@ public class GiangVienBUS {
         try {
             return giangVienDAO.getById(maGV);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new BusinessException("Lỗi lấy giảng viên theo mã: " + e.getMessage(), e);
         }
     }
 
@@ -97,10 +94,10 @@ public class GiangVienBUS {
                 danhSachGiangVien = new ArrayList<>(giangVienDAO.getAllGiangVien());
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi thêm giảng viên mới: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -120,10 +117,10 @@ public class GiangVienBUS {
                 }
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi cập nhật giảng viên: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -137,10 +134,10 @@ public class GiangVienBUS {
                 }
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi xóa giảng viên: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -150,8 +147,7 @@ public class GiangVienBUS {
         try {
             return giangVienDAO.updatePassword(maGV, matKhauMoi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi reset mật khẩu giảng viên: " + e.getMessage(), e);
         }
     }
 
@@ -172,8 +168,7 @@ public class GiangVienBUS {
             // Cập nhật mật khẩu mới
             return giangVienDAO.updatePassword(maGV, PasswordEncoder.encode(matKhauMoi));
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi đổi mật khẩu giảng viên: " + e.getMessage(), e);
         }
     }
 
@@ -184,8 +179,7 @@ public class GiangVienBUS {
         try {
             return giangVienDAO.search(keyword);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi tìm kiếm giảng viên: " + e.getMessage(), e);
         }
     }
 

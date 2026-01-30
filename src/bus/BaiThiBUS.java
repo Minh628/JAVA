@@ -45,7 +45,7 @@ public class BaiThiBUS {
                 return baiThi.getMaBaiThi();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi bắt đầu làm bài: " + e.getMessage(), e);
         }
         return -1;
     }
@@ -57,8 +57,7 @@ public class BaiThiBUS {
         try {
             return baiThiDAO.updateKetQua(baiThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi cập nhật kết quả: " + e.getMessage(), e);
         }
     }
 
@@ -76,7 +75,7 @@ public class BaiThiBUS {
                 return baiThiDAO.updateKetQua(baiThi);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi cập nhật kết quả: " + e.getMessage(), e);
         }
         return false;
     }
@@ -88,8 +87,7 @@ public class BaiThiBUS {
         try {
             return baiThiDAO.getBySinhVien(maSV);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy lịch sử bài thi: " + e.getMessage(), e);
         }
     }
 
@@ -100,8 +98,7 @@ public class BaiThiBUS {
         try {
             return baiThiDAO.getByDeThi(maDeThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy bài thi theo đề: " + e.getMessage(), e);
         }
     }
 
@@ -112,8 +109,7 @@ public class BaiThiBUS {
         try {
             return baiThiDAO.getById(maBaiThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new BusinessException("Lỗi lấy bài thi: " + e.getMessage(), e);
         }
     }
 
@@ -124,8 +120,7 @@ public class BaiThiBUS {
         try {
             return baiThiDAO.checkDaThi(maDeThi, maSV);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return true; // Mặc định true để an toàn
+            throw new BusinessException("Lỗi kiểm tra đã thi: " + e.getMessage(), e);
         }
     }
 
@@ -136,8 +131,7 @@ public class BaiThiBUS {
         try {
             return baiThiDAO.countByDeThi(maDeThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
+            throw new BusinessException("Lỗi đếm bài thi: " + e.getMessage(), e);
         }
     }
 }

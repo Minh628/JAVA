@@ -28,8 +28,7 @@ public class KyThiBUS {
             try {
                 danhSachKyThi = new ArrayList<>(kyThiDAO.getAll());
             } catch (SQLException e) {
-                e.printStackTrace();
-                return new ArrayList<>();
+                throw new BusinessException("Lỗi lấy danh sách kỳ thi: " + e.getMessage(), e);
             }
         }
         return danhSachKyThi;
@@ -42,8 +41,7 @@ public class KyThiBUS {
         try {
             return kyThiDAO.getKyThiDangDienRa();
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy kỳ thi đang diễn ra: " + e.getMessage(), e);
         }
     }
 
@@ -54,8 +52,7 @@ public class KyThiBUS {
         try {
             return kyThiDAO.getById(maKyThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new BusinessException("Lỗi lấy kỳ thi theo mã: " + e.getMessage(), e);
         }
     }
 
@@ -68,10 +65,10 @@ public class KyThiBUS {
                 danhSachKyThi = new ArrayList<>(kyThiDAO.getAll());
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi thêm kỳ thi mới: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -89,10 +86,10 @@ public class KyThiBUS {
                 }
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi cập nhật kỳ thi: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -104,10 +101,10 @@ public class KyThiBUS {
                 danhSachKyThi.removeIf(kt -> kt.getMaKyThi() == maKyThi);
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi xóa kỳ thi: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -117,8 +114,7 @@ public class KyThiBUS {
         try {
             return kyThiDAO.search(keyword);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi tìm kiếm kỳ thi: " + e.getMessage(), e);
         }
     }
 

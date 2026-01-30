@@ -28,8 +28,7 @@ public class HocPhanBUS {
             try {
                 danhSachHocPhan = new ArrayList<>(hocPhanDAO.getAll());
             } catch (SQLException e) {
-                e.printStackTrace();
-                return new ArrayList<>();
+                throw new BusinessException("Lỗi lấy danh sách học phần: " + e.getMessage(), e);
             }
         }
         return danhSachHocPhan;
@@ -57,10 +56,10 @@ public class HocPhanBUS {
                 danhSachHocPhan = new ArrayList<>(hocPhanDAO.getAll());
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi thêm học phần mới: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -77,10 +76,10 @@ public class HocPhanBUS {
                 }
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi cập nhật học phần: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -92,10 +91,10 @@ public class HocPhanBUS {
                 danhSachHocPhan.removeIf(hp -> hp.getMaHocPhan() == maHocPhan);
                 return true;
             }
+            return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException("Lỗi xóa học phần: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -105,8 +104,7 @@ public class HocPhanBUS {
         try {
             return hocPhanDAO.search(keyword);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi tìm kiếm học phần: " + e.getMessage(), e);
         }
     }
 

@@ -25,8 +25,7 @@ public class ChiTietDeThiBUS {
         try {
             return chiTietDeThiDAO.getByDeThi(maDeThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy danh sách chi tiết đề thi theo mã đề thi: " + e.getMessage(), e);
         }
     }
 
@@ -37,8 +36,7 @@ public class ChiTietDeThiBUS {
         try {
             return chiTietDeThiDAO.getMaCauHoiByDeThi(maDeThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+            throw new BusinessException("Lỗi lấy danh sách mã câu hỏi theo mã đề thi: " + e.getMessage(), e);
         }
     }
 
@@ -49,8 +47,7 @@ public class ChiTietDeThiBUS {
         try {
             return chiTietDeThiDAO.insert(chiTiet);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi thêm câu hỏi vào đề thi: " + e.getMessage(), e);
         }
     }
 
@@ -70,8 +67,7 @@ public class ChiTietDeThiBUS {
             }
             return chiTietDeThiDAO.insertBatch(chiTietList);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi thêm nhiều câu hỏi vào đề thi: " + e.getMessage(), e);
         }
     }
 
@@ -82,8 +78,7 @@ public class ChiTietDeThiBUS {
         try {
             return chiTietDeThiDAO.insertBatch(danhSach);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi thêm batch chi tiết đề thi: " + e.getMessage(), e);
         }
     }
 
@@ -94,8 +89,7 @@ public class ChiTietDeThiBUS {
         try {
             return chiTietDeThiDAO.delete(maDeThi, maCauHoi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi xóa câu hỏi khỏi đề thi: " + e.getMessage(), e);
         }
     }
 
@@ -106,8 +100,7 @@ public class ChiTietDeThiBUS {
         try {
             return chiTietDeThiDAO.deleteByDeThi(maDeThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("Lỗi xóa tất cả câu hỏi trong đề thi: " + e.getMessage(), e);
         }
     }
 
@@ -118,8 +111,7 @@ public class ChiTietDeThiBUS {
         try {
             return chiTietDeThiDAO.countByDeThi(maDeThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
+            throw new BusinessException("Lỗi đếm số câu hỏi trong đề thi: " + e.getMessage(), e);
         }
     }
 
@@ -130,8 +122,7 @@ public class ChiTietDeThiBUS {
         try {
             return chiTietDeThiDAO.getMaxThuTu(maDeThi);
         } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
+            throw new BusinessException("Lỗi lấy thứ tự lớn nhất trong đề thi: " + e.getMessage(), e);
         }
     }
 }
