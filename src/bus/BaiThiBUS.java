@@ -249,20 +249,29 @@ public class BaiThiBUS {
         if (cauHoi instanceof CauHoiMCDTO) {
             CauHoiMCDTO mc = (CauHoiMCDTO) cauHoi;
             String dapAnDung = mc.getNoiDungDung();
-            // Lấy nội dung đáp án tương ứng với lựa chọn A/B/C/D
             String noiDungDapAnSV = null;
-            switch (dapAnSV.toUpperCase()) {
-                case "A": noiDungDapAnSV = mc.getNoiDungA(); break;
-                case "B": noiDungDapAnSV = mc.getNoiDungB(); break;
-                case "C": noiDungDapAnSV = mc.getNoiDungC(); break;
-                case "D": noiDungDapAnSV = mc.getNoiDungD(); break;
+            
+            // Nếu đáp án là ký hiệu A/B/C/D, chuyển đổi sang nội dung
+            String dapAnUpper = dapAnSV.trim().toUpperCase();
+            if (dapAnUpper.equals("A") || dapAnUpper.equals("B") || 
+                dapAnUpper.equals("C") || dapAnUpper.equals("D")) {
+                switch (dapAnUpper) {
+                    case "A": noiDungDapAnSV = mc.getNoiDungA(); break;
+                    case "B": noiDungDapAnSV = mc.getNoiDungB(); break;
+                    case "C": noiDungDapAnSV = mc.getNoiDungC(); break;
+                    case "D": noiDungDapAnSV = mc.getNoiDungD(); break;
+                }
+            } else {
+                // Nếu đáp án là nội dung trực tiếp, so sánh trực tiếp
+                noiDungDapAnSV = dapAnSV.trim();
             }
+            
             return noiDungDapAnSV != null && dapAnDung != null && 
                    noiDungDapAnSV.trim().equalsIgnoreCase(dapAnDung.trim());
         } else if (cauHoi instanceof CauHoiDKDTO) {
             CauHoiDKDTO dk = (CauHoiDKDTO) cauHoi;
-            String dapAnDung = dk.getNoiDungDung();
-            return dapAnDung != null && dapAnSV.trim().equalsIgnoreCase(dapAnDung.trim());
+            // Sử dụng phương thức kiemTraDapAn của CauHoiDKDTO
+            return dk.kiemTraDapAn(dapAnSV);
         }
         return false;
     }

@@ -145,7 +145,7 @@ public class LoginFrame extends JFrame {
         formContainer.add(lblVaiTro);
         formContainer.add(Box.createVerticalStrut(8));
         
-        cboVaiTro = new JComboBox<>(new String[]{"👨‍🎓  Sinh viên", "👨‍🏫  Giảng viên", "👔  Admin"});
+        cboVaiTro = new JComboBox<>(new String[]{"  Sinh viên", "  Giảng viên", "  Admin"});
         cboVaiTro.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         cboVaiTro.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         cboVaiTro.setPreferredSize(new Dimension(300, 50));
@@ -265,7 +265,7 @@ public class LoginFrame extends JFrame {
         field.setPreferredSize(new Dimension(300, 50));
         field.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+            BorderFactory.createEmptyBorder(11, 10, 18, 10)
         ));
         field.setAlignmentX(Component.LEFT_ALIGNMENT);
         
@@ -274,13 +274,13 @@ public class LoginFrame extends JFrame {
             public void focusGained(FocusEvent e) {
                 field.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(Constants.PRIMARY_COLOR, 2),
-                    BorderFactory.createEmptyBorder(9, 14, 9, 14)
+                    BorderFactory.createEmptyBorder(11, 10, 18, 10)
                 ));
             }
             public void focusLost(FocusEvent e) {
                 field.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
-                    BorderFactory.createEmptyBorder(10, 15, 10, 15)
+                    BorderFactory.createEmptyBorder(11, 10, 18, 10)
                 ));
             }
         });
@@ -307,7 +307,7 @@ public class LoginFrame extends JFrame {
         field.setPreferredSize(new Dimension(300, 50));
         field.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+            BorderFactory.createEmptyBorder(11, 10, 18, 10)
         ));
         field.setAlignmentX(Component.LEFT_ALIGNMENT);
         
@@ -316,13 +316,13 @@ public class LoginFrame extends JFrame {
             public void focusGained(FocusEvent e) {
                 field.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(Constants.PRIMARY_COLOR, 2),
-                    BorderFactory.createEmptyBorder(9, 14, 9, 14)
+                    BorderFactory.createEmptyBorder(11, 10, 18, 10)
                 ));
             }
             public void focusLost(FocusEvent e) {
                 field.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
-                    BorderFactory.createEmptyBorder(10, 15, 10, 15)
+                    BorderFactory.createEmptyBorder(11, 10, 18, 10)
                 ));
             }
         });

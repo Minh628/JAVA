@@ -191,19 +191,11 @@ public class LichSuThiPanel extends JPanel {
         }
 
         int maBaiThi = (int) modelLichSu.getValueAt(row, 0);
-        String tenDeThi = (String) modelLichSu.getValueAt(row, 1);
-        String soCauDung = (String) modelLichSu.getValueAt(row, 4);
-        String diem = (String) modelLichSu.getValueAt(row, 5);
-
-        // Hiển thị thông tin chi tiết
-        String message = String.format(
-                "Thông tin bài thi:\n\n" +
-                        "- Đề thi: %s\n" +
-                        "- Số câu đúng: %s\n" +
-                        "- Điểm: %s\n\n" +
-                        "(Chức năng xem chi tiết câu trả lời đang phát triển)",
-                tenDeThi, soCauDung, diem);
-        JOptionPane.showMessageDialog(this, message, "Chi tiết bài thi", JOptionPane.INFORMATION_MESSAGE);
+        
+        // Mở dialog xem chi tiết điểm
+        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        ChiTietDiemDialog dialog = new ChiTietDiemDialog(parentFrame, maBaiThi);
+        dialog.setVisible(true);
     }
 
     private String getTenHocPhan(int maHocPhan) {

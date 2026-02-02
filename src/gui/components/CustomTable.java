@@ -75,7 +75,6 @@ public class CustomTable extends JTable {
     private class ModernRowRenderer extends DefaultTableCellRenderer {
         private final Color mauLe = Color.WHITE;
         private final Color mauChan = new Color(248, 249, 250);
-        private final Color mauHover = new Color(232, 245, 253);
         
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
@@ -98,48 +97,6 @@ public class CustomTable extends JTable {
             }
             
             return c;
-        }
-    }
-    
-    public void setColumnWidths(int... widths) {
-        TableColumnModel columnModel = getColumnModel();
-        for (int i = 0; i < widths.length && i < columnModel.getColumnCount(); i++) {
-            columnModel.getColumn(i).setPreferredWidth(widths[i]);
-        }
-    }
-    
-    public void centerColumn(int columnIndex) {
-        if (columnIndex < getColumnModel().getColumnCount()) {
-            DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-            centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-            getColumnModel().getColumn(columnIndex).setCellRenderer(centerRenderer);
-        }
-    }
-    
-    public void centerAllColumns() {
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
-            private final Color mauLe = Color.WHITE;
-            private final Color mauChan = new Color(248, 249, 250);
-            
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, 
-                        isSelected, hasFocus, row, column);
-                setHorizontalAlignment(JLabel.CENTER);
-                
-                if (isSelected) {
-                    c.setBackground(new Color(52, 152, 219, 120));
-                } else {
-                    c.setBackground(row % 2 == 0 ? mauChan : mauLe);
-                }
-                setBorder(BorderFactory.createEmptyBorder(5, 12, 5, 12));
-                return c;
-            }
-        };
-        
-        for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
-            getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
     }
 }

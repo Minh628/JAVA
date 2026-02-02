@@ -1,6 +1,6 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: SoanCauHoiPanel - Panel soạn câu hỏi
+ * GUI: SoanCauHoiPanel - Panel soạn câu hỏi (hỗ trợ cả trắc nghiệm và điền khuyết)
  * 
  * Sử dụng BUS chuyên biệt:
  * - CauHoiBUS: Quản lý câu hỏi
@@ -12,6 +12,7 @@ import bus.CauHoiBUS;
 import bus.DeThiBUS;
 import bus.HocPhanBUS;
 import config.Constants;
+import dto.CauHoiDKDTO;
 import dto.CauHoiDTO;
 import dto.CauHoiMCDTO;
 import dto.GiangVienDTO;
@@ -34,13 +35,28 @@ public class SoanCauHoiPanel extends JPanel {
 
     private JTextField txtMaCauHoi;
     private JTextArea txtNoiDung;
+    
+    // Components cho trắc nghiệm
     private JTextField txtDapAnA;
     private JTextField txtDapAnB;
     private JTextField txtDapAnC;
     private JTextField txtDapAnD;
     private JComboBox<String> cboDapAnDung;
+    
+    // Components cho điền khuyết
+    private JTextField txtDapAnDienKhuyet;
+    private JTextField txtTuGoiY;
+    private JLabel lblHuongDanDK;
+    
+    // Panel chứa form nhập liệu theo loại
+    private JPanel panelFormTracNghiem;
+    private JPanel panelFormDienKhuyet;
+    private CardLayout cardLayoutForm;
+    private JPanel panelFormContainer;
+    
     private JComboBox<HocPhanDTO> cboHocPhan;
     private JComboBox<String> cboMucDo;
+    private JComboBox<String> cboLoaiCauHoi;
 
     private JTextField txtTimKiem;
     private JComboBox<String> cboLoaiTimKiem;
@@ -66,7 +82,7 @@ public class SoanCauHoiPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Tiêu đề
-        JLabel lblTieuDe = new JLabel("SOẠN CÂU HỎI TRẮC NGHIỆM", SwingConstants.CENTER);
+        JLabel lblTieuDe = new JLabel("SOẠN CÂU HỎI", SwingConstants.CENTER);
         lblTieuDe.setFont(Constants.HEADER_FONT);
         lblTieuDe.setForeground(Constants.PRIMARY_COLOR);
 
@@ -79,25 +95,32 @@ public class SoanCauHoiPanel extends JPanel {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Row 1: Mã câu hỏi, Học phần
+        // Row 1: Mã câu hỏi, Loại câu hỏi, Học phần, Mức độ
         gbc.gridx = 0;
         gbc.gridy = 0;
         panelForm.add(new JLabel("Mã câu hỏi:"), gbc);
         gbc.gridx = 1;
-        txtMaCauHoi = new JTextField(10);
+        txtMaCauHoi = new JTextField(8);
         txtMaCauHoi.setEditable(false);
         panelForm.add(txtMaCauHoi, gbc);
 
         gbc.gridx = 2;
-        panelForm.add(new JLabel("Học phần:"), gbc);
+        panelForm.add(new JLabel("Loại câu hỏi:"), gbc);
         gbc.gridx = 3;
-        cboHocPhan = new JComboBox<>();
-        cboHocPhan.setPreferredSize(new Dimension(200, 25));
-        panelForm.add(cboHocPhan, gbc);
+        cboLoaiCauHoi = new JComboBox<>(new String[] { "Trắc nghiệm", "Điền khuyết" });
+        cboLoaiCauHoi.addActionListener(e -> chuyenLoaiCauHoi());
+        panelForm.add(cboLoaiCauHoi, gbc);
 
         gbc.gridx = 4;
-        panelForm.add(new JLabel("Mức độ:"), gbc);
+        panelForm.add(new JLabel("Học phần:"), gbc);
         gbc.gridx = 5;
+        cboHocPhan = new JComboBox<>();
+        cboHocPhan.setPreferredSize(new Dimension(180, 25));
+        panelForm.add(cboHocPhan, gbc);
+
+        gbc.gridx = 6;
+        panelForm.add(new JLabel("Mức độ:"), gbc);
+        gbc.gridx = 7;
         cboMucDo = new JComboBox<>(new String[] { "Dễ", "Trung bình", "Khó" });
         panelForm.add(cboMucDo, gbc);
 
@@ -106,7 +129,7 @@ public class SoanCauHoiPanel extends JPanel {
         gbc.gridy = 1;
         panelForm.add(new JLabel("Nội dung:"), gbc);
         gbc.gridx = 1;
-        gbc.gridwidth = 5;
+        gbc.gridwidth = 7;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         txtNoiDung = new JTextArea(3, 50);
         txtNoiDung.setLineWrap(true);
@@ -114,59 +137,27 @@ public class SoanCauHoiPanel extends JPanel {
         JScrollPane scrollNoiDung = new JScrollPane(txtNoiDung);
         panelForm.add(scrollNoiDung, gbc);
 
-        // Row 3: Đáp án A, B
+        // Panel container cho form theo loại (CardLayout)
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridx = 0;
         gbc.gridy = 2;
-        panelForm.add(new JLabel("Đáp án A:"), gbc);
-        gbc.gridx = 1;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 8;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        txtDapAnA = new JTextField(25);
-        panelForm.add(txtDapAnA, gbc);
-
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.gridx = 3;
-        panelForm.add(new JLabel("Đáp án B:"), gbc);
-        gbc.gridx = 4;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        txtDapAnB = new JTextField(25);
-        panelForm.add(txtDapAnB, gbc);
-
-        // Row 4: Đáp án C, D
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        panelForm.add(new JLabel("Đáp án C:"), gbc);
-        gbc.gridx = 1;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        txtDapAnC = new JTextField(25);
-        panelForm.add(txtDapAnC, gbc);
-
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.gridx = 3;
-        panelForm.add(new JLabel("Đáp án D:"), gbc);
-        gbc.gridx = 4;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        txtDapAnD = new JTextField(25);
-        panelForm.add(txtDapAnD, gbc);
-
-        // Row 5: Đáp án đúng
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        panelForm.add(new JLabel("Đáp án đúng:"), gbc);
-        gbc.gridx = 1;
-        cboDapAnDung = new JComboBox<>(new String[] { "A", "B", "C", "D" });
-        panelForm.add(cboDapAnDung, gbc);
+        
+        cardLayoutForm = new CardLayout();
+        panelFormContainer = new JPanel(cardLayoutForm);
+        panelFormContainer.setBackground(Constants.BACKGROUND_COLOR);
+        
+        // Form trắc nghiệm
+        panelFormTracNghiem = createFormTracNghiem();
+        panelFormContainer.add(panelFormTracNghiem, "TN");
+        
+        // Form điền khuyết
+        panelFormDienKhuyet = createFormDienKhuyet();
+        panelFormContainer.add(panelFormDienKhuyet, "DK");
+        
+        panelForm.add(panelFormContainer, gbc);
 
         // Buttons
         JPanel panelNut = new JPanel(new FlowLayout());
@@ -187,9 +178,9 @@ public class SoanCauHoiPanel extends JPanel {
         panelNut.add(btnXoa);
         panelNut.add(btnLamMoi);
 
-        gbc.gridx = 2;
-        gbc.gridy = 4;
-        gbc.gridwidth = 4;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 8;
         panelForm.add(panelNut, gbc);
 
         // Panel trên
@@ -199,7 +190,7 @@ public class SoanCauHoiPanel extends JPanel {
         add(panelTren, BorderLayout.NORTH);
 
         // Bảng câu hỏi
-        String[] columns = { "Mã", "Nội dung câu hỏi", "Môn học", "Mức độ", "Đáp án đúng" };
+        String[] columns = { "Mã", "Loại", "Nội dung câu hỏi", "Môn học", "Mức độ", "Đáp án đúng" };
         modelCauHoi = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -221,7 +212,7 @@ public class SoanCauHoiPanel extends JPanel {
         lblTimKiem.setFont(Constants.NORMAL_FONT);
         panelTimKiem.add(lblTimKiem);
 
-        cboLoaiTimKiem = new JComboBox<>(new String[] { "Tất cả", "Mã", "Nội dung", "Môn học", "Mức độ" });
+        cboLoaiTimKiem = new JComboBox<>(new String[] { "Tất cả", "Mã", "Nội dung", "Môn học", "Mức độ", "Loại" });
         cboLoaiTimKiem.setFont(Constants.NORMAL_FONT);
         panelTimKiem.add(cboLoaiTimKiem);
 
@@ -250,6 +241,135 @@ public class SoanCauHoiPanel extends JPanel {
         panelCenter.add(scrollPane, BorderLayout.CENTER);
         add(panelCenter, BorderLayout.CENTER);
     }
+    
+    /**
+     * Tạo form nhập liệu cho câu hỏi trắc nghiệm
+     */
+    private JPanel createFormTracNghiem() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(Constants.BACKGROUND_COLOR);
+        panel.setBorder(BorderFactory.createTitledBorder("Đáp án trắc nghiệm"));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // Row 1: Đáp án A, B
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Đáp án A:"), gbc);
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        txtDapAnA = new JTextField(25);
+        panel.add(txtDapAnA, gbc);
+        
+        gbc.gridx = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        panel.add(new JLabel("Đáp án B:"), gbc);
+        gbc.gridx = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        txtDapAnB = new JTextField(25);
+        panel.add(txtDapAnB, gbc);
+        
+        // Row 2: Đáp án C, D
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        panel.add(new JLabel("Đáp án C:"), gbc);
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        txtDapAnC = new JTextField(25);
+        panel.add(txtDapAnC, gbc);
+        
+        gbc.gridx = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        panel.add(new JLabel("Đáp án D:"), gbc);
+        gbc.gridx = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        txtDapAnD = new JTextField(25);
+        panel.add(txtDapAnD, gbc);
+        
+        // Row 3: Đáp án đúng
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        panel.add(new JLabel("Đáp án đúng:"), gbc);
+        gbc.gridx = 1;
+        cboDapAnDung = new JComboBox<>(new String[] { "A", "B", "C", "D" });
+        panel.add(cboDapAnDung, gbc);
+        
+        return panel;
+    }
+    
+    /**
+     * Tạo form nhập liệu cho câu hỏi điền khuyết
+     */
+    private JPanel createFormDienKhuyet() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(Constants.BACKGROUND_COLOR);
+        panel.setBorder(BorderFactory.createTitledBorder("Đáp án điền khuyết"));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // Hướng dẫn
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 4;
+        lblHuongDanDK = new JLabel("💡 Trong nội dung câu hỏi, dùng _____ (5 dấu gạch dưới) để đánh dấu chỗ trống");
+        lblHuongDanDK.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+        lblHuongDanDK.setForeground(new Color(100, 100, 100));
+        panel.add(lblHuongDanDK, gbc);
+        
+        // Row 1: Đáp án đúng
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        panel.add(new JLabel("Đáp án đúng:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        txtDapAnDienKhuyet = new JTextField(40);
+        txtDapAnDienKhuyet.setToolTipText("Nếu có nhiều chỗ trống, phân cách đáp án bằng dấu | (ví dụ: từ1|từ2|từ3)");
+        panel.add(txtDapAnDienKhuyet, gbc);
+        
+        // Row 2: Từ gợi ý
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        panel.add(new JLabel("Từ gợi ý:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        txtTuGoiY = new JTextField(40);
+        txtTuGoiY.setToolTipText("Danh sách từ gợi ý, phân cách bằng dấu | (có thể bao gồm cả đáp án sai để gây nhiễu)");
+        panel.add(txtTuGoiY, gbc);
+        
+        // Hướng dẫn chi tiết
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 4;
+        JLabel lblViDu = new JLabel("<html><b>Ví dụ:</b> Nội dung: \"Thủ đô của Việt Nam là _____\" | Đáp án: \"Hà Nội\" | Gợi ý: \"Hà Nội|Đà Nẵng|TP.HCM\"</html>");
+        lblViDu.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        lblViDu.setForeground(Color.GRAY);
+        panel.add(lblViDu, gbc);
+        
+        return panel;
+    }
+    
+    /**
+     * Chuyển đổi form theo loại câu hỏi
+     */
+    private void chuyenLoaiCauHoi() {
+        String loai = (String) cboLoaiCauHoi.getSelectedItem();
+        if ("Điền khuyết".equals(loai)) {
+            cardLayoutForm.show(panelFormContainer, "DK");
+        } else {
+            cardLayoutForm.show(panelFormContainer, "TN");
+        }
+    }
 
     private void loadData() {
         loadHocPhan();
@@ -272,13 +392,18 @@ public class SoanCauHoiPanel extends JPanel {
         if (danhSach != null) {
             for (CauHoiDTO ch : danhSach) {
                 String noiDung = ch.getNoiDungCauHoi();
-                if (noiDung.length() > 60) {
-                    noiDung = noiDung.substring(0, 60) + "...";
+                if (noiDung.length() > 50) {
+                    noiDung = noiDung.substring(0, 50) + "...";
                 }
                 String tenMon = getTenMonByMa(ch.getMaMon());
+                String loaiCH = CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) ? "Điền khuyết" : "Trắc nghiệm";
+                String dapAn = ch.getDapAnDung();
+                if (CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) && dapAn != null && dapAn.length() > 30) {
+                    dapAn = dapAn.substring(0, 30) + "...";
+                }
                 modelCauHoi.addRow(new Object[] {
-                        ch.getMaCauHoi(), noiDung, tenMon,
-                        ch.getMucDo(), ch.getDapAnDung()
+                        ch.getMaCauHoi(), loaiCH, noiDung, tenMon,
+                        ch.getMucDo(), dapAn
                 });
             }
         }
@@ -302,6 +427,8 @@ public class SoanCauHoiPanel extends JPanel {
             for (CauHoiDTO ch : danhSach) {
                 boolean match = true;
                 String tenMon = getTenMonByMa(ch.getMaMon());
+                String loaiCH = CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) ? "Điền khuyết" : "Trắc nghiệm";
+                
                 if (!keyword.isEmpty() && !loaiTimKiem.equals("Tất cả")) {
                     String keyLower = keyword.toLowerCase();
                     switch (loaiTimKiem) {
@@ -318,22 +445,30 @@ public class SoanCauHoiPanel extends JPanel {
                         case "Mức độ":
                             match = ch.getMucDo() != null && ch.getMucDo().toLowerCase().contains(keyLower);
                             break;
+                        case "Loại":
+                            match = loaiCH.toLowerCase().contains(keyLower);
+                            break;
                     }
                 } else if (!keyword.isEmpty()) {
                     String keyLower = keyword.toLowerCase();
                     match = String.valueOf(ch.getMaCauHoi()).contains(keyword)
                             || (ch.getNoiDungCauHoi() != null && ch.getNoiDungCauHoi().toLowerCase().contains(keyLower))
                             || tenMon.toLowerCase().contains(keyLower)
-                            || (ch.getMucDo() != null && ch.getMucDo().toLowerCase().contains(keyLower));
+                            || (ch.getMucDo() != null && ch.getMucDo().toLowerCase().contains(keyLower))
+                            || loaiCH.toLowerCase().contains(keyLower);
                 }
                 if (match) {
                     String noiDung = ch.getNoiDungCauHoi();
-                    if (noiDung.length() > 60) {
-                        noiDung = noiDung.substring(0, 60) + "...";
+                    if (noiDung.length() > 50) {
+                        noiDung = noiDung.substring(0, 50) + "...";
+                    }
+                    String dapAn = ch.getDapAnDung();
+                    if (CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) && dapAn != null && dapAn.length() > 30) {
+                        dapAn = dapAn.substring(0, 30) + "...";
                     }
                     modelCauHoi.addRow(new Object[] {
-                            ch.getMaCauHoi(), noiDung, tenMon,
-                            ch.getMucDo(), ch.getDapAnDung()
+                            ch.getMaCauHoi(), loaiCH, noiDung, tenMon,
+                            ch.getMucDo(), dapAn
                     });
                 }
             }
@@ -349,11 +484,36 @@ public class SoanCauHoiPanel extends JPanel {
             if (cauHoi != null) {
                 txtMaCauHoi.setText(String.valueOf(cauHoi.getMaCauHoi()));
                 txtNoiDung.setText(cauHoi.getNoiDungCauHoi());
-                txtDapAnA.setText(cauHoi.getNoiDungA());
-                txtDapAnB.setText(cauHoi.getNoiDungB());
-                txtDapAnC.setText(cauHoi.getNoiDungC());
-                txtDapAnD.setText(cauHoi.getNoiDungD());
-                cboDapAnDung.setSelectedItem(cauHoi.getDapAnDung());
+                
+                // Chọn loại câu hỏi
+                if (CauHoiDTO.LOAI_DIEN_KHUYET.equals(cauHoi.getLoaiCauHoi())) {
+                    cboLoaiCauHoi.setSelectedItem("Điền khuyết");
+                    cardLayoutForm.show(panelFormContainer, "DK");
+                    
+                    CauHoiDKDTO dk = (CauHoiDKDTO) cauHoi;
+                    txtDapAnDienKhuyet.setText(dk.getDapAnDung() != null ? dk.getDapAnDung() : "");
+                    txtTuGoiY.setText(dk.getDanhSachTu() != null ? dk.getDanhSachTu() : "");
+                    
+                    // Xóa thông tin trắc nghiệm
+                    txtDapAnA.setText("");
+                    txtDapAnB.setText("");
+                    txtDapAnC.setText("");
+                    txtDapAnD.setText("");
+                } else {
+                    cboLoaiCauHoi.setSelectedItem("Trắc nghiệm");
+                    cardLayoutForm.show(panelFormContainer, "TN");
+                    
+                    CauHoiMCDTO mc = (CauHoiMCDTO) cauHoi;
+                    txtDapAnA.setText(mc.getNoiDungA() != null ? mc.getNoiDungA() : "");
+                    txtDapAnB.setText(mc.getNoiDungB() != null ? mc.getNoiDungB() : "");
+                    txtDapAnC.setText(mc.getNoiDungC() != null ? mc.getNoiDungC() : "");
+                    txtDapAnD.setText(mc.getNoiDungD() != null ? mc.getNoiDungD() : "");
+                    cboDapAnDung.setSelectedItem(mc.getDapAnDung());
+                    
+                    // Xóa thông tin điền khuyết
+                    txtDapAnDienKhuyet.setText("");
+                    txtTuGoiY.setText("");
+                }
 
                 // Chọn mức độ
                 String mucDo = cauHoi.getMucDo();
@@ -379,18 +539,30 @@ public class SoanCauHoiPanel extends JPanel {
         if (!validateInput())
             return;
 
-        CauHoiMCDTO cauHoi = new CauHoiMCDTO();
+        String loai = (String) cboLoaiCauHoi.getSelectedItem();
+        CauHoiDTO cauHoi;
+        
+        if ("Điền khuyết".equals(loai)) {
+            CauHoiDKDTO dk = new CauHoiDKDTO();
+            dk.setDapAnDung(txtDapAnDienKhuyet.getText().trim());
+            dk.setDanhSachTu(txtTuGoiY.getText().trim());
+            cauHoi = dk;
+        } else {
+            CauHoiMCDTO mc = new CauHoiMCDTO();
+            mc.setNoiDungA(txtDapAnA.getText().trim());
+            mc.setNoiDungB(txtDapAnB.getText().trim());
+            mc.setNoiDungC(txtDapAnC.getText().trim());
+            mc.setNoiDungD(txtDapAnD.getText().trim());
+            mc.setDapAnDung((String) cboDapAnDung.getSelectedItem());
+            cauHoi = mc;
+        }
+        
         cauHoi.setMaGV(giangVien.getMaGV());
         HocPhanDTO hocPhan = (HocPhanDTO) cboHocPhan.getSelectedItem();
         if (hocPhan != null) {
             cauHoi.setMaMon(hocPhan.getMaHocPhan());
         }
         cauHoi.setNoiDungCauHoi(txtNoiDung.getText().trim());
-        cauHoi.setNoiDungA(txtDapAnA.getText().trim());
-        cauHoi.setNoiDungB(txtDapAnB.getText().trim());
-        cauHoi.setNoiDungC(txtDapAnC.getText().trim());
-        cauHoi.setNoiDungD(txtDapAnD.getText().trim());
-        cauHoi.setDapAnDung((String) cboDapAnDung.getSelectedItem());
         cauHoi.setMucDo((String) cboMucDo.getSelectedItem());
 
         if (cauHoiBUS.themCauHoi(cauHoi)) {
@@ -410,19 +582,48 @@ public class SoanCauHoiPanel extends JPanel {
         if (!validateInput())
             return;
 
-        CauHoiMCDTO cauHoi = new CauHoiMCDTO();
-        cauHoi.setMaCauHoi(Integer.parseInt(txtMaCauHoi.getText()));
+        // Lấy câu hỏi cũ để kiểm tra loại
+        int maCauHoi = Integer.parseInt(txtMaCauHoi.getText());
+        CauHoiDTO cauHoiCu = cauHoiBUS.getById(maCauHoi);
+        if (cauHoiCu == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy câu hỏi!");
+            return;
+        }
+        
+        String loaiMoi = (String) cboLoaiCauHoi.getSelectedItem();
+        String loaiCu = CauHoiDTO.LOAI_DIEN_KHUYET.equals(cauHoiCu.getLoaiCauHoi()) ? "Điền khuyết" : "Trắc nghiệm";
+        
+        // Không cho đổi loại câu hỏi khi sửa
+        if (!loaiMoi.equals(loaiCu)) {
+            JOptionPane.showMessageDialog(this, 
+                "Không thể thay đổi loại câu hỏi!\nNếu muốn đổi loại, hãy xóa và tạo câu hỏi mới.",
+                "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        CauHoiDTO cauHoi;
+        if ("Điền khuyết".equals(loaiMoi)) {
+            CauHoiDKDTO dk = new CauHoiDKDTO();
+            dk.setDapAnDung(txtDapAnDienKhuyet.getText().trim());
+            dk.setDanhSachTu(txtTuGoiY.getText().trim());
+            cauHoi = dk;
+        } else {
+            CauHoiMCDTO mc = new CauHoiMCDTO();
+            mc.setNoiDungA(txtDapAnA.getText().trim());
+            mc.setNoiDungB(txtDapAnB.getText().trim());
+            mc.setNoiDungC(txtDapAnC.getText().trim());
+            mc.setNoiDungD(txtDapAnD.getText().trim());
+            mc.setDapAnDung((String) cboDapAnDung.getSelectedItem());
+            cauHoi = mc;
+        }
+        
+        cauHoi.setMaCauHoi(maCauHoi);
         cauHoi.setMaGV(giangVien.getMaGV());
         HocPhanDTO hocPhan = (HocPhanDTO) cboHocPhan.getSelectedItem();
         if (hocPhan != null) {
             cauHoi.setMaMon(hocPhan.getMaHocPhan());
         }
         cauHoi.setNoiDungCauHoi(txtNoiDung.getText().trim());
-        cauHoi.setNoiDungA(txtDapAnA.getText().trim());
-        cauHoi.setNoiDungB(txtDapAnB.getText().trim());
-        cauHoi.setNoiDungC(txtDapAnC.getText().trim());
-        cauHoi.setNoiDungD(txtDapAnD.getText().trim());
-        cauHoi.setDapAnDung((String) cboDapAnDung.getSelectedItem());
         cauHoi.setMucDo((String) cboMucDo.getSelectedItem());
 
         if (cauHoiBUS.capNhatCauHoi(cauHoi)) {
@@ -463,8 +664,12 @@ public class SoanCauHoiPanel extends JPanel {
         txtDapAnB.setText("");
         txtDapAnC.setText("");
         txtDapAnD.setText("");
+        txtDapAnDienKhuyet.setText("");
+        txtTuGoiY.setText("");
         cboDapAnDung.setSelectedIndex(0);
         cboMucDo.setSelectedIndex(0);
+        cboLoaiCauHoi.setSelectedIndex(0);
+        cardLayoutForm.show(panelFormContainer, "TN");
         tblCauHoi.clearSelection();
     }
 
@@ -474,10 +679,36 @@ public class SoanCauHoiPanel extends JPanel {
             txtNoiDung.requestFocus();
             return false;
         }
-        if (txtDapAnA.getText().trim().isEmpty() || txtDapAnB.getText().trim().isEmpty() ||
-                txtDapAnC.getText().trim().isEmpty() || txtDapAnD.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ 4 đáp án!");
-            return false;
+        
+        String loai = (String) cboLoaiCauHoi.getSelectedItem();
+        if ("Điền khuyết".equals(loai)) {
+            if (txtDapAnDienKhuyet.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đáp án đúng cho câu hỏi điền khuyết!");
+                txtDapAnDienKhuyet.requestFocus();
+                return false;
+            }
+            // Kiểm tra số chỗ trống trong nội dung
+            String noiDung = txtNoiDung.getText();
+            int soChoTrong = 0;
+            int index = 0;
+            while ((index = noiDung.indexOf("_____", index)) != -1) {
+                soChoTrong++;
+                index += 5;
+            }
+            String[] dapAnArr = txtDapAnDienKhuyet.getText().split("\\|");
+            if (soChoTrong > 0 && soChoTrong != dapAnArr.length) {
+                JOptionPane.showMessageDialog(this, 
+                    String.format("Số đáp án (%d) không khớp với số chỗ trống (%d) trong câu hỏi!", 
+                        dapAnArr.length, soChoTrong),
+                    "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        } else {
+            if (txtDapAnA.getText().trim().isEmpty() || txtDapAnB.getText().trim().isEmpty() ||
+                    txtDapAnC.getText().trim().isEmpty() || txtDapAnD.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ 4 đáp án!");
+                return false;
+            }
         }
         return true;
     }
