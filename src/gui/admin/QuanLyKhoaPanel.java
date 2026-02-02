@@ -143,10 +143,12 @@ public class QuanLyKhoaPanel extends JPanel {
         panelTimKiem.add(txtTimKiem);
 
         btnTimKiem = new CustomButton("Tìm", Constants.INFO_COLOR, Constants.TEXT_COLOR);
+        btnTimKiem.setPreferredSize(new Dimension(100, 38));
         btnTimKiem.addActionListener(e -> timKiem());
         panelTimKiem.add(btnTimKiem);
 
-        CustomButton btnHienTatCa = new CustomButton("Tất cả", Constants.SECONDARY_COLOR, Constants.TEXT_COLOR);
+        CustomButton btnHienTatCa = new CustomButton("Hiện Tất cả", Constants.SECONDARY_COLOR, Constants.TEXT_COLOR);
+        btnHienTatCa.setPreferredSize(new Dimension(100, 38));
         btnHienTatCa.addActionListener(e -> {
             txtTimKiem.setText("");
             loadData();
