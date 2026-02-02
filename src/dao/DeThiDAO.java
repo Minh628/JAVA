@@ -177,63 +177,6 @@ public class DeThiDAO {
         }
     }
 
-    /**
-     * Thêm câu hỏi vào đề thi
-     */
-    public boolean themCauHoiVaoDeThi(int maDeThi, int maCauHoi) throws SQLException {
-        String sql = "INSERT INTO ChiTietDeThi (ma_de_thi, ma_cau_hoi) VALUES (?, ?)";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, maDeThi);
-            pstmt.setInt(2, maCauHoi);
-            return pstmt.executeUpdate() > 0;
-        }
-    }
-
-    /**
-     * Thêm nhiều câu hỏi vào đề thi (batch insert)
-     */
-    public boolean themNhieuCauHoiVaoDeThi(int maDeThi, List<Integer> danhSachMaCauHoi) throws SQLException {
-        String sql = "INSERT INTO ChiTietDeThi (ma_de_thi, ma_cau_hoi) VALUES (?, ?)";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            conn.setAutoCommit(false);
-            try {
-                for (int maCauHoi : danhSachMaCauHoi) {
-                    pstmt.setInt(1, maDeThi);
-                    pstmt.setInt(2, maCauHoi);
-                    pstmt.addBatch();
-                }
-                pstmt.executeBatch();
-                conn.commit();
-                return true;
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
-            } finally {
-                conn.setAutoCommit(true);
-            }
-        }
-    }
-
-    /**
-     * Xóa câu hỏi khỏi đề thi
-     */
-    public boolean xoaCauHoiKhoiDeThi(int maDeThi, int maCauHoi) throws SQLException {
-        String sql = "DELETE FROM ChiTietDeThi WHERE ma_de_thi = ? AND ma_cau_hoi = ?";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, maDeThi);
-            pstmt.setInt(2, maCauHoi);
-            return pstmt.executeUpdate() > 0;
-        }
-    }
 
     /**
      * Map ResultSet sang DTO

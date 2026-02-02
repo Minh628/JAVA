@@ -1,6 +1,5 @@
 package gui.admin;
 
-import bus.CauHoiBUS;
 import bus.HocPhanBUS;
 import config.Constants;
 import dto.HocPhanDTO;

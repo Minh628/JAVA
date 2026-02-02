@@ -6,8 +6,7 @@ public class Main {
     public static void main(String[] stringArray) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
         SwingUtilities.invokeLater(() -> {
@@ -15,4 +14,5 @@ public class Main {
             loginFrame.setVisible(true);
         });
     }
+    
 }
