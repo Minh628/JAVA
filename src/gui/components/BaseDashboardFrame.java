@@ -1,10 +1,9 @@
 package gui.components;
 
 import config.Constants;
-import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 public abstract class BaseDashboardFrame extends JFrame {
     protected JPanel panelNoiDung;

@@ -132,6 +132,40 @@ public class KhoaBUS {
     }
 
     /**
+     * Tìm kiếm khoa theo loại
+     */
+    public List<KhoaDTO> timKiem(String keyword, String loai) {
+        List<KhoaDTO> result = new ArrayList<>();
+        try {
+            keyword = keyword.toLowerCase();
+            getDanhSachKhoa();
+            for (KhoaDTO k : danhSachKhoa) {
+                if (matchFilter(k, keyword, loai)) {
+                    result.add(k);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean matchFilter(KhoaDTO k, String keyword, String loai) {
+        if (keyword.isEmpty()) return true;
+        switch (loai) {
+            case "Mã Khoa":
+                return String.valueOf(k.getMaKhoa()).contains(keyword);
+            case "Tên Khoa":
+                return k.getTenKhoa() != null && k.getTenKhoa().toLowerCase().contains(keyword);
+            case "Tất cả":
+                return String.valueOf(k.getMaKhoa()).contains(keyword) ||
+                       (k.getTenKhoa() != null && k.getTenKhoa().toLowerCase().contains(keyword));
+            default:
+                return true;
+        }
+    }
+
+    /**
      * Reload cache
      */
     public static void reloadCache() {

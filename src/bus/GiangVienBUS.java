@@ -12,7 +12,9 @@
 package bus;
 
 import dao.GiangVienDAO;
+import dao.KhoaDAO;
 import dto.GiangVienDTO;
+import dto.KhoaDTO;
 import dto.VaiTroDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,12 +22,14 @@ import java.util.List;
 
 public class GiangVienBUS {
     private GiangVienDAO giangVienDAO;
+    private KhoaDAO khoaDAO;
 
     // Cache
     private static ArrayList<GiangVienDTO> danhSachGiangVien = null;
 
     public GiangVienBUS() {
         this.giangVienDAO = new GiangVienDAO();
+        this.khoaDAO = new KhoaDAO();
     }
 
     /**
@@ -184,6 +188,61 @@ public class GiangVienBUS {
         } catch (SQLException e) {
             e.printStackTrace();
             return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Tìm kiếm giảng viên theo loại
+     */
+    public List<GiangVienDTO> timKiem(String keyword, String loai) {
+        List<GiangVienDTO> result = new ArrayList<>();
+        try {
+            keyword = keyword.toLowerCase();
+            getDanhSachGiangVien();
+            for (GiangVienDTO gv : danhSachGiangVien) {
+                if (matchFilter(gv, keyword, loai)) {
+                    result.add(gv);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean matchFilter(GiangVienDTO gv, String keyword, String loai) {
+        if (keyword.isEmpty()) return true;
+        try {
+            switch (loai) {
+                case "Mã GV":
+                    return String.valueOf(gv.getMaGV()).contains(keyword);
+                case "Tên đăng nhập":
+                    return gv.getTenDangNhap() != null && gv.getTenDangNhap().toLowerCase().contains(keyword);
+                case "Họ tên":
+                    return (gv.getHo() + " " + gv.getTen()).toLowerCase().contains(keyword);
+                case "Email":
+                    return gv.getEmail() != null && gv.getEmail().toLowerCase().contains(keyword);
+                case "Khoa": {
+                    KhoaDTO khoa = khoaDAO.getById(gv.getMaKhoa());
+                    if (khoa != null && khoa.getTenKhoa().toLowerCase().contains(keyword)) {
+                        return true;
+                    }
+                }
+
+                case "Tất cả":
+                    return String.valueOf(gv.getMaGV()).contains(keyword) ||
+                            (gv.getTenDangNhap() != null && gv.getTenDangNhap().toLowerCase().contains(keyword)) ||
+                            (gv.getHo() + " " + gv.getTen()).toLowerCase().contains(keyword) ||
+                            (gv.getEmail() != null && gv.getEmail().toLowerCase().contains(keyword)) ||
+                            (khoaDAO.getById(gv.getMaKhoa()) != null &&
+                             khoaDAO.getById(gv.getMaKhoa()).getTenKhoa().toLowerCase().contains(keyword));
+                default:
+                    return true;
+            }
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

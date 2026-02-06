@@ -122,37 +122,21 @@ public class QuanLyGiangVienPanel extends BaseCrudPanel {
 
     @Override
     protected void timKiem() {
-        String keyword = txtTimKiem.getText().trim().toLowerCase();
+        String keyword = txtTimKiem.getText().trim();
         String loai = (String) cboLoaiTimKiem.getSelectedItem();
+
         tableModel.setRowCount(0);
 
-        List<GiangVienDTO> danhSach = keyword.isEmpty() || "Tất cả".equals(loai)
-                ? giangVienBUS.timKiem(keyword)
-                : giangVienBUS.getDanhSachGiangVien();
+        List<GiangVienDTO> danhSach = giangVienBUS.timKiem(keyword, loai);
 
-        if (danhSach != null) {
-            danhSach.stream().filter(gv -> matchFilter(gv, keyword, loai))
-                    .forEach(gv -> tableModel.addRow(new Object[] {
-                            gv.getMaGV(), gv.getTenDangNhap(),
-                            gv.getMatKhau() != null ? gv.getMatKhau() : "",
-                            gv.getHo(), gv.getTen(), gv.getEmail(), getTenKhoa(gv.getMaKhoa()),
-                            gv.isTrangThai() ? "Hoạt động" : "Khóa"
-                    }));
+        for (GiangVienDTO gv : danhSach) {
+            tableModel.addRow(new Object[] {
+                gv.getMaGV(), gv.getTenDangNhap(),
+                gv.getMatKhau() != null ? gv.getMatKhau() : "",
+                gv.getHo(), gv.getTen(), gv.getEmail(), getTenKhoa(gv.getMaKhoa()),
+                gv.isTrangThai() ? "Hoạt động" : "Khóa"
+            });
         }
-    }
-
-    private boolean matchFilter(GiangVienDTO gv, String keyword, String loai) {
-        if (keyword.isEmpty() || "Tất cả".equals(loai))
-            return true;
-        String tenKhoa = getTenKhoa(gv.getMaKhoa());
-        return switch (loai) {
-            case "Mã GV" -> String.valueOf(gv.getMaGV()).contains(keyword);
-            case "Tên đăng nhập" -> gv.getTenDangNhap() != null && gv.getTenDangNhap().toLowerCase().contains(keyword);
-            case "Họ tên" -> (gv.getHo() + " " + gv.getTen()).toLowerCase().contains(keyword);
-            case "Email" -> gv.getEmail() != null && gv.getEmail().toLowerCase().contains(keyword);
-            case "Khoa" -> tenKhoa != null && tenKhoa.toLowerCase().contains(keyword);
-            default -> true;
-        };
     }
 
     @Override

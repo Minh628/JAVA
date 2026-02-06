@@ -15,6 +15,7 @@ import javax.swing.*;
 public class QuanLyNganhPanel extends BaseCrudPanel {
     private NganhBUS nganhBUS = new NganhBUS();
     private KhoaBUS khoaBUS = new KhoaBUS();
+    private JTextField txtMaNganh;
     private JTextField txtTenNganh;
     private JComboBox<KhoaDTO> cboKhoa;
     private int selectedMaNganh = -1;
@@ -40,18 +41,30 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.anchor = GridBagConstraints.WEST;
 
+        txtMaNganh = createTextField(10, false);
         txtTenNganh = createTextField(30, true);
         cboKhoa = new JComboBox<>();
         cboKhoa.setPreferredSize(new Dimension(250, 30));
 
+        // Row 0: Mã ngành
         gbc.gridx = 0;
         gbc.gridy = 0;
+        panel.add(createLabel("Mã ngành:"), gbc);
+        gbc.gridx = 1;
+        panel.add(txtMaNganh, gbc);
+
+        // Row 1: Tên ngành
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         panel.add(createLabel("Tên ngành:"), gbc);
         gbc.gridx = 1;
         panel.add(txtTenNganh, gbc);
-        gbc.gridx = 2;
+
+        // Row 2: Thuộc khoa
+        gbc.gridx = 0;
+        gbc.gridy = 2;
         panel.add(createLabel("Thuộc khoa:"), gbc);
-        gbc.gridx = 3;
+        gbc.gridx = 1;
         panel.add(cboKhoa, gbc);
 
         return panel;
@@ -85,33 +98,19 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
 
     @Override
     protected void timKiem() {
-        String keyword = txtTimKiem.getText().trim().toLowerCase();
+        String keyword = txtTimKiem.getText().trim();
         String loai = (String) cboLoaiTimKiem.getSelectedItem();
+
         tableModel.setRowCount(0);
 
-        List<NganhDTO> danhSach = keyword.isEmpty() || "Tất cả".equals(loai)
-                ? nganhBUS.timKiem(keyword)
-                : nganhBUS.getDanhSachNganh();
+        List<NganhDTO> danhSach = nganhBUS.timKiem(keyword, loai);
 
-        if (danhSach != null) {
-            danhSach.stream().filter(n -> matchFilter(n, keyword, loai))
-                    .forEach(n -> tableModel.addRow(new Object[] {
-                            n.getMaNganh(), n.getTenNganh(),
-                            getTenKhoa(n.getMaKhoa())
-                    }));
+        for (NganhDTO n : danhSach) {
+            tableModel.addRow(new Object[] {
+                n.getMaNganh(), n.getTenNganh(),
+                getTenKhoa(n.getMaKhoa())
+            });
         }
-    }
-
-    private boolean matchFilter(NganhDTO n, String keyword, String loai) {
-        if (keyword.isEmpty() || "Tất cả".equals(loai))
-            return true;
-        String tenKhoa = getTenKhoa(n.getMaKhoa());
-        return switch (loai) {
-            case "Mã Ngành" -> String.valueOf(n.getMaNganh()).contains(keyword);
-            case "Tên Ngành" -> n.getTenNganh() != null && n.getTenNganh().toLowerCase().contains(keyword);
-            case "Thuộc Khoa" -> tenKhoa != null && tenKhoa.toLowerCase().contains(keyword);
-            default -> true;
-        };
     }
 
     @Override
@@ -119,6 +118,7 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
         int row = table.getSelectedRow();
         if (row >= 0) {
             selectedMaNganh = (int) tableModel.getValueAt(row, 0);
+            txtMaNganh.setText(String.valueOf(selectedMaNganh));
             txtTenNganh.setText((String) tableModel.getValueAt(row, 1));
             String tenKhoa = (String) tableModel.getValueAt(row, 2);
             for (int i = 0; i < cboKhoa.getItemCount(); i++) {
@@ -196,6 +196,7 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
 
     @Override
     protected void lamMoi() {
+        txtMaNganh.setText("");
         txtTenNganh.setText("");
         if (cboKhoa.getItemCount() > 0)
             cboKhoa.setSelectedIndex(0);

@@ -91,7 +91,7 @@ public class AdminDashboard extends BaseDashboardFrame {
         panelNoiDung.add(new QuanLyKyThiPanel(), "KY_THI");
         panelNoiDung.add(new QuanLyGiangVienPanel(), "GIANG_VIEN");
         panelNoiDung.add(new QuanLySinhVienPanel(), "SINH_VIEN");
-        panelNoiDung.add(createThongTinPanel(), "THONG_TIN");
+        panelNoiDung.add(new ThongTinAdminPanel(nguoiDung), "THONG_TIN");
     }
     
     private JPanel createTongQuanPanel() {
@@ -135,48 +135,5 @@ public class AdminDashboard extends BaseDashboardFrame {
         return panel;
     }
     
-    private JPanel createThongTinPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(CONTENT_BG);
-        panel.setBorder(BorderFactory.createEmptyBorder(Constants.PADDING_LARGE, Constants.PADDING_LARGE, 
-                                                         Constants.PADDING_LARGE, Constants.PADDING_LARGE));
-        
-        // Tiêu đề - sử dụng HeaderLabel
-        panel.add(HeaderLabel.createWithIcon("👤", "THÔNG TIN CÁ NHÂN"), BorderLayout.NORTH);
-        
-        // Lấy tên khoa
-        String tenKhoa = "";
-        KhoaDTO khoa = khoaBUS.getById(nguoiDung.getMaKhoa());
-        if (khoa != null) tenKhoa = khoa.getTenKhoa();
-        
-        // Panel thông tin - sử dụng InfoDisplayPanel
-        String[][] info = {
-            {"Mã giảng viên:", String.valueOf(nguoiDung.getMaGV())},
-            {"Họ:", nguoiDung.getHo()},
-            {"Tên:", nguoiDung.getTen()},
-            {"Email:", nguoiDung.getEmail() != null ? nguoiDung.getEmail() : ""},
-            {"Khoa:", tenKhoa},
-            {"Vai trò:", "ADMIN"}
-        };
-        
-        panel.add(InfoDisplayPanel.createWrapper(new InfoDisplayPanel(info)), BorderLayout.CENTER);
-        
-        // Nút đổi mật khẩu
-        JPanel panelNut = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelNut.setBackground(CONTENT_BG);
-        
-        CustomButton btnDoiMK = new CustomButton("🔑  Đổi mật khẩu", Constants.PRIMARY_COLOR, Constants.TEXT_COLOR);
-        btnDoiMK.addActionListener(e -> doiMatKhau());
-        panelNut.add(btnDoiMK);
-        
-        panel.add(panelNut, BorderLayout.SOUTH);
-        
-        return panel;
-    }
     
-    private void doiMatKhau() {
-        ChangePasswordDialog.show(this, (oldPwd, newPwd) -> 
-            giangVienBUS.resetMatKhau(nguoiDung.getMaGV(), newPwd)
-        );
-    }
 }

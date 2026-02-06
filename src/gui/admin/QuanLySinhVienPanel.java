@@ -122,36 +122,21 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
 
     @Override
     protected void timKiem() {
-        String keyword = txtTimKiem.getText().trim().toLowerCase();
+        String keyword = txtTimKiem.getText().trim();
         String loai = (String) cboLoaiTimKiem.getSelectedItem();
+
         tableModel.setRowCount(0);
 
-        List<SinhVienDTO> danhSach = keyword.isEmpty() || "Tất cả".equals(loai)
-                ? sinhVienBUS.timKiem(keyword)
-                : sinhVienBUS.getDanhSachSinhVien();
+        List<SinhVienDTO> danhSach = sinhVienBUS.timKiem(keyword, loai);
 
-        if (danhSach != null) {
-            danhSach.stream().filter(sv -> matchFilter(sv, keyword, loai))
-                    .forEach(sv -> tableModel.addRow(new Object[] {
-                            sv.getMaSV(), sv.getHo(), sv.getTen(), sv.getTenDangNhap(),
-                            sv.getMatKhau() != null ? sv.getMatKhau() : "",
-                            sv.getEmail(), getTenNganh(sv.getMaNganh()), sv.isTrangThai() ? "Hoạt động" : "Khóa"
-                    }));
+        for (SinhVienDTO sv : danhSach) {
+            tableModel.addRow(new Object[] {
+                sv.getMaSV(), sv.getHo(), sv.getTen(), sv.getTenDangNhap(),
+                sv.getMatKhau() != null ? sv.getMatKhau() : "",
+                sv.getEmail(), getTenNganh(sv.getMaNganh()),
+                sv.isTrangThai() ? "Hoạt động" : "Khóa"
+            });
         }
-    }
-
-    private boolean matchFilter(SinhVienDTO sv, String keyword, String loai) {
-        if (keyword.isEmpty() || "Tất cả".equals(loai))
-            return true;
-        String tenNganh = getTenNganh(sv.getMaNganh());
-        return switch (loai) {
-            case "Mã SV" -> String.valueOf(sv.getMaSV()).contains(keyword);
-            case "Tên đăng nhập" -> sv.getTenDangNhap() != null && sv.getTenDangNhap().toLowerCase().contains(keyword);
-            case "Họ tên" -> (sv.getHo() + " " + sv.getTen()).toLowerCase().contains(keyword);
-            case "Email" -> sv.getEmail() != null && sv.getEmail().toLowerCase().contains(keyword);
-            case "Ngành" -> tenNganh != null && tenNganh.toLowerCase().contains(keyword);
-            default -> true;
-        };
     }
 
     @Override

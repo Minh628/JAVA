@@ -542,6 +542,82 @@ INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dun
 (79, 'Từ thông trong vật liệu', 'Dòng điện', 'Điện áp', 'Tần số', 'Từ thông trong vật liệu'),
 (80, 'F = I * l * B * sin(θ)', 'F = V * I', 'F = P / I', 'F = R * I²', 'F = I * l * B * sin(θ)');
 
+-- ========== 15. INSERT CauHoi - Bổ sung câu hỏi MC cho các môn còn thiếu ==========
+INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
+-- Cấu trúc dữ liệu và Giải thuật (ma_mon = 3)
+(81, 3, 2, 'Cấu trúc dữ liệu nào hoạt động theo nguyên tắc LIFO?', 'De', 'MC'),
+(82, 3, 2, 'Độ phức tạp thời gian trung bình của tìm kiếm nhị phân là?', 'TrungBinh', 'MC'),
+-- Mạng máy tính (ma_mon = 4)
+(83, 4, 3, 'Giao thức nào dùng để truyền trang web?', 'De', 'MC'),
+(84, 4, 3, 'Địa chỉ IPv4 có bao nhiêu bit?', 'TrungBinh', 'MC'),
+-- Hệ điều hành (ma_mon = 5)
+(85, 5, 4, 'Tiến trình (process) là gì?', 'De', 'MC'),
+(86, 5, 4, 'Thuật toán lập lịch nào ưu tiên tiến trình có thời gian chạy ngắn nhất?', 'TrungBinh', 'MC'),
+-- Lập trình Web (ma_mon = 6)
+(87, 6, 5, 'HTML dùng để làm gì?', 'De', 'MC'),
+(88, 6, 5, 'HTTP method nào thường dùng để tạo mới dữ liệu?', 'TrungBinh', 'MC'),
+-- Trí tuệ nhân tạo (ma_mon = 7)
+(89, 7, 6, 'Học có giám sát cần loại dữ liệu nào?', 'De', 'MC'),
+(90, 7, 6, 'Thuật toán tìm kiếm theo chiều sâu là?', 'TrungBinh', 'MC'),
+-- An toàn và Bảo mật Thông tin (ma_mon = 8)
+(91, 8, 7, 'Mã hóa đối xứng sử dụng?', 'De', 'MC'),
+(92, 8, 7, 'Xác thực hai lớp (2FA) là?', 'TrungBinh', 'MC'),
+-- Tài chính Doanh nghiệp (ma_mon = 11)
+(93, 11, 9, 'Giá trị hiện tại (PV) là gì?', 'De', 'MC'),
+(94, 11, 9, 'Chỉ số ROE đo lường?', 'TrungBinh', 'MC'),
+-- Thương mại Điện tử (ma_mon = 12)
+(95, 12, 10, 'Mô hình B2C là gì?', 'De', 'MC'),
+(96, 12, 10, 'Giỏ hàng (shopping cart) dùng để?', 'TrungBinh', 'MC'),
+-- Dịch thuật Anh - Việt (ma_mon = 15)
+(97, 15, 12, 'Từ "economy" dịch là?', 'De', 'MC'),
+(98, 15, 12, 'Kỹ thuật "literal translation" là?', 'TrungBinh', 'MC'),
+-- Văn hóa Quốc tế (ma_mon = 16)
+(99, 16, 13, 'Khái niệm "cultural shock" là?', 'De', 'MC'),
+(100, 16, 13, 'Giao tiếp phi ngôn ngữ bao gồm?', 'TrungBinh', 'MC'),
+-- Hệ thống Điện (ma_mon = 19)
+(101, 19, 14, 'Lưới điện truyền tải thường dùng điện áp?', 'De', 'MC'),
+(102, 19, 14, 'Chức năng của trạm biến áp là?', 'TrungBinh', 'MC'),
+-- Công suất Điện (ma_mon = 20)
+(103, 20, 15, 'Công suất tác dụng ký hiệu là?', 'De', 'MC'),
+(104, 20, 15, 'Công thức công suất biểu kiến là?', 'TrungBinh', 'MC'),
+-- Điện toán Đám mây (ma_mon = 21)
+(105, 21, 8, 'Dịch vụ IaaS cung cấp?', 'De', 'MC'),
+(106, 21, 8, 'Ưu điểm chính của điện toán đám mây là?', 'TrungBinh', 'MC'),
+-- IoT và Cảm biến (ma_mon = 22)
+(107, 22, 8, 'Cảm biến dùng để?', 'De', 'MC'),
+(108, 22, 8, 'Giao thức nhẹ phổ biến trong IoT là?', 'TrungBinh', 'MC');
+
+-- ========== 16. INSERT CauHoiMC - Đáp án cho các môn bổ sung ==========
+INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dung_D, noi_dung_dung) VALUES 
+(81, 'Stack', 'Queue', 'Tree', 'Graph', 'Stack'),
+(82, 'O(n)', 'O(log n)', 'O(n log n)', 'O(1)', 'O(log n)'),
+(83, 'FTP', 'SMTP', 'HTTP', 'DNS', 'HTTP'),
+(84, '16', '32', '48', '64', '32'),
+(85, 'Một chương trình đã biên dịch', 'Một chương trình đang thực thi', 'Một file dữ liệu', 'Một driver thiết bị', 'Một chương trình đang thực thi'),
+(86, 'Round Robin', 'FCFS', 'SJF', 'Priority', 'SJF'),
+(87, 'Tạo kiểu giao diện', 'Xử lý logic server', 'Cấu trúc nội dung trang', 'Lưu trữ dữ liệu', 'Cấu trúc nội dung trang'),
+(88, 'GET', 'POST', 'PUT', 'DELETE', 'POST'),
+(89, 'Dữ liệu đã gán nhãn', 'Dữ liệu không gán nhãn', 'Dữ liệu ngẫu nhiên', 'Dữ liệu thời gian thực', 'Dữ liệu đã gán nhãn'),
+(90, 'BFS', 'DFS', 'A*', 'Greedy', 'DFS'),
+(91, 'Một khóa dùng chung', 'Hai khóa công khai', 'Chỉ khóa công khai', 'Không cần khóa', 'Một khóa dùng chung'),
+(92, 'Xác thực bằng mật khẩu', 'Xác thực bằng 2 yếu tố khác nhau', 'Xác thực bằng vân tay', 'Xác thực bằng OTP', 'Xác thực bằng 2 yếu tố khác nhau'),
+(93, 'Giá trị tiền tệ trong tương lai', 'Giá trị tiền tệ hiện tại của dòng tiền tương lai', 'Tổng doanh thu', 'Tổng chi phí', 'Giá trị tiền tệ hiện tại của dòng tiền tương lai'),
+(94, 'Lợi nhuận trên tổng tài sản', 'Lợi nhuận trên vốn chủ sở hữu', 'Lợi nhuận trên doanh thu', 'Tỷ lệ nợ', 'Lợi nhuận trên vốn chủ sở hữu'),
+(95, 'Doanh nghiệp bán cho doanh nghiệp', 'Doanh nghiệp bán cho người tiêu dùng', 'Người tiêu dùng bán cho người tiêu dùng', 'Chính phủ bán cho doanh nghiệp', 'Doanh nghiệp bán cho người tiêu dùng'),
+(96, 'Lưu sản phẩm trước khi thanh toán', 'So sánh giá', 'Tạo tài khoản', 'Tính thuế', 'Lưu sản phẩm trước khi thanh toán'),
+(97, 'Nền kinh tế', 'Kinh doanh', 'Thương mại', 'Ngân hàng', 'Nền kinh tế'),
+(98, 'Dịch ý', 'Dịch sát nghĩa', 'Dịch tự do', 'Dịch sáng tạo', 'Dịch sát nghĩa'),
+(99, 'Sốc văn hóa', 'Tôn trọng văn hóa', 'Đa văn hóa', 'Giao lưu văn hóa', 'Sốc văn hóa'),
+(100, 'Cử chỉ, nét mặt, ánh mắt', 'Chỉ ngôn ngữ nói', 'Chỉ văn bản', 'Chỉ âm thanh', 'Cử chỉ, nét mặt, ánh mắt'),
+(101, 'Điện áp thấp', 'Điện áp trung bình', 'Điện áp cao', 'Điện áp một chiều', 'Điện áp cao'),
+(102, 'Tăng công suất tải', 'Biến đổi điện áp', 'Đo tần số', 'Ổn định nhiệt', 'Biến đổi điện áp'),
+(103, 'P', 'Q', 'S', 'U', 'P'),
+(104, 'S = U * I', 'S = P / Q', 'S = U / I', 'S = I / U', 'S = U * I'),
+(105, 'Hạ tầng ảo: máy chủ, lưu trữ, mạng', 'Nền tảng phát triển ứng dụng', 'Phần mềm hoàn chỉnh', 'Dịch vụ email', 'Hạ tầng ảo: máy chủ, lưu trữ, mạng'),
+(106, 'Mua thiết bị phần cứng cố định', 'Co giãn tài nguyên theo nhu cầu', 'Giảm bảo mật', 'Chỉ dùng nội bộ', 'Co giãn tài nguyên theo nhu cầu'),
+(107, 'Thu thập dữ liệu môi trường', 'Lưu trữ dữ liệu', 'Phân tích dữ liệu', 'Hiển thị giao diện', 'Thu thập dữ liệu môi trường'),
+(108, 'MQTT', 'FTP', 'SNMP', 'IMAP', 'MQTT');
+
 -- ========== 15. INSERT CauHoi - Câu hỏi điền khuyết ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
 (31, 1, 2, 'Trong Java, từ khóa _____ được dùng để kế thừa một lớp.', 'De', 'DK'),
@@ -550,6 +626,23 @@ INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_ca
 (34, 2, 4, 'Lệnh _____ dùng để xóa dữ liệu trong bảng SQL.', 'De', 'DK'),
 (35, 2, 4, 'Mệnh đề _____ dùng để sắp xếp kết quả truy vấn SQL.', 'De', 'DK');
 
+-- ========== 17. INSERT CauHoi - Bổ sung câu hỏi điền khuyết cho các môn còn thiếu ==========
+INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
+(109, 3, 2, 'Cấu trúc dữ liệu _____ hoạt động theo FIFO.', 'De', 'DK'),
+(110, 4, 3, 'Giao thức _____ dùng để phân giải tên miền.', 'De', 'DK'),
+(111, 5, 4, 'Bộ phận _____ quản lý bộ nhớ trong hệ điều hành.', 'TrungBinh', 'DK'),
+(112, 6, 5, 'Ngôn ngữ _____ dùng để tạo kiểu giao diện web.', 'De', 'DK'),
+(113, 7, 6, 'Thuật toán _____ là mô hình học máy tuyến tính cho phân loại.', 'TrungBinh', 'DK'),
+(114, 8, 7, 'Tấn công _____ là hình thức giả mạo trang web.', 'De', 'DK'),
+(115, 11, 9, 'Chỉ số _____ đo khả năng thanh toán ngắn hạn.', 'TrungBinh', 'DK'),
+(116, 12, 10, 'Cổng _____ hỗ trợ thanh toán trực tuyến.', 'De', 'DK'),
+(117, 15, 12, 'Dịch _____ là dịch theo ngữ cảnh.', 'TrungBinh', 'DK'),
+(118, 16, 13, 'Khái niệm _____ mô tả chuẩn mực ứng xử trong văn hóa.', 'TrungBinh', 'DK'),
+(119, 19, 14, 'Thiết bị _____ dùng để bảo vệ quá tải.', 'De', 'DK'),
+(120, 20, 15, 'Công suất phản kháng ký hiệu là _____.', 'De', 'DK'),
+(121, 21, 8, 'Mô hình _____ cho phép chạy ứng dụng mà không quản lý máy chủ.', 'TrungBinh', 'DK'),
+(122, 22, 8, 'Thiết bị _____ kết nối cảm biến với mạng.', 'De', 'DK');
+
 -- ========== 13. INSERT CauHoiDK - Đáp án điền khuyết ==========
 INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES 
 (31, 'extends|implements|inherits|derives', 'extends'),
@@ -557,6 +650,23 @@ INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES
 (33, 'final|const|static|constant', 'final'),
 (34, 'DELETE|REMOVE|DROP|TRUNCATE', 'DELETE'),
 (35, 'ORDER BY|SORT BY|ARRANGE BY|GROUP BY', 'ORDER BY');
+
+-- ========== 18. INSERT CauHoiDK - Đáp án điền khuyết cho các môn bổ sung ==========
+INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES 
+(109, 'Queue|Stack|Tree|Graph', 'Queue'),
+(110, 'DNS|HTTP|FTP|SMTP', 'DNS'),
+(111, 'Memory Manager|Scheduler|Shell|Driver', 'Memory Manager'),
+(112, 'CSS|HTML|SQL|XML', 'CSS'),
+(113, 'Logistic Regression|KNN|Naive Bayes|SVM', 'Logistic Regression'),
+(114, 'phishing|spoofing|sniffing|spam', 'phishing'),
+(115, 'Current Ratio|ROE|ROI|EPS', 'Current Ratio'),
+(116, 'Payment Gateway|Checkout|Invoice|Receipt', 'Payment Gateway'),
+(117, 'tự do|máy|từng chữ|âm vị', 'tự do'),
+(118, 'nghi thức|xung đột|đa văn hóa|định kiến', 'nghi thức'),
+(119, 'CB|Biến áp|Tụ điện|Rơle thời gian', 'CB'),
+(120, 'Q|P|S|U', 'Q'),
+(121, 'Serverless|IaaS|PaaS|On-premises', 'Serverless'),
+(122, 'Gateway|Router|Switch|Repeater', 'Gateway');
 
 -- ========== 14. INSERT DeThi ==========
 INSERT INTO DeThi (ma_de_thi, ma_hoc_phan, ma_ky_thi, ma_gv, ten_de_thi, thoi_gian_lam, ngay_tao, so_cau_hoi) VALUES 

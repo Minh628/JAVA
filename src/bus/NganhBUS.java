@@ -4,7 +4,10 @@
  */
 package bus;
 
+
+import dao.KhoaDAO;
 import dao.NganhDAO;
+import dto.KhoaDTO;
 import dto.NganhDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,12 +15,14 @@ import java.util.List;
 
 public class NganhBUS {
     private NganhDAO nganhDAO;
+    private KhoaDAO khoaDAO;
     
     // Cache
     private static ArrayList<NganhDTO> danhSachNganh = null;
 
     public NganhBUS() {
         this.nganhDAO = new NganhDAO();
+        this.khoaDAO = new KhoaDAO();
     }
 
     /**
@@ -122,6 +127,56 @@ public class NganhBUS {
         } catch (SQLException e) {
             e.printStackTrace();
             return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Tìm kiếm ngành theo loại
+     */
+    public List<NganhDTO> timKiem(String keyword, String loai) {
+        List<NganhDTO> result = new ArrayList<>();
+        try {
+            keyword = keyword.toLowerCase();
+            getDanhSachNganh();
+            for (NganhDTO n : danhSachNganh) {
+                if (matchFilter(n, keyword, loai)) {
+                    result.add(n);
+                }
+            }
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean matchFilter(NganhDTO n, String keyword, String loai) {
+        if (keyword.isEmpty())
+            return true;
+        try {
+            switch (loai) {
+                case "Mã Ngành":
+                    return String.valueOf(n.getMaNganh()).contains(keyword);
+                case "Tên Ngành":
+                    return n.getTenNganh() != null && n.getTenNganh().toLowerCase().contains(keyword);
+                case "Thuộc Khoa": {
+                    KhoaDTO khoa = khoaDAO.getById(n.getMaKhoa());
+                    if (khoa != null && khoa.getTenKhoa().toLowerCase().contains(keyword)) {
+                        return true;
+                    }
+                }
+                case "Tất cả":
+                    return String.valueOf(n.getMaNganh()).contains(keyword) ||
+                            (n.getTenNganh() != null && n.getTenNganh().toLowerCase().contains(keyword)) ||
+                            (khoaDAO.getById(n.getMaKhoa()) != null &&
+                             khoaDAO.getById(n.getMaKhoa()).getTenKhoa().toLowerCase().contains(keyword));
+                default:
+                    return true;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

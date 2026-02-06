@@ -4,7 +4,7 @@
  */
 package gui.admin;
 
-import bus.DeThiBUS;
+
 import bus.KyThiBUS;
 import config.Constants;
 import dto.KyThiDTO;
@@ -25,6 +25,7 @@ public class QuanLyKyThiPanel extends JPanel {
     private CustomTable tblKyThi;
     private DefaultTableModel modelKyThi;
 
+    private JTextField txtMaKyThi;
     private JTextField txtTenKyThi;
     private JSpinner spnNgayBatDau;
     private JSpinner spnNgayKetThuc;
@@ -67,9 +68,28 @@ public class QuanLyKyThiPanel extends JPanel {
         gbc.insets = new Insets(8, 10, 8, 10);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Row 1: Tên kỳ thi
+        // Row 0: Mã kỳ thi
         gbc.gridx = 0;
         gbc.gridy = 0;
+        JLabel lblMaKyThi = new JLabel("Mã kỳ thi:");
+        lblMaKyThi.setFont(Constants.NORMAL_FONT);
+        panelForm.add(lblMaKyThi, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        txtMaKyThi = new JTextField(10);
+        txtMaKyThi.setFont(Constants.NORMAL_FONT);
+        txtMaKyThi.setEditable(false);
+        panelForm.add(txtMaKyThi, gbc);
+
+        // Row 1: Tên kỳ thi
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
         JLabel lblTenKyThi = new JLabel("Tên kỳ thi:");
         lblTenKyThi.setFont(Constants.NORMAL_FONT);
         panelForm.add(lblTenKyThi, gbc);
@@ -84,7 +104,7 @@ public class QuanLyKyThiPanel extends JPanel {
 
         // Row 2: Thời gian bắt đầu và kết thúc
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
@@ -133,7 +153,7 @@ public class QuanLyKyThiPanel extends JPanel {
         panelNut.add(btnLamMoi);
 
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 4;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -221,44 +241,21 @@ public class QuanLyKyThiPanel extends JPanel {
     private void timKiem() {
         String keyword = txtTimKiem.getText().trim();
         String loaiTimKiem = (String) cboLoaiTimKiem.getSelectedItem();
+
         modelKyThi.setRowCount(0);
 
-        List<KyThiDTO> danhSach;
-        if (keyword.isEmpty() || loaiTimKiem.equals("Tất cả")) {
-            danhSach = kyThiBUS.timKiem(keyword);
-        } else {
-            danhSach = kyThiBUS.getDanhSachKyThi();
-        }
+        List<KyThiDTO> danhSach = kyThiBUS.timKiem(keyword, loaiTimKiem);
 
-        if (danhSach != null) {
-            Timestamp now = new Timestamp(System.currentTimeMillis());
-            for (KyThiDTO kt : danhSach) {
-                String trangThai = getTrangThai(kt, now);
-                boolean match = true;
-                if (!keyword.isEmpty() && !loaiTimKiem.equals("Tất cả")) {
-                    String keyLower = keyword.toLowerCase();
-                    switch (loaiTimKiem) {
-                        case "Mã KT":
-                            match = String.valueOf(kt.getMaKyThi()).contains(keyword);
-                            break;
-                        case "Tên Kỳ Thi":
-                            match = kt.getTenKyThi() != null && kt.getTenKyThi().toLowerCase().contains(keyLower);
-                            break;
-                        case "Trạng thái":
-                            match = trangThai.toLowerCase().contains(keyLower);
-                            break;
-                    }
-                }
-                if (match) {
-                    modelKyThi.addRow(new Object[] {
-                            kt.getMaKyThi(),
-                            kt.getTenKyThi(),
-                            kt.getThoiGianBatDau() != null ? dateFormat.format(kt.getThoiGianBatDau()) : "",
-                            kt.getThoiGianKetThuc() != null ? dateFormat.format(kt.getThoiGianKetThuc()) : "",
-                            trangThai
-                    });
-                }
-            }
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        for (KyThiDTO kt : danhSach) {
+            String trangThai = getTrangThai(kt, now);
+            modelKyThi.addRow(new Object[] {
+                kt.getMaKyThi(),
+                kt.getTenKyThi(),
+                kt.getThoiGianBatDau() != null ? dateFormat.format(kt.getThoiGianBatDau()) : "",
+                kt.getThoiGianKetThuc() != null ? dateFormat.format(kt.getThoiGianKetThuc()) : "",
+                trangThai
+            });
         }
     }
 
@@ -279,6 +276,7 @@ public class QuanLyKyThiPanel extends JPanel {
         int row = tblKyThi.getSelectedRow();
         if (row >= 0) {
             selectedMaKyThi = (int) modelKyThi.getValueAt(row, 0);
+            txtMaKyThi.setText(String.valueOf(selectedMaKyThi));
             txtTenKyThi.setText((String) modelKyThi.getValueAt(row, 1));
 
             String batDauStr = (String) modelKyThi.getValueAt(row, 2);
@@ -359,6 +357,7 @@ public class QuanLyKyThiPanel extends JPanel {
     }
 
     private void lamMoi() {
+        txtMaKyThi.setText("");
         txtTenKyThi.setText("");
         spnNgayBatDau.setValue(new Date());
         spnNgayKetThuc.setValue(new Date());

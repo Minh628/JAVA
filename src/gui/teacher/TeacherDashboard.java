@@ -5,22 +5,17 @@
  */
 package gui.teacher;
 
-import bus.GiangVienBUS;
-import config.Constants;
 import dto.GiangVienDTO;
 import gui.components.BaseDashboardFrame;
 import gui.login.LoginFrame;
-import java.awt.*;
 import javax.swing.*;
 
 public class TeacherDashboard extends BaseDashboardFrame {
     private GiangVienDTO nguoiDung;
-    private GiangVienBUS giangVienBUS;
 
     public TeacherDashboard(GiangVienDTO nguoiDung) {
         super("EXAM MANAGEMENT - Giảng viên");
         this.nguoiDung = nguoiDung;
-        this.giangVienBUS = new GiangVienBUS();
         initUI();
     }
 

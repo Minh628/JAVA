@@ -5,7 +5,9 @@
  */
 package bus;
 
+import dao.NganhDAO;
 import dao.SinhVienDAO;
+import dto.NganhDTO;
 import dto.SinhVienDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,12 +15,14 @@ import java.util.List;
 
 public class SinhVienBUS {
     private SinhVienDAO sinhVienDAO;
+    private NganhDAO nganhDAO = new NganhDAO();
 
     // Cache
     private static ArrayList<SinhVienDTO> danhSachSinhVien = null;
 
     public SinhVienBUS() {
         this.sinhVienDAO = new SinhVienDAO();
+        this.nganhDAO = new NganhDAO();
     }
 
     /**
@@ -62,13 +66,6 @@ public class SinhVienBUS {
             e.printStackTrace();
             return null;
         }
-    }
-
-    /**
-     * Lấy thông tin sinh viên (alias cho getById)
-     */
-    public SinhVienDTO getThongTin(int maSV) {
-        return getById(maSV);
     }
 
     /**
@@ -173,6 +170,60 @@ public class SinhVienBUS {
         } catch (SQLException e) {
             e.printStackTrace();
             return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Tìm kiếm sinh viên theo loại
+     */
+    public List<SinhVienDTO> timKiem(String keyword, String loai) {
+        List<SinhVienDTO> result = new ArrayList<>();
+        try {
+            keyword = keyword.toLowerCase();
+            getDanhSachSinhVien();
+            for (SinhVienDTO sv : danhSachSinhVien) {
+                if (matchFilter(sv, keyword, loai)) {
+                    result.add(sv);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean matchFilter(SinhVienDTO sv, String keyword, String loai) {
+        if (keyword.isEmpty()) return true;
+        try {
+            switch (loai) {
+            case "Mã SV":
+                return String.valueOf(sv.getMaSV()).contains(keyword);
+            case "Tên đăng nhập":
+                return sv.getTenDangNhap() != null && sv.getTenDangNhap().toLowerCase().contains(keyword);
+            case "Họ tên":
+                return (sv.getHo() + " " + sv.getTen()).toLowerCase().contains(keyword);
+            case "Email":
+                return sv.getEmail() != null && sv.getEmail().toLowerCase().contains(keyword);
+            case "Ngành": {
+                NganhDTO nganh = nganhDAO.getById(sv.getMaNganh());
+                if (nganh != null &&  nganh.getTenNganh().toLowerCase().contains(keyword)) {
+                    return true;
+                }
+            }
+            case "Tất cả":
+                return String.valueOf(sv.getMaSV()).contains(keyword) ||
+                       (sv.getTenDangNhap() != null && sv.getTenDangNhap().toLowerCase().contains(keyword)) ||
+                       (sv.getHo() + " " + sv.getTen()).toLowerCase().contains(keyword) ||
+                       (sv.getEmail() != null && sv.getEmail().toLowerCase().contains(keyword)) ||
+                       (nganhDAO.getById(sv.getMaNganh()) != null &&
+                        nganhDAO.getById(sv.getMaNganh()).getTenNganh().toLowerCase().contains(keyword));
+            default:
+                return true;
+        }
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

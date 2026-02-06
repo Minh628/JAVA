@@ -13,6 +13,7 @@ import javax.swing.*;
 public class QuanLyHocPhanPanel extends BaseCrudPanel {
     private HocPhanBUS hocPhanBUS = new HocPhanBUS();
     private KhoaBUS khoaBUS = new KhoaBUS();
+    private JTextField txtMaHocPhan;
     private JTextField txtTenMon;
     private JSpinner spnSoTin;
     private JComboBox<KhoaDTO> cboKhoa;
@@ -21,7 +22,7 @@ public class QuanLyHocPhanPanel extends BaseCrudPanel {
     public QuanLyHocPhanPanel() {
         super("QUẢN LÝ HỌC PHẦN",
                 new String[] { "Mã HP", "Tên Học Phần", "Số TC", "Khoa" },
-                new String[] { "Tất cả", "Mã HP", "Tên Học Phần", "Khoa" });
+                new String[] { "Tất cả", "Mã HP", "Tên Học Phần","Số TC", "Khoa" });
         
         loadKhoaData();
     }
@@ -48,6 +49,7 @@ public class QuanLyHocPhanPanel extends BaseCrudPanel {
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.anchor = GridBagConstraints.WEST;
 
+        txtMaHocPhan = createTextField(10, false);
         txtTenMon = createTextField(25, true);
         spnSoTin = new JSpinner(new SpinnerNumberModel(3, 1, 10, 1));
         spnSoTin.setPreferredSize(new Dimension(80, 28));
@@ -57,30 +59,35 @@ public class QuanLyHocPhanPanel extends BaseCrudPanel {
         cboKhoa.setPreferredSize(new Dimension(200, 28));
         cboKhoa.setFont(Constants.NORMAL_FONT);
 
-        // Row 0: Tên môn và Số tín chỉ
+        // Row 0: Mã môn và Tên môn
         gbc.gridx = 0;
         gbc.gridy = 0;
-        panel.add(createLabel("Tên môn:"), gbc);
+        panel.add(createLabel("Mã HP:"), gbc);
         gbc.gridx = 1;
+        panel.add(txtMaHocPhan, gbc);
+
+        gbc.gridx = 2;
+        panel.add(createLabel("Tên môn:"), gbc);
+        gbc.gridx = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
         panel.add(txtTenMon, gbc);
-        gbc.gridx = 2;
+
+        // Row 1: Số tín chỉ và Khoa
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
         panel.add(createLabel("Số tín chỉ:"), gbc);
-        gbc.gridx = 3;
+        gbc.gridx = 1;
         panel.add(spnSoTin, gbc);
         
-        // Row 1: Khoa
-        gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridx = 2;
         panel.add(createLabel("Khoa:"), gbc);
-        gbc.gridx = 1;
+        gbc.gridx = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
         panel.add(cboKhoa, gbc);
-
         return panel;
     }
 
@@ -105,42 +112,31 @@ public class QuanLyHocPhanPanel extends BaseCrudPanel {
 
     @Override
     protected void timKiem() {
-        String keyword = txtTimKiem.getText().trim().toLowerCase();
+        String keyword = txtTimKiem.getText().trim();
         String loai = (String) cboLoaiTimKiem.getSelectedItem();
+
         tableModel.setRowCount(0);
 
-        List<HocPhanDTO> danhSach = hocPhanBUS.getDanhSachHocPhan();
+        List<HocPhanDTO> danhSach = hocPhanBUS.timKiem(keyword, loai);
 
-        if (danhSach != null) {
-            danhSach.stream().filter(hp -> matchFilter(hp, keyword, loai))
-                    .forEach(hp -> {
-                        String tenKhoa = getTenKhoa(hp.getMaKhoa());
-                        tableModel.addRow(new Object[] {
-                            hp.getMaHocPhan(), hp.getTenMon(), hp.getSoTin(), tenKhoa
-                        });
-                    });
+        for (HocPhanDTO hp : danhSach) {
+            String tenKhoa = getTenKhoa(hp.getMaKhoa());
+            tableModel.addRow(new Object[] {
+                hp.getMaHocPhan(),
+                hp.getTenMon(),
+                hp.getSoTin(),
+                tenKhoa
+            });
         }
     }
 
-    private boolean matchFilter(HocPhanDTO hp, String keyword, String loai) {
-        if (keyword.isEmpty() || "Tất cả".equals(loai))
-            return true;
-        return switch (loai) {
-            case "Mã HP" -> String.valueOf(hp.getMaHocPhan()).contains(keyword);
-            case "Tên Học Phần" -> hp.getTenMon() != null && hp.getTenMon().toLowerCase().contains(keyword);
-            case "Khoa" -> {
-                String tenKhoa = getTenKhoa(hp.getMaKhoa());
-                yield tenKhoa != null && tenKhoa.toLowerCase().contains(keyword);
-            }
-            default -> true;
-        };
-    }
 
     @Override
     protected void hienThiThongTin() {
         int row = table.getSelectedRow();
         if (row >= 0) {
             selectedMaHocPhan = (int) tableModel.getValueAt(row, 0);
+            txtMaHocPhan.setText(String.valueOf(selectedMaHocPhan));
             txtTenMon.setText((String) tableModel.getValueAt(row, 1));
             spnSoTin.setValue(tableModel.getValueAt(row, 2));
             
@@ -223,6 +219,7 @@ public class QuanLyHocPhanPanel extends BaseCrudPanel {
 
     @Override
     protected void lamMoi() {
+        txtMaHocPhan.setText("");
         txtTenMon.setText("");
         spnSoTin.setValue(3);
         if (cboKhoa.getItemCount() > 0) {

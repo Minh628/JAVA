@@ -356,6 +356,7 @@ public class LoginFrame extends JFrame {
         int maVaiTro = dangNhapBUS.getVaiTro(user);
         
         // vaiTroIndex: 0 = Sinh viên, 1 = Giảng viên, 2 = ADMIN
+        // maVaiTro: 1 = Sinh viên, 2 = Giảng viên, 3 = ADMIN
         boolean vaiTroHopLe = false;
         
         if (vaiTroIndex == 0 && maVaiTro == VaiTroDTO.SINH_VIEN) {

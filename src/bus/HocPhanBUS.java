@@ -5,19 +5,23 @@
 package bus;
 
 import dao.HocPhanDAO;
+import dao.KhoaDAO;
 import dto.HocPhanDTO;
+import dto.KhoaDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HocPhanBUS {
     private HocPhanDAO hocPhanDAO;
+    private KhoaDAO khoaDAO;
     
     // Cache
     private static ArrayList<HocPhanDTO> danhSachHocPhan = null;
 
     public HocPhanBUS() {
         this.hocPhanDAO = new HocPhanDAO();
+        this.khoaDAO = new KhoaDAO();
     }
 
     /**
@@ -101,13 +105,61 @@ public class HocPhanBUS {
     /**
      * Tìm kiếm học phần
      */
-    public List<HocPhanDTO> timKiem(String keyword) {
+    public List<HocPhanDTO> timKiem(String keyword, String loai) {
+        List<HocPhanDTO> result = new ArrayList<>();
         try {
-            return hocPhanDAO.search(keyword);
-        } catch (SQLException e) {
+            keyword = keyword.toLowerCase();
+            getDanhSachHocPhan(); // đảm bảo cache đã load
+
+            for (HocPhanDTO hp : danhSachHocPhan) {
+                if (matchFilter(hp, keyword, loai)) {
+                    result.add(hp);
+                }
+            }
+        }catch(Exception e){
             e.printStackTrace();
-            return new ArrayList<>();
         }
+        
+        return result;
+    }
+
+    private boolean matchFilter(HocPhanDTO hp, String keyword, String loai) {
+        try{
+            if (keyword.isEmpty())
+            return true;
+
+            return switch (loai) {
+                case "Mã HP" -> String.valueOf(hp.getMaHocPhan()).contains(keyword);
+                case "Tên Học Phần" -> hp.getTenMon() != null &&
+                        hp.getTenMon().toLowerCase().contains(keyword);
+                case "Số TC" -> String.valueOf(hp.getSoTin()).contains(keyword);
+                case "Khoa" -> {
+                    KhoaDTO khoa = khoaDAO.getById(hp.getMaKhoa());
+                    yield khoa != null &&
+                        khoa.getTenKhoa().toLowerCase().contains(keyword);
+                }
+                case "Tất cả" -> {
+                    if (String.valueOf(hp.getMaHocPhan()).contains(keyword))
+                        yield true;
+                    if (hp.getTenMon() != null &&
+                        hp.getTenMon().toLowerCase().contains(keyword))
+                        yield true;
+                    if (String.valueOf(hp.getSoTin()).contains(keyword))
+                        yield true;
+                    KhoaDTO khoa = khoaDAO.getById(hp.getMaKhoa());
+                    if (khoa != null &&
+                        khoa.getTenKhoa().toLowerCase().contains(keyword))
+                        yield true;
+                    yield false;
+                }
+                default -> true;
+            };
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        return false;
+        
     }
 
     public static void reloadCache() {

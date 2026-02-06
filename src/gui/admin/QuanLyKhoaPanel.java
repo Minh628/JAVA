@@ -29,7 +29,9 @@ public class QuanLyKhoaPanel extends JPanel {
     private CustomTable tblNganh;
     private DefaultTableModel modelNganh;
 
+    private JTextField txtMaKhoa;
     private JTextField txtTenKhoa;
+    private JTextField txtSoNganh;
     private JTextField txtTimKiem;
     private JComboBox<String> cboLoaiTimKiem;
 
@@ -69,9 +71,26 @@ public class QuanLyKhoaPanel extends JPanel {
         gbc.insets = new Insets(8, 10, 8, 10);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Row 1: Tên khoa
+        // Row 0: Mã khoa
         gbc.gridx = 0;
         gbc.gridy = 0;
+        JLabel lblMaKhoa = new JLabel("Mã khoa:");
+        lblMaKhoa.setFont(Constants.NORMAL_FONT);
+        panelForm.add(lblMaKhoa, gbc);
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        txtMaKhoa = new JTextField(10);
+        txtMaKhoa.setFont(Constants.NORMAL_FONT);
+        txtMaKhoa.setEditable(false);
+        panelForm.add(txtMaKhoa, gbc);
+
+        // Row 1: Tên khoa
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
         JLabel lblTenKhoa = new JLabel("Tên khoa:");
         lblTenKhoa.setFont(Constants.NORMAL_FONT);
         panelForm.add(lblTenKhoa, gbc);
@@ -83,6 +102,23 @@ public class QuanLyKhoaPanel extends JPanel {
         txtTenKhoa.setFont(Constants.NORMAL_FONT);
         panelForm.add(txtTenKhoa, gbc);
 
+        // Row 2: Số ngành
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE; 
+        gbc.weightx = 0;
+        JLabel lblSoNganh = new JLabel("Số ngành:");
+        lblSoNganh.setFont(Constants.NORMAL_FONT);
+        panelForm.add(lblSoNganh, gbc);
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        txtSoNganh = new JTextField(10);
+        txtSoNganh.setFont(Constants.NORMAL_FONT);
+        txtSoNganh.setEditable(false);
+        panelForm.add(txtSoNganh, gbc);
+        
         // Buttons
         JPanel panelNut = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         panelNut.setBackground(Constants.CARD_COLOR);
@@ -103,7 +139,7 @@ public class QuanLyKhoaPanel extends JPanel {
         panelNut.add(btnLamMoi);
 
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -227,36 +263,16 @@ public class QuanLyKhoaPanel extends JPanel {
     private void timKiem() {
         String keyword = txtTimKiem.getText().trim();
         String loaiTimKiem = (String) cboLoaiTimKiem.getSelectedItem();
+
         modelKhoa.setRowCount(0);
 
-        List<KhoaDTO> danhSach;
-        if (keyword.isEmpty() || loaiTimKiem.equals("Tất cả")) {
-            danhSach = khoaBUS.timKiem(keyword);
-        } else {
-            danhSach = khoaBUS.getDanhSachKhoa();
-        }
+        List<KhoaDTO> danhSach = khoaBUS.timKiem(keyword, loaiTimKiem);
 
-        if (danhSach != null) {
-            for (KhoaDTO khoa : danhSach) {
-                boolean match = true;
-                if (!keyword.isEmpty() && !loaiTimKiem.equals("Tất cả")) {
-                    String keyLower = keyword.toLowerCase();
-                    switch (loaiTimKiem) {
-                        case "Mã Khoa":
-                            match = String.valueOf(khoa.getMaKhoa()).contains(keyword);
-                            break;
-                        case "Tên Khoa":
-                            match = khoa.getTenKhoa() != null && khoa.getTenKhoa().toLowerCase().contains(keyLower);
-                            break;
-                    }
-                }
-                if (match) {
-                    int soNganh = nganhBUS.getNganhTheoKhoa(khoa.getMaKhoa()).size();
-                    modelKhoa.addRow(new Object[] {
-                            khoa.getMaKhoa(), khoa.getTenKhoa(), soNganh
-                    });
-                }
-            }
+        for (KhoaDTO khoa : danhSach) {
+            int soNganh = nganhBUS.getNganhTheoKhoa(khoa.getMaKhoa()).size();
+            modelKhoa.addRow(new Object[] {
+                khoa.getMaKhoa(), khoa.getTenKhoa(), soNganh
+            });
         }
         modelNganh.setRowCount(0);
     }
@@ -284,7 +300,9 @@ public class QuanLyKhoaPanel extends JPanel {
         int row = tblKhoa.getSelectedRow();
         if (row >= 0) {
             selectedMaKhoa = (int) modelKhoa.getValueAt(row, 0);
+            txtMaKhoa.setText(String.valueOf(selectedMaKhoa));
             txtTenKhoa.setText((String) modelKhoa.getValueAt(row, 1));
+            txtSoNganh.setText(modelKhoa.getValueAt(row, 2).toString());
         }
     }
 
@@ -347,7 +365,9 @@ public class QuanLyKhoaPanel extends JPanel {
     }
 
     private void lamMoi() {
+        txtMaKhoa.setText("");
         txtTenKhoa.setText("");
+        txtSoNganh.setText("");
         tblKhoa.clearSelection();
         selectedMaKhoa = -1;
         modelNganh.setRowCount(0); // Clear bảng ngành

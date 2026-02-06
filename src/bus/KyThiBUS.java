@@ -122,6 +122,58 @@ public class KyThiBUS {
         }
     }
 
+    /**
+     * Tìm kiếm kỳ thi theo loại
+     */
+    public List<KyThiDTO> timKiem(String keyword, String loai) {
+        List<KyThiDTO> result = new ArrayList<>();
+        try {
+            keyword = keyword.toLowerCase();
+            getDanhSachKyThi();
+            java.sql.Timestamp now = new java.sql.Timestamp(System.currentTimeMillis());
+            for (KyThiDTO kt : danhSachKyThi) {
+                if (matchFilter(kt, keyword, loai, now)) {
+                    result.add(kt);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean matchFilter(KyThiDTO kt, String keyword, String loai, java.sql.Timestamp now) {
+        if (keyword.isEmpty()) return true;
+        String trangThai = getTrangThai(kt, now);
+        switch (loai) {
+            case "Mã KT":
+                return String.valueOf(kt.getMaKyThi()).contains(keyword);
+            case "Tên Kỳ Thi":
+                return kt.getTenKyThi() != null && kt.getTenKyThi().toLowerCase().contains(keyword);
+            case "Trạng thái":
+                return trangThai.toLowerCase().contains(keyword);
+            case "Tất cả":
+                return String.valueOf(kt.getMaKyThi()).contains(keyword) ||
+                       (kt.getTenKyThi() != null && kt.getTenKyThi().toLowerCase().contains(keyword)) ||
+                       trangThai.toLowerCase().contains(keyword);
+            default:
+                return true;
+        }
+    }
+
+    private String getTrangThai(KyThiDTO kt, java.sql.Timestamp now) {
+        if (kt.getThoiGianBatDau() == null || kt.getThoiGianKetThuc() == null) {
+            return "Chưa xác định";
+        }
+        if (now.before(kt.getThoiGianBatDau())) {
+            return "Sắp diễn ra";
+        } else if (now.after(kt.getThoiGianKetThuc())) {
+            return "Đã kết thúc";
+        } else {
+            return "Đang diễn ra";
+        }
+    }
+
     public static void reloadCache() {
         danhSachKyThi = null;
     }
