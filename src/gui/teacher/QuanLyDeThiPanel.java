@@ -2,6 +2,8 @@
  * Hệ thống thi trắc nghiệm trực tuyến
  * GUI: QuanLyDeThiPanel - Panel quản lý đề thi cho giảng viên
  * 
+ * Kế thừa BaseCrudPanel để tái sử dụng code CRUD
+ * 
  * Sử dụng BUS chuyên biệt:
  * - DeThiBUS: Quản lý đề thi và chi tiết đề thi
  * - HocPhanBUS: Lấy danh sách học phần
@@ -20,12 +22,15 @@ import bus.CauHoiBUS;
 import bus.DeThiBUS;
 import bus.HocPhanBUS;
 import bus.KyThiBUS;
+import bus.SearchCondition;
 import config.Constants;
 import dto.CauHoiDTO;
 import dto.DeThiDTO;
 import dto.GiangVienDTO;
 import dto.HocPhanDTO;
 import dto.KyThiDTO;
+import gui.components.AdvancedSearchDialog;
+import gui.components.BaseCrudPanel;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
 import java.awt.*;
@@ -36,7 +41,7 @@ import java.util.Set;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class QuanLyDeThiPanel extends JPanel {
+public class QuanLyDeThiPanel extends BaseCrudPanel {
     private GiangVienDTO nguoiDung;
     private DeThiBUS deThiBUS;
     private HocPhanBUS hocPhanBUS;
@@ -48,49 +53,31 @@ public class QuanLyDeThiPanel extends JPanel {
     private List<HocPhanDTO> danhSachHocPhan;
     private List<KyThiDTO> danhSachKyThi;
 
-    private CustomTable tblDeThi;
-    private DefaultTableModel modelDeThi;
-
     // Form fields
     private JTextField txtTenDeThi;
     private JComboBox<HocPhanDTO> cboHocPhan;
     private JComboBox<KyThiDTO> cboKyThi;
     private JSpinner spnThoiGian;
 
-    private JTextField txtTimKiem;
-    private JComboBox<String> cboLoaiTimKiem;
-    private CustomButton btnTimKiem;
-
-    private CustomButton btnThem;
-    private CustomButton btnSua;
-    private CustomButton btnXoa;
-    private CustomButton btnLamMoi;
     private CustomButton btnQuanLyCauHoi;
 
     private int selectedMaDeThi = -1;
 
+    private static final String[] COLUMNS = { "Mã đề", "Tên đề thi", "Học phần", "Kỳ thi", "Số câu", "Thời gian" };
+    private static final String[] SEARCH_OPTIONS = { "Tất cả", "Mã đề", "Tên đề thi", "Học phần", "Kỳ thi" };
+
     public QuanLyDeThiPanel(GiangVienDTO nguoiDung) {
+        super("QUẢN LÝ ĐỀ THI", COLUMNS, SEARCH_OPTIONS);
         this.nguoiDung = nguoiDung;
         this.deThiBUS = new DeThiBUS();
         this.hocPhanBUS = new HocPhanBUS();
         this.kyThiBUS = new KyThiBUS();
         this.cauHoiBUS = new CauHoiBUS();
         this.baiThiBUS = new BaiThiBUS();
-        initComponents();
-        loadData();
     }
 
-    private void initComponents() {
-        setLayout(new BorderLayout(10, 10));
-        setBackground(Constants.CONTENT_BG);
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // Tiêu đề
-        JLabel lblTieuDe = new JLabel("QUẢN LÝ ĐỀ THI", SwingConstants.CENTER);
-        lblTieuDe.setFont(Constants.HEADER_FONT);
-        lblTieuDe.setForeground(Constants.PRIMARY_COLOR);
-
-        // Form nhập liệu
+    @Override
+    protected JPanel createFormPanel() {
         JPanel panelForm = new JPanel(new GridBagLayout());
         panelForm.setBackground(Constants.CARD_COLOR);
         panelForm.setBorder(BorderFactory.createTitledBorder(
@@ -104,7 +91,7 @@ public class QuanLyDeThiPanel extends JPanel {
         // Row 1: Tên đề thi
         gbc.gridx = 0;
         gbc.gridy = 0;
-        addLabel(panelForm, "Tên đề thi:", gbc);
+        panelForm.add(createLabel("Tên đề thi:"), gbc);
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
@@ -115,7 +102,7 @@ public class QuanLyDeThiPanel extends JPanel {
         gbc.gridx = 2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        addLabel(panelForm, "Học phần:", gbc);
+        panelForm.add(createLabel("Học phần:"), gbc);
         gbc.gridx = 3;
         cboHocPhan = new JComboBox<>();
         cboHocPhan.setPreferredSize(new Dimension(200, 28));
@@ -125,7 +112,7 @@ public class QuanLyDeThiPanel extends JPanel {
         // Row 2
         gbc.gridx = 0;
         gbc.gridy = 1;
-        addLabel(panelForm, "Kỳ thi:", gbc);
+        panelForm.add(createLabel("Kỳ thi:"), gbc);
         gbc.gridx = 1;
         cboKyThi = new JComboBox<>();
         cboKyThi.setPreferredSize(new Dimension(200, 28));
@@ -133,109 +120,31 @@ public class QuanLyDeThiPanel extends JPanel {
         panelForm.add(cboKyThi, gbc);
 
         gbc.gridx = 2;
-        addLabel(panelForm, "Thời gian (phút):", gbc);
+        panelForm.add(createLabel("Thời gian (phút):"), gbc);
         gbc.gridx = 3;
         spnThoiGian = new JSpinner(new SpinnerNumberModel(45, 10, 180, 5));
         spnThoiGian.setPreferredSize(new Dimension(80, 28));
         spnThoiGian.setFont(Constants.NORMAL_FONT);
         panelForm.add(spnThoiGian, gbc);
 
-        // Buttons
-        JPanel panelNut = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        panelNut.setBackground(Constants.CARD_COLOR);
-
-        btnThem = new CustomButton("Thêm", Constants.SUCCESS_COLOR, Constants.TEXT_COLOR);
-        btnSua = new CustomButton("Sửa", Constants.PRIMARY_COLOR, Constants.TEXT_COLOR);
-        btnXoa = new CustomButton("Xóa", Constants.DANGER_COLOR, Constants.TEXT_COLOR);
-        btnLamMoi = new CustomButton("Làm mới", Constants.WARNING_COLOR, Constants.TEXT_COLOR);
-        btnQuanLyCauHoi = new CustomButton("Quản lý câu hỏi", new Color(128, 0, 128), Constants.TEXT_COLOR);
-
-        btnThem.addActionListener(e -> themDeThi());
-        btnSua.addActionListener(e -> suaDeThi());
-        btnXoa.addActionListener(e -> xoaDeThi());
-        btnLamMoi.addActionListener(e -> lamMoi());
-        btnQuanLyCauHoi.addActionListener(e -> moQuanLyCauHoi());
-
-        panelNut.add(btnThem);
-        panelNut.add(btnSua);
-        panelNut.add(btnXoa);
-        panelNut.add(btnLamMoi);
-        panelNut.add(btnQuanLyCauHoi);
-
+        // Row 3: Nút quản lý câu hỏi (nút đặc biệt riêng)
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.CENTER;
-        panelForm.add(panelNut, gbc);
+        
+        JPanel panelExtraBtn = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        panelExtraBtn.setBackground(Constants.CARD_COLOR);
+        btnQuanLyCauHoi = new CustomButton("Quản lý câu hỏi", new Color(128, 0, 128), Constants.TEXT_COLOR);
+        btnQuanLyCauHoi.addActionListener(e -> moQuanLyCauHoi());
+        panelExtraBtn.add(btnQuanLyCauHoi);
+        panelForm.add(panelExtraBtn, gbc);
 
-        // Panel trên: Tiêu đề + Form
-        JPanel panelTren = new JPanel(new BorderLayout(0, 10));
-        panelTren.setBackground(Constants.CONTENT_BG);
-        panelTren.add(lblTieuDe, BorderLayout.NORTH);
-        panelTren.add(panelForm, BorderLayout.CENTER);
-        add(panelTren, BorderLayout.NORTH);
-
-        // Bảng
-        String[] columns = { "Mã đề", "Tên đề thi", "Học phần", "Kỳ thi", "Số câu", "Thời gian" };
-        modelDeThi = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        tblDeThi = new CustomTable(modelDeThi);
-        tblDeThi.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                hienThiThongTin();
-            }
-        });
-
-        JScrollPane scrollPane = new JScrollPane(tblDeThi);
-        scrollPane.getViewport().setBackground(Constants.CARD_COLOR);
-
-        // Panel tìm kiếm
-        JPanel panelTimKiem = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        panelTimKiem.setBackground(Constants.CONTENT_BG);
-
-        JLabel lblTimKiem = new JLabel("Tìm kiếm:");
-        lblTimKiem.setFont(Constants.NORMAL_FONT);
-        panelTimKiem.add(lblTimKiem);
-
-        cboLoaiTimKiem = new JComboBox<>(new String[] { "Tất cả", "Mã đề", "Tên đề thi", "Học phần", "Kỳ thi" });
-        cboLoaiTimKiem.setFont(Constants.NORMAL_FONT);
-        panelTimKiem.add(cboLoaiTimKiem);
-
-        txtTimKiem = new JTextField(20);
-        txtTimKiem.setFont(Constants.NORMAL_FONT);
-        txtTimKiem.addActionListener(e -> timKiem());
-        panelTimKiem.add(txtTimKiem);
-
-        btnTimKiem = new CustomButton("Tìm", Constants.INFO_COLOR, Constants.TEXT_COLOR);
-        btnTimKiem.addActionListener(e -> timKiem());
-        panelTimKiem.add(btnTimKiem);
-
-        CustomButton btnHienTatCa = new CustomButton("Hiện tất cả", Constants.SECONDARY_COLOR, Constants.TEXT_COLOR);
-        btnHienTatCa.addActionListener(e -> {
-            txtTimKiem.setText("");
-            loadDeThi();
-        });
-        panelTimKiem.add(btnHienTatCa);
-
-        // Panel center chứa tìm kiếm và bảng
-        JPanel panelCenter = new JPanel(new BorderLayout(0, 5));
-        panelCenter.setBackground(Constants.CONTENT_BG);
-        panelCenter.add(panelTimKiem, BorderLayout.NORTH);
-        panelCenter.add(scrollPane, BorderLayout.CENTER);
-        add(panelCenter, BorderLayout.CENTER);
+        return panelForm;
     }
 
-    private void addLabel(JPanel panel, String text, GridBagConstraints gbc) {
-        JLabel lbl = new JLabel(text);
-        lbl.setFont(Constants.NORMAL_FONT);
-        panel.add(lbl, gbc);
-    }
-
-    private void loadData() {
+    @Override
+    protected void loadData() {
         loadHocPhan();
         loadKyThi();
         loadDeThi();
@@ -285,13 +194,13 @@ public class QuanLyDeThiPanel extends JPanel {
     }
 
     private void loadDeThi() {
-        modelDeThi.setRowCount(0);
+        tableModel.setRowCount(0);
         List<DeThiDTO> danhSach = deThiBUS.getDanhSachDeThi(nguoiDung.getMaGV());
         if (danhSach != null) {
             for (DeThiDTO dt : danhSach) {
                 String tenHocPhan = getTenHocPhanByMa(dt.getMaHocPhan());
                 String tenKyThi = getTenKyThiByMa(dt.getMaKyThi());
-                modelDeThi.addRow(new Object[] {
+                tableModel.addRow(new Object[] {
                         dt.getMaDeThi(), dt.getTenDeThi(), tenHocPhan,
                         tenKyThi, dt.getSoCauHoi(), dt.getThoiGianLam() + " phút"
                 });
@@ -299,57 +208,88 @@ public class QuanLyDeThiPanel extends JPanel {
         }
     }
 
-    private void timKiem() {
+    @Override
+    protected void timKiem() {
         String keyword = txtTimKiem.getText().trim();
         String loaiTimKiem = (String) cboLoaiTimKiem.getSelectedItem();
-        modelDeThi.setRowCount(0);
+        tableModel.setRowCount(0);
 
-        List<DeThiDTO> danhSach = deThiBUS.getDanhSachDeThi(nguoiDung.getMaGV());
+        // Sử dụng BUS để tìm kiếm
+        List<DeThiDTO> danhSach = deThiBUS.timKiem(
+                nguoiDung.getMaGV(), 
+                keyword, 
+                loaiTimKiem,
+                this::getTenHocPhanByMa,
+                this::getTenKyThiByMa
+        );
+        
         if (danhSach != null) {
             for (DeThiDTO dt : danhSach) {
                 String tenHocPhan = getTenHocPhanByMa(dt.getMaHocPhan());
                 String tenKyThi = getTenKyThiByMa(dt.getMaKyThi());
-                boolean match = true;
-                if (!keyword.isEmpty() && !loaiTimKiem.equals("Tất cả")) {
-                    String keyLower = keyword.toLowerCase();
-                    switch (loaiTimKiem) {
-                        case "Mã đề":
-                            match = String.valueOf(dt.getMaDeThi()).contains(keyword);
-                            break;
-                        case "Tên đề thi":
-                            match = dt.getTenDeThi() != null && dt.getTenDeThi().toLowerCase().contains(keyLower);
-                            break;
-                        case "Học phần":
-                            match = tenHocPhan != null && tenHocPhan.toLowerCase().contains(keyLower);
-                            break;
-                        case "Kỳ thi":
-                            match = tenKyThi != null && tenKyThi.toLowerCase().contains(keyLower);
-                            break;
-                    }
-                } else if (!keyword.isEmpty()) {
-                    String keyLower = keyword.toLowerCase();
-                    match = String.valueOf(dt.getMaDeThi()).contains(keyword)
-                            || (dt.getTenDeThi() != null && dt.getTenDeThi().toLowerCase().contains(keyLower))
-                            || (tenHocPhan != null && tenHocPhan.toLowerCase().contains(keyLower))
-                            || (tenKyThi != null && tenKyThi.toLowerCase().contains(keyLower));
-                }
-                if (match) {
-                    modelDeThi.addRow(new Object[] {
-                            dt.getMaDeThi(), dt.getTenDeThi(), tenHocPhan,
-                            tenKyThi, dt.getSoCauHoi(), dt.getThoiGianLam() + " phút"
-                    });
-                }
+                tableModel.addRow(new Object[] {
+                        dt.getMaDeThi(), dt.getTenDeThi(), tenHocPhan,
+                        tenKyThi, dt.getSoCauHoi(), dt.getThoiGianLam() + " phút"
+                });
             }
         }
     }
 
-    private void hienThiThongTin() {
-        int row = tblDeThi.getSelectedRow();
-        if (row >= 0) {
-            selectedMaDeThi = (int) modelDeThi.getValueAt(row, 0);
-            txtTenDeThi.setText((String) modelDeThi.getValueAt(row, 1));
+    @Override
+    protected void addExtraSearchComponents(JPanel searchPanel) {
+        CustomButton btnAdvanced = new CustomButton("Tìm nâng cao", new Color(128, 0, 128), Constants.TEXT_COLOR);
+        btnAdvanced.addActionListener(e -> moTimKiemNangCao());
+        searchPanel.add(btnAdvanced);
+    }
 
-            String tenHocPhan = (String) modelDeThi.getValueAt(row, 2);
+    private void moTimKiemNangCao() {
+        AdvancedSearchDialog dialog = new AdvancedSearchDialog(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Tìm kiếm đề thi nâng cao",
+                SEARCH_OPTIONS
+        );
+        dialog.setVisible(true);
+        
+        if (dialog.isConfirmed()) {
+            List<SearchCondition> conditions = dialog.getConditions();
+            String logic = dialog.getLogic();
+            timKiemNangCao(conditions, logic);
+        }
+    }
+
+    private void timKiemNangCao(List<SearchCondition> conditions, String logic) {
+        tableModel.setRowCount(0);
+        
+        List<DeThiDTO> danhSach = deThiBUS.timKiemNangCao(
+                nguoiDung.getMaGV(),
+                conditions,
+                logic,
+                this::getTenHocPhanByMa,
+                this::getTenKyThiByMa
+        );
+        
+        if (danhSach != null) {
+            for (DeThiDTO dt : danhSach) {
+                String tenHocPhan = getTenHocPhanByMa(dt.getMaHocPhan());
+                String tenKyThi = getTenKyThiByMa(dt.getMaKyThi());
+                tableModel.addRow(new Object[] {
+                        dt.getMaDeThi(), dt.getTenDeThi(), tenHocPhan,
+                        tenKyThi, dt.getSoCauHoi(), dt.getThoiGianLam() + " phút"
+                });
+            }
+        }
+        
+        showMessage("Tìm thấy " + tableModel.getRowCount() + " kết quả.");
+    }
+
+    @Override
+    protected void hienThiThongTin() {
+        int row = table.getSelectedRow();
+        if (row >= 0) {
+            selectedMaDeThi = (int) tableModel.getValueAt(row, 0);
+            txtTenDeThi.setText((String) tableModel.getValueAt(row, 1));
+
+            String tenHocPhan = (String) tableModel.getValueAt(row, 2);
             for (int i = 0; i < cboHocPhan.getItemCount(); i++) {
                 if (cboHocPhan.getItemAt(i).getTenMon().equals(tenHocPhan)) {
                     cboHocPhan.setSelectedIndex(i);
@@ -357,7 +297,7 @@ public class QuanLyDeThiPanel extends JPanel {
                 }
             }
 
-            String tenKyThi = (String) modelDeThi.getValueAt(row, 3);
+            String tenKyThi = (String) tableModel.getValueAt(row, 3);
             for (int i = 0; i < cboKyThi.getItemCount(); i++) {
                 if (cboKyThi.getItemAt(i).getTenKyThi().equals(tenKyThi)) {
                     cboKyThi.setSelectedIndex(i);
@@ -365,12 +305,13 @@ public class QuanLyDeThiPanel extends JPanel {
                 }
             }
 
-            String thoiGian = (String) modelDeThi.getValueAt(row, 5);
+            String thoiGian = (String) tableModel.getValueAt(row, 5);
             spnThoiGian.setValue(Integer.parseInt(thoiGian.replace(" phút", "")));
         }
     }
 
-    private void themDeThi() {
+    @Override
+    protected void them() {
         if (!validateInput())
             return;
 
@@ -396,13 +337,14 @@ public class QuanLyDeThiPanel extends JPanel {
             loadDeThi();
             lamMoi();
         } else {
-            JOptionPane.showMessageDialog(this, "Thêm đề thi thất bại!");
+            showMessage("Thêm đề thi thất bại!");
         }
     }
 
-    private void suaDeThi() {
+    @Override
+    protected void sua() {
         if (selectedMaDeThi == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn đề thi cần sửa!");
+            showMessage("Vui lòng chọn đề thi cần sửa!");
             return;
         }
         if (!validateInput())
@@ -431,33 +373,32 @@ public class QuanLyDeThiPanel extends JPanel {
             deThi.setMaKyThi(kt.getMaKyThi());
 
         // Giữ nguyên số câu hỏi
-        int row = tblDeThi.getSelectedRow();
-        deThi.setSoCauHoi((Integer) modelDeThi.getValueAt(row, 4));
+        int row = table.getSelectedRow();
+        deThi.setSoCauHoi((Integer) tableModel.getValueAt(row, 4));
         deThi.setThoiGianLam((Integer) spnThoiGian.getValue());
 
         if (deThiBUS.capNhatDeThi(deThi)) {
-            JOptionPane.showMessageDialog(this, "Cập nhật đề thi thành công!");
+            showMessage("Cập nhật đề thi thành công!");
             loadDeThi();
             lamMoi();
         } else {
-            JOptionPane.showMessageDialog(this, "Cập nhật đề thi thất bại!");
+            showMessage("Cập nhật đề thi thất bại!");
         }
     }
 
-    private void xoaDeThi() {
+    @Override
+    protected void xoa() {
         if (selectedMaDeThi == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn đề thi cần xóa!");
+            showMessage("Vui lòng chọn đề thi cần xóa!");
             return;
         }
 
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "Bạn có chắc muốn xóa đề thi này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
+        if (confirmDelete("đề thi")) {
             // Xóa chi tiết đề thi trước - gọi DeThiBUS
             deThiBUS.xoaTatCaCauHoiTrongDeThi(selectedMaDeThi);
             // Xóa đề thi
             if (deThiBUS.xoaDeThi(selectedMaDeThi)) {
-                JOptionPane.showMessageDialog(this, "Xóa đề thi thành công!");
+                showMessage("Xóa đề thi thành công!");
                 loadDeThi();
                 lamMoi();
             } else {
@@ -473,7 +414,7 @@ public class QuanLyDeThiPanel extends JPanel {
      */
     private void moQuanLyCauHoi() {
         if (selectedMaDeThi == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn đề thi để quản lý câu hỏi!");
+            showMessage("Vui lòng chọn đề thi để quản lý câu hỏi!");
             return;
         }
 
@@ -487,8 +428,8 @@ public class QuanLyDeThiPanel extends JPanel {
         }
 
         // Lấy mã học phần của đề thi để lọc câu hỏi
-        int row = tblDeThi.getSelectedRow();
-        String tenHocPhan = (String) modelDeThi.getValueAt(row, 2);
+        int row = table.getSelectedRow();
+        String tenHocPhan = (String) tableModel.getValueAt(row, 2);
         int maHocPhan = -1;
         for (int i = 0; i < cboHocPhan.getItemCount(); i++) {
             if (cboHocPhan.getItemAt(i).getTenMon().equals(tenHocPhan)) {
@@ -497,39 +438,40 @@ public class QuanLyDeThiPanel extends JPanel {
             }
         }
 
-        String tenDeThi = (String) modelDeThi.getValueAt(row, 1);
+        String tenDeThi = (String) tableModel.getValueAt(row, 1);
         QuanLyCauHoiDeThiDialog dialog = new QuanLyCauHoiDeThiDialog(
                 (JFrame) SwingUtilities.getWindowAncestor(this),
-            deThiBUS, cauHoiBUS, nguoiDung.getMaGV(), selectedMaDeThi, tenDeThi, maHocPhan);
+                deThiBUS, cauHoiBUS, nguoiDung.getMaGV(), selectedMaDeThi, tenDeThi, maHocPhan);
         dialog.setVisible(true);
 
         // Reload sau khi đóng dialog
         loadDeThi();
     }
 
-    private void lamMoi() {
+    @Override
+    protected void lamMoi() {
         txtTenDeThi.setText("");
         if (cboHocPhan.getItemCount() > 0)
             cboHocPhan.setSelectedIndex(0);
         if (cboKyThi.getItemCount() > 0)
             cboKyThi.setSelectedIndex(0);
         spnThoiGian.setValue(45);
-        tblDeThi.clearSelection();
+        table.clearSelection();
         selectedMaDeThi = -1;
     }
 
     private boolean validateInput() {
         if (txtTenDeThi.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên đề thi!");
+            showMessage("Vui lòng nhập tên đề thi!");
             txtTenDeThi.requestFocus();
             return false;
         }
         if (cboHocPhan.getSelectedItem() == null) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn học phần!");
+            showMessage("Vui lòng chọn học phần!");
             return false;
         }
         if (cboKyThi.getSelectedItem() == null) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn kỳ thi!");
+            showMessage("Vui lòng chọn kỳ thi!");
             return false;
         }
         return true;
@@ -748,7 +690,7 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
             // Cập nhật số câu hỏi trong đề thi
             int soCauMoi = modelCauHoiTrongDeThi.getRowCount() + danhSachMaCH.size();
             deThiBUS.capNhatSoCauHoi(maDeThi, soCauMoi);
-            
+
             // Reload cache DeThiBUS để hiển thị số câu hỏi mới
             DeThiBUS.reloadCache();
 
@@ -784,7 +726,7 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
         // Cập nhật số câu hỏi trong đề thi
         int soCauMoi = modelCauHoiTrongDeThi.getRowCount() - successCount;
         deThiBUS.capNhatSoCauHoi(maDeThi, soCauMoi);
-        
+
         // Reload cache DeThiBUS để hiển thị số câu hỏi mới
         DeThiBUS.reloadCache();
 

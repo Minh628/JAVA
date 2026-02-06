@@ -188,6 +188,119 @@ public class DeThiBUS {
         lastMaGV = -1;
     }
 
+    /**
+     * Tìm kiếm đề thi theo keyword và loại tìm kiếm
+     */
+    public List<DeThiDTO> timKiem(int maGV, String keyword, String loai, 
+            java.util.function.Function<Integer, String> getTenHocPhan,
+            java.util.function.Function<Integer, String> getTenKyThi) {
+        List<DeThiDTO> result = new ArrayList<>();
+        try {
+            keyword = keyword.toLowerCase();
+            getDanhSachDeThi(maGV);
+
+            for (DeThiDTO dt : danhSachDeThi) {
+                if (matchFilter(dt, keyword, loai, getTenHocPhan, getTenKyThi)) {
+                    result.add(dt);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * Tìm kiếm nâng cao với nhiều điều kiện
+     */
+    public List<DeThiDTO> timKiemNangCao(int maGV, List<SearchCondition> conditions, String logic,
+            java.util.function.Function<Integer, String> getTenHocPhan,
+            java.util.function.Function<Integer, String> getTenKyThi) {
+        List<DeThiDTO> result = new ArrayList<>();
+        try {
+            getDanhSachDeThi(maGV);
+            
+            for (DeThiDTO dt : danhSachDeThi) {
+                boolean match = evaluateConditions(dt, conditions, logic, getTenHocPhan, getTenKyThi);
+                if (match) {
+                    result.add(dt);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean matchFilter(DeThiDTO dt, String keyword, String loai,
+            java.util.function.Function<Integer, String> getTenHocPhan,
+            java.util.function.Function<Integer, String> getTenKyThi) {
+        if (keyword.isEmpty()) return true;
+        
+        String tenHocPhan = getTenHocPhan.apply(dt.getMaHocPhan());
+        String tenKyThi = getTenKyThi.apply(dt.getMaKyThi());
+        
+        return switch (loai) {
+            case "Mã đề" -> String.valueOf(dt.getMaDeThi()).contains(keyword);
+            case "Tên đề thi" -> dt.getTenDeThi() != null && 
+                    dt.getTenDeThi().toLowerCase().contains(keyword);
+            case "Học phần" -> tenHocPhan != null && 
+                    tenHocPhan.toLowerCase().contains(keyword);
+            case "Kỳ thi" -> tenKyThi != null && 
+                    tenKyThi.toLowerCase().contains(keyword);
+            case "Tất cả" -> {
+                if (String.valueOf(dt.getMaDeThi()).contains(keyword)) yield true;
+                if (dt.getTenDeThi() != null && 
+                        dt.getTenDeThi().toLowerCase().contains(keyword)) yield true;
+                if (tenHocPhan != null && 
+                        tenHocPhan.toLowerCase().contains(keyword)) yield true;
+                if (tenKyThi != null && 
+                        tenKyThi.toLowerCase().contains(keyword)) yield true;
+                yield false;
+            }
+            default -> true;
+        };
+    }
+
+    private boolean evaluateConditions(DeThiDTO dt, List<SearchCondition> conditions, String logic,
+            java.util.function.Function<Integer, String> getTenHocPhan,
+            java.util.function.Function<Integer, String> getTenKyThi) {
+        if (conditions.isEmpty()) return true;
+        
+        boolean result = "AND".equals(logic);
+        
+        for (SearchCondition cond : conditions) {
+            boolean condResult = evaluateSingleCondition(dt, cond, getTenHocPhan, getTenKyThi);
+            
+            if ("AND".equals(logic)) {
+                result = result && condResult;
+                if (!result) return false;
+            } else if ("OR".equals(logic)) {
+                result = result || condResult;
+            } else if ("NOT".equals(logic)) {
+                result = !condResult;
+            }
+        }
+        return result;
+    }
+
+    private boolean evaluateSingleCondition(DeThiDTO dt, SearchCondition cond,
+            java.util.function.Function<Integer, String> getTenHocPhan,
+            java.util.function.Function<Integer, String> getTenKyThi) {
+        String fieldValue = switch (cond.getField()) {
+            case "Mã đề" -> String.valueOf(dt.getMaDeThi());
+            case "Tên đề thi" -> dt.getTenDeThi();
+            case "Học phần" -> getTenHocPhan.apply(dt.getMaHocPhan());
+            case "Kỳ thi" -> getTenKyThi.apply(dt.getMaKyThi());
+            case "Số câu" -> String.valueOf(dt.getSoCauHoi());
+            case "Thời gian" -> String.valueOf(dt.getThoiGianLam());
+            default -> "";
+        };
+        
+        if (fieldValue == null) fieldValue = "";
+        return cond.evaluate(fieldValue);
+    }
+
     // ============== Quản lý Chi tiết đề thi ==============
 
     /**

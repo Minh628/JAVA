@@ -1,10 +1,10 @@
 package gui.components;
 
 import config.Constants;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.function.Function;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * Base class cho tất cả các panel quản lý CRUD
@@ -114,7 +114,18 @@ public abstract class BaseCrudPanel extends JPanel {
         });
         panel.add(btnTatCa);
 
+        // Hook for subclass to add extra search components
+        addExtraSearchComponents(panel);
+
         return panel;
+    }
+
+    /**
+     * Hook method để subclass có thể thêm các component tìm kiếm bổ sung
+     * (ví dụ: nút tìm kiếm nâng cao)
+     */
+    protected void addExtraSearchComponents(JPanel searchPanel) {
+        // Default: không thêm gì
     }
 
     // === Utility methods ===

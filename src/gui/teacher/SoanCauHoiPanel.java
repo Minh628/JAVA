@@ -1,3 +1,5 @@
+
+
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * GUI: SoanCauHoiPanel - Panel soạn câu hỏi (hỗ trợ cả trắc nghiệm và điền khuyết)
@@ -11,12 +13,14 @@ package gui.teacher;
 import bus.CauHoiBUS;
 import bus.DeThiBUS;
 import bus.HocPhanBUS;
+import bus.SearchCondition;
 import config.Constants;
 import dto.CauHoiDKDTO;
 import dto.CauHoiDTO;
 import dto.CauHoiMCDTO;
 import dto.GiangVienDTO;
 import dto.HocPhanDTO;
+import gui.components.AdvancedSearchDialog;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
 import java.awt.*;
@@ -232,6 +236,10 @@ public class SoanCauHoiPanel extends JPanel {
         });
         panelTimKiem.add(btnHienTatCa);
 
+        CustomButton btnTimNangCao = new CustomButton("Tìm nâng cao", new Color(128, 0, 128), Constants.TEXT_COLOR);
+        btnTimNangCao.addActionListener(e -> moTimKiemNangCao());
+        panelTimKiem.add(btnTimNangCao);
+
         // Panel center chứa tìm kiếm và bảng
         JPanel panelCenter = new JPanel(new BorderLayout(0, 5));
         panelCenter.setBackground(Constants.BACKGROUND_COLOR);
@@ -422,57 +430,80 @@ public class SoanCauHoiPanel extends JPanel {
         String loaiTimKiem = (String) cboLoaiTimKiem.getSelectedItem();
         modelCauHoi.setRowCount(0);
 
-        List<CauHoiDTO> danhSach = cauHoiBUS.getDanhSachCauHoi(giangVien.getMaGV());
+        // Sử dụng BUS để tìm kiếm
+        List<CauHoiDTO> danhSach = cauHoiBUS.timKiem(
+                giangVien.getMaGV(),
+                keyword,
+                loaiTimKiem,
+                this::getTenMonByMa
+        );
+        
         if (danhSach != null) {
             for (CauHoiDTO ch : danhSach) {
-                boolean match = true;
+                String noiDung = ch.getNoiDungCauHoi();
+                if (noiDung.length() > 50) {
+                    noiDung = noiDung.substring(0, 50) + "...";
+                }
                 String tenMon = getTenMonByMa(ch.getMaMon());
                 String loaiCH = CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) ? "Điền khuyết" : "Trắc nghiệm";
-                
-                if (!keyword.isEmpty() && !loaiTimKiem.equals("Tất cả")) {
-                    String keyLower = keyword.toLowerCase();
-                    switch (loaiTimKiem) {
-                        case "Mã":
-                            match = String.valueOf(ch.getMaCauHoi()).contains(keyword);
-                            break;
-                        case "Nội dung":
-                            match = ch.getNoiDungCauHoi() != null
-                                    && ch.getNoiDungCauHoi().toLowerCase().contains(keyLower);
-                            break;
-                        case "Môn học":
-                            match = tenMon.toLowerCase().contains(keyLower);
-                            break;
-                        case "Mức độ":
-                            match = ch.getMucDo() != null && ch.getMucDo().toLowerCase().contains(keyLower);
-                            break;
-                        case "Loại":
-                            match = loaiCH.toLowerCase().contains(keyLower);
-                            break;
-                    }
-                } else if (!keyword.isEmpty()) {
-                    String keyLower = keyword.toLowerCase();
-                    match = String.valueOf(ch.getMaCauHoi()).contains(keyword)
-                            || (ch.getNoiDungCauHoi() != null && ch.getNoiDungCauHoi().toLowerCase().contains(keyLower))
-                            || tenMon.toLowerCase().contains(keyLower)
-                            || (ch.getMucDo() != null && ch.getMucDo().toLowerCase().contains(keyLower))
-                            || loaiCH.toLowerCase().contains(keyLower);
+                String dapAn = ch.getDapAnDung();
+                if (CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) && dapAn != null && dapAn.length() > 30) {
+                    dapAn = dapAn.substring(0, 30) + "...";
                 }
-                if (match) {
-                    String noiDung = ch.getNoiDungCauHoi();
-                    if (noiDung.length() > 50) {
-                        noiDung = noiDung.substring(0, 50) + "...";
-                    }
-                    String dapAn = ch.getDapAnDung();
-                    if (CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) && dapAn != null && dapAn.length() > 30) {
-                        dapAn = dapAn.substring(0, 30) + "...";
-                    }
-                    modelCauHoi.addRow(new Object[] {
-                            ch.getMaCauHoi(), loaiCH, noiDung, tenMon,
-                            ch.getMucDo(), dapAn
-                    });
-                }
+                modelCauHoi.addRow(new Object[] {
+                        ch.getMaCauHoi(), loaiCH, noiDung, tenMon,
+                        ch.getMucDo(), dapAn
+                });
             }
         }
+    }
+
+    private void moTimKiemNangCao() {
+        String[] searchOptions = { "Tất cả", "Mã", "Nội dung", "Môn học", "Mức độ", "Loại", "Đáp án đúng" };
+        AdvancedSearchDialog dialog = new AdvancedSearchDialog(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Tìm kiếm câu hỏi nâng cao",
+                searchOptions
+        );
+        dialog.setVisible(true);
+        
+        if (dialog.isConfirmed()) {
+            List<SearchCondition> conditions = dialog.getConditions();
+            String logic = dialog.getLogic();
+            timKiemNangCao(conditions, logic);
+        }
+    }
+
+    private void timKiemNangCao(List<SearchCondition> conditions, String logic) {
+        modelCauHoi.setRowCount(0);
+        
+        List<CauHoiDTO> danhSach = cauHoiBUS.timKiemNangCao(
+                giangVien.getMaGV(),
+                conditions,
+                logic,
+                this::getTenMonByMa
+        );
+        
+        if (danhSach != null) {
+            for (CauHoiDTO ch : danhSach) {
+                String noiDung = ch.getNoiDungCauHoi();
+                if (noiDung.length() > 50) {
+                    noiDung = noiDung.substring(0, 50) + "...";
+                }
+                String tenMon = getTenMonByMa(ch.getMaMon());
+                String loaiCH = CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) ? "Điền khuyết" : "Trắc nghiệm";
+                String dapAn = ch.getDapAnDung();
+                if (CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) && dapAn != null && dapAn.length() > 30) {
+                    dapAn = dapAn.substring(0, 30) + "...";
+                }
+                modelCauHoi.addRow(new Object[] {
+                        ch.getMaCauHoi(), loaiCH, noiDung, tenMon,
+                        ch.getMucDo(), dapAn
+                });
+            }
+        }
+        
+        JOptionPane.showMessageDialog(this, "Tìm thấy " + modelCauHoi.getRowCount() + " kết quả.");
     }
 
     private void hienThiThongTin() {

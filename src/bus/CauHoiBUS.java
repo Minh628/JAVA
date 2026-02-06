@@ -193,4 +193,116 @@ public class CauHoiBUS {
         danhSachCauHoi = null;
         lastMaGV = -1;
     }
+
+    /**
+     * Tìm kiếm câu hỏi theo keyword và loại tìm kiếm
+     */
+    public List<CauHoiDTO> timKiem(int maGV, String keyword, String loai,
+            java.util.function.Function<Integer, String> getTenMon) {
+        List<CauHoiDTO> result = new ArrayList<>();
+        try {
+            keyword = keyword.toLowerCase();
+            getDanhSachCauHoi(maGV);
+
+            for (CauHoiDTO ch : danhSachCauHoi) {
+                if (matchFilter(ch, keyword, loai, getTenMon)) {
+                    result.add(ch);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * Tìm kiếm nâng cao với nhiều điều kiện
+     */
+    public List<CauHoiDTO> timKiemNangCao(int maGV, List<SearchCondition> conditions, String logic,
+            java.util.function.Function<Integer, String> getTenMon) {
+        List<CauHoiDTO> result = new ArrayList<>();
+        try {
+            getDanhSachCauHoi(maGV);
+            
+            for (CauHoiDTO ch : danhSachCauHoi) {
+                boolean match = evaluateConditions(ch, conditions, logic, getTenMon);
+                if (match) {
+                    result.add(ch);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean matchFilter(CauHoiDTO ch, String keyword, String loai,
+            java.util.function.Function<Integer, String> getTenMon) {
+        if (keyword.isEmpty()) return true;
+        
+        String tenMon = getTenMon.apply(ch.getMaMon());
+        String loaiCH = CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) ? "Điền khuyết" : "Trắc nghiệm";
+        
+        return switch (loai) {
+            case "Mã" -> String.valueOf(ch.getMaCauHoi()).contains(keyword);
+            case "Nội dung" -> ch.getNoiDungCauHoi() != null && 
+                    ch.getNoiDungCauHoi().toLowerCase().contains(keyword);
+            case "Môn học" -> tenMon != null && 
+                    tenMon.toLowerCase().contains(keyword);
+            case "Mức độ" -> ch.getMucDo() != null && 
+                    ch.getMucDo().toLowerCase().contains(keyword);
+            case "Loại" -> loaiCH.toLowerCase().contains(keyword);
+            case "Tất cả" -> {
+                if (String.valueOf(ch.getMaCauHoi()).contains(keyword)) yield true;
+                if (ch.getNoiDungCauHoi() != null && 
+                        ch.getNoiDungCauHoi().toLowerCase().contains(keyword)) yield true;
+                if (tenMon != null && 
+                        tenMon.toLowerCase().contains(keyword)) yield true;
+                if (ch.getMucDo() != null && 
+                        ch.getMucDo().toLowerCase().contains(keyword)) yield true;
+                if (loaiCH.toLowerCase().contains(keyword)) yield true;
+                yield false;
+            }
+            default -> true;
+        };
+    }
+
+    private boolean evaluateConditions(CauHoiDTO ch, List<SearchCondition> conditions, String logic,
+            java.util.function.Function<Integer, String> getTenMon) {
+        if (conditions.isEmpty()) return true;
+        
+        boolean result = "AND".equals(logic);
+        
+        for (SearchCondition cond : conditions) {
+            boolean condResult = evaluateSingleCondition(ch, cond, getTenMon);
+            
+            if ("AND".equals(logic)) {
+                result = result && condResult;
+                if (!result) return false;
+            } else if ("OR".equals(logic)) {
+                result = result || condResult;
+            } else if ("NOT".equals(logic)) {
+                result = !condResult;
+            }
+        }
+        return result;
+    }
+
+    private boolean evaluateSingleCondition(CauHoiDTO ch, SearchCondition cond,
+            java.util.function.Function<Integer, String> getTenMon) {
+        String loaiCH = CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) ? "Điền khuyết" : "Trắc nghiệm";
+        
+        String fieldValue = switch (cond.getField()) {
+            case "Mã" -> String.valueOf(ch.getMaCauHoi());
+            case "Nội dung" -> ch.getNoiDungCauHoi();
+            case "Môn học" -> getTenMon.apply(ch.getMaMon());
+            case "Mức độ" -> ch.getMucDo();
+            case "Loại" -> loaiCH;
+            case "Đáp án đúng" -> ch.getDapAnDung();
+            default -> "";
+        };
+        
+        if (fieldValue == null) fieldValue = "";
+        return cond.evaluate(fieldValue);
+    }
 }
