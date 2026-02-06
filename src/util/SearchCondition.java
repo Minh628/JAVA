@@ -1,9 +1,9 @@
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
- * BUS: SearchCondition - Điều kiện tìm kiếm nâng cao
+ * Util: SearchCondition - Điều kiện tìm kiếm nâng cao
  * Hỗ trợ các phép toán: =, <>, >, >=, <, <=, LIKE (contains)
  */
-package bus;
+package util;
 
 public class SearchCondition {
     private String field;      // Tên trường

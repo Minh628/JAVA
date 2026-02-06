@@ -5,12 +5,16 @@ import bus.KhoaBUS;
 import config.Constants;
 import dto.GiangVienDTO;
 import dto.KhoaDTO;
+import gui.components.AdvancedSearchDialog;
 import gui.components.BaseCrudPanel;
+import gui.components.CustomButton;
+import gui.components.SelectEntityDialog;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
+import util.SearchCondition;
 
 public class QuanLyGiangVienPanel extends BaseCrudPanel {
     private GiangVienBUS giangVienBUS = new GiangVienBUS();
@@ -18,6 +22,7 @@ public class QuanLyGiangVienPanel extends BaseCrudPanel {
     private JTextField txtMaGV, txtTenDangNhap, txtHo, txtTen, txtEmail;
     private JPasswordField txtMatKhau;
     private JComboBox<KhoaDTO> cboKhoa;
+    private CustomButton btnChonKhoa;
     private Map<Integer, String> khoaMap = new HashMap<>();
 
     public QuanLyGiangVienPanel() {
@@ -88,6 +93,11 @@ public class QuanLyGiangVienPanel extends BaseCrudPanel {
         panel.add(createLabel("Khoa:"), gbc);
         gbc.gridx = 1;
         panel.add(cboKhoa, gbc);
+        gbc.gridx = 2;
+        btnChonKhoa = new CustomButton("...", Constants.INFO_COLOR, Constants.TEXT_COLOR);
+        btnChonKhoa.setPreferredSize(new Dimension(45, 28));
+        btnChonKhoa.addActionListener(e -> moChonKhoa());
+        panel.add(btnChonKhoa, gbc);
 
         return panel;
     }
@@ -239,5 +249,72 @@ public class QuanLyGiangVienPanel extends BaseCrudPanel {
         if (cboKhoa.getItemCount() > 0)
             cboKhoa.setSelectedIndex(0);
         table.clearSelection();
+    }
+
+    @Override
+    protected void addExtraSearchComponents(JPanel searchPanel) {
+        CustomButton btnTimNangCao = new CustomButton("Tìm nâng cao", new Color(128, 0, 128), Constants.TEXT_COLOR);
+        btnTimNangCao.addActionListener(e -> moTimKiemNangCao());
+        searchPanel.add(btnTimNangCao);
+    }
+
+    private void moChonKhoa() {
+        List<KhoaDTO> khoaList = khoaBUS.getDanhSachKhoa();
+        SelectEntityDialog.clearSelection();
+        SelectEntityDialog<KhoaDTO> dialog = new SelectEntityDialog<>(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Chọn khoa",
+                "KHOA",
+                khoaList,
+                KhoaDTO::getMaKhoa,
+                KhoaDTO::getTenKhoa
+        );
+        dialog.setVisible(true);
+
+        if ("KHOA".equals(SelectEntityDialog.getSelectedType())) {
+            int maKhoa = SelectEntityDialog.getSelectedId();
+            if (maKhoa >= 0) {
+                selectKhoaById(maKhoa);
+            }
+        }
+    }
+
+    private void selectKhoaById(int maKhoa) {
+        for (int i = 0; i < cboKhoa.getItemCount(); i++) {
+            KhoaDTO k = cboKhoa.getItemAt(i);
+            if (k != null && k.getMaKhoa() == maKhoa) {
+                cboKhoa.setSelectedIndex(i);
+                return;
+            }
+        }
+    }
+
+    private void moTimKiemNangCao() {
+        String[] searchFields = { "Mã GV", "Tên đăng nhập", "Họ tên", "Email", "Khoa", "Trạng thái" };
+        AdvancedSearchDialog dialog = new AdvancedSearchDialog(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Tìm kiếm giảng viên nâng cao",
+                searchFields
+        );
+        dialog.setVisible(true);
+
+        if (dialog.isConfirmed()) {
+            List<SearchCondition> conditions = dialog.getConditions();
+            String logic = dialog.getLogic();
+            timKiemNangCao(conditions, logic);
+        }
+    }
+
+    private void timKiemNangCao(List<SearchCondition> conditions, String logic) {
+        tableModel.setRowCount(0);
+        List<GiangVienDTO> danhSach = giangVienBUS.timKiemNangCao(conditions, logic);
+        for (GiangVienDTO gv : danhSach) {
+            tableModel.addRow(new Object[] {
+                gv.getMaGV(), gv.getTenDangNhap(),
+                gv.getMatKhau() != null ? gv.getMatKhau() : "",
+                gv.getHo(), gv.getTen(), gv.getEmail(), getTenKhoa(gv.getMaKhoa()),
+                gv.isTrangThai() ? "Hoạt động" : "Khóa"
+            });
+        }
     }
 }

@@ -9,6 +9,7 @@ import dto.KyThiDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import util.SearchCondition;
 
 public class KyThiBUS {
     private KyThiDAO kyThiDAO;
@@ -176,5 +177,52 @@ public class KyThiBUS {
 
     public static void reloadCache() {
         danhSachKyThi = null;
+    }
+
+    /**
+     * Tìm kiếm nâng cao với nhiều điều kiện
+     */
+    public List<KyThiDTO> timKiemNangCao(List<SearchCondition> conditions, String logic) {
+        List<KyThiDTO> result = new ArrayList<>();
+        try {
+            getDanhSachKyThi();
+            java.sql.Timestamp now = new java.sql.Timestamp(System.currentTimeMillis());
+            for (KyThiDTO kt : danhSachKyThi) {
+                if (evaluateConditions(kt, conditions, logic, now)) {
+                    result.add(kt);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean evaluateConditions(KyThiDTO kt, List<SearchCondition> conditions, String logic, java.sql.Timestamp now) {
+        if (conditions.isEmpty()) return true;
+        boolean result = "AND".equals(logic);
+        for (SearchCondition cond : conditions) {
+            boolean condResult = evaluateSingleCondition(kt, cond, now);
+            if ("AND".equals(logic)) {
+                result = result && condResult;
+                if (!result) return false;
+            } else if ("OR".equals(logic)) {
+                result = result || condResult;
+            } else if ("NOT".equals(logic)) {
+                result = !condResult;
+            }
+        }
+        return result;
+    }
+
+    private boolean evaluateSingleCondition(KyThiDTO kt, SearchCondition cond, java.sql.Timestamp now) {
+        String fieldValue = switch (cond.getField()) {
+            case "Mã KT" -> String.valueOf(kt.getMaKyThi());
+            case "Tên Kỳ Thi" -> kt.getTenKyThi();
+            case "Trạng thái" -> getTrangThai(kt, now);
+            default -> "";
+        };
+        if (fieldValue == null) fieldValue = "";
+        return cond.evaluate(fieldValue);
     }
 }

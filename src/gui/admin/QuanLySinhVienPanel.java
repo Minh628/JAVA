@@ -5,12 +5,16 @@ import bus.SinhVienBUS;
 import config.Constants;
 import dto.NganhDTO;
 import dto.SinhVienDTO;
+import gui.components.AdvancedSearchDialog;
 import gui.components.BaseCrudPanel;
+import gui.components.CustomButton;
+import gui.components.SelectEntityDialog;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
+import util.SearchCondition;
 
 public class QuanLySinhVienPanel extends BaseCrudPanel {
     private SinhVienBUS sinhVienBUS = new SinhVienBUS();
@@ -18,6 +22,7 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
     private JTextField txtMaSV, txtTenDangNhap, txtHo, txtTen, txtEmail;
     private JPasswordField txtMatKhau;
     private JComboBox<NganhDTO> cboNganh;
+    private CustomButton btnChonNganh;
     private Map<Integer, String> nganhMap = new HashMap<>();
 
     public QuanLySinhVienPanel() {
@@ -88,6 +93,11 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
         panel.add(createLabel("Ngành:"), gbc);
         gbc.gridx = 1;
         panel.add(cboNganh, gbc);
+        gbc.gridx = 2;
+        btnChonNganh = new CustomButton("...", Constants.INFO_COLOR, Constants.TEXT_COLOR);
+        btnChonNganh.setPreferredSize(new Dimension(45, 28));
+        btnChonNganh.addActionListener(e -> moChonNganh());
+        panel.add(btnChonNganh, gbc);
 
         return panel;
     }
@@ -239,5 +249,72 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
         if (cboNganh.getItemCount() > 0)
             cboNganh.setSelectedIndex(0);
         table.clearSelection();
+    }
+
+    @Override
+    protected void addExtraSearchComponents(JPanel searchPanel) {
+        CustomButton btnTimNangCao = new CustomButton("Tìm nâng cao", new Color(128, 0, 128), Constants.TEXT_COLOR);
+        btnTimNangCao.addActionListener(e -> moTimKiemNangCao());
+        searchPanel.add(btnTimNangCao);
+    }
+
+    private void moChonNganh() {
+        List<NganhDTO> nganhList = nganhBUS.getDanhSachNganh();
+        SelectEntityDialog.clearSelection();
+        SelectEntityDialog<NganhDTO> dialog = new SelectEntityDialog<>(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Chọn ngành",
+                "NGANH",
+                nganhList,
+                NganhDTO::getMaNganh,
+                NganhDTO::getTenNganh
+        );
+        dialog.setVisible(true);
+
+        if ("NGANH".equals(SelectEntityDialog.getSelectedType())) {
+            int maNganh = SelectEntityDialog.getSelectedId();
+            if (maNganh >= 0) {
+                selectNganhById(maNganh);
+            }
+        }
+    }
+
+    private void selectNganhById(int maNganh) {
+        for (int i = 0; i < cboNganh.getItemCount(); i++) {
+            NganhDTO n = cboNganh.getItemAt(i);
+            if (n != null && n.getMaNganh() == maNganh) {
+                cboNganh.setSelectedIndex(i);
+                return;
+            }
+        }
+    }
+
+    private void moTimKiemNangCao() {
+        String[] searchFields = { "Mã SV", "Tên đăng nhập", "Họ tên", "Email", "Ngành", "Trạng thái" };
+        AdvancedSearchDialog dialog = new AdvancedSearchDialog(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Tìm kiếm sinh viên nâng cao",
+                searchFields
+        );
+        dialog.setVisible(true);
+
+        if (dialog.isConfirmed()) {
+            List<SearchCondition> conditions = dialog.getConditions();
+            String logic = dialog.getLogic();
+            timKiemNangCao(conditions, logic);
+        }
+    }
+
+    private void timKiemNangCao(List<SearchCondition> conditions, String logic) {
+        tableModel.setRowCount(0);
+        List<SinhVienDTO> danhSach = sinhVienBUS.timKiemNangCao(conditions, logic);
+        for (SinhVienDTO sv : danhSach) {
+            tableModel.addRow(new Object[] {
+                sv.getMaSV(), sv.getHo(), sv.getTen(), sv.getTenDangNhap(),
+                sv.getMatKhau() != null ? sv.getMatKhau() : "",
+                sv.getEmail(), getTenNganh(sv.getMaNganh()),
+                sv.isTrangThai() ? "Hoạt động" : "Khóa"
+            });
+        }
     }
 }

@@ -8,8 +8,10 @@ package gui.admin;
 import bus.KyThiBUS;
 import config.Constants;
 import dto.KyThiDTO;
+import gui.components.AdvancedSearchDialog;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
+import gui.components.HeaderLabel;
 import java.awt.*;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -18,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import util.SearchCondition;
 
 public class QuanLyKyThiPanel extends JPanel {
     private KyThiBUS kyThiBUS;
@@ -53,9 +56,7 @@ public class QuanLyKyThiPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Tiêu đề
-        JLabel lblTieuDe = new JLabel("QUẢN LÝ KỲ THI", SwingConstants.CENTER);
-        lblTieuDe.setFont(Constants.HEADER_FONT);
-        lblTieuDe.setForeground(Constants.PRIMARY_COLOR);
+        HeaderLabel lblTieuDe = HeaderLabel.createPrimary("QUẢN LÝ KỲ THI");
 
         // Form nhập liệu
         JPanel panelForm = new JPanel(new GridBagLayout());
@@ -211,6 +212,10 @@ public class QuanLyKyThiPanel extends JPanel {
             loadData();
         });
         panelTimKiem.add(btnHienTatCa);
+
+        CustomButton btnTimNangCao = new CustomButton("Tìm nâng cao", new Color(128, 0, 128), Constants.TEXT_COLOR);
+        btnTimNangCao.addActionListener(e -> moTimKiemNangCao());
+        panelTimKiem.add(btnTimNangCao);
 
         // Panel center chứa tìm kiếm và bảng
         JPanel panelCenter = new JPanel(new BorderLayout(0, 5));
@@ -381,5 +386,37 @@ public class QuanLyKyThiPanel extends JPanel {
         }
 
         return true;
+    }
+
+    private void moTimKiemNangCao() {
+        String[] searchFields = { "Mã KT", "Tên Kỳ Thi", "Trạng thái" };
+        AdvancedSearchDialog dialog = new AdvancedSearchDialog(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Tìm kiếm kỳ thi nâng cao",
+                searchFields
+        );
+        dialog.setVisible(true);
+
+        if (dialog.isConfirmed()) {
+            List<SearchCondition> conditions = dialog.getConditions();
+            String logic = dialog.getLogic();
+            timKiemNangCao(conditions, logic);
+        }
+    }
+
+    private void timKiemNangCao(List<SearchCondition> conditions, String logic) {
+        modelKyThi.setRowCount(0);
+        List<KyThiDTO> danhSach = kyThiBUS.timKiemNangCao(conditions, logic);
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        for (KyThiDTO kt : danhSach) {
+            String trangThai = getTrangThai(kt, now);
+            modelKyThi.addRow(new Object[] {
+                kt.getMaKyThi(),
+                kt.getTenKyThi(),
+                kt.getThoiGianBatDau() != null ? dateFormat.format(kt.getThoiGianBatDau()) : "",
+                kt.getThoiGianKetThuc() != null ? dateFormat.format(kt.getThoiGianKetThuc()) : "",
+                trangThai
+            });
+        }
     }
 }

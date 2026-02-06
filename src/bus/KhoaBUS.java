@@ -10,6 +10,7 @@ import dto.KhoaDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import util.SearchCondition;
 
 public class KhoaBUS {
     private KhoaDAO khoaDAO;
@@ -170,5 +171,50 @@ public class KhoaBUS {
      */
     public static void reloadCache() {
         danhSachKhoa = null;
+    }
+
+    /**
+     * Tìm kiếm nâng cao với nhiều điều kiện
+     */
+    public List<KhoaDTO> timKiemNangCao(List<SearchCondition> conditions, String logic) {
+        List<KhoaDTO> result = new ArrayList<>();
+        try {
+            getDanhSachKhoa();
+            for (KhoaDTO k : danhSachKhoa) {
+                if (evaluateConditions(k, conditions, logic)) {
+                    result.add(k);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean evaluateConditions(KhoaDTO k, List<SearchCondition> conditions, String logic) {
+        if (conditions.isEmpty()) return true;
+        boolean result = "AND".equals(logic);
+        for (SearchCondition cond : conditions) {
+            boolean condResult = evaluateSingleCondition(k, cond);
+            if ("AND".equals(logic)) {
+                result = result && condResult;
+                if (!result) return false;
+            } else if ("OR".equals(logic)) {
+                result = result || condResult;
+            } else if ("NOT".equals(logic)) {
+                result = !condResult;
+            }
+        }
+        return result;
+    }
+
+    private boolean evaluateSingleCondition(KhoaDTO k, SearchCondition cond) {
+        String fieldValue = switch (cond.getField()) {
+            case "Mã Khoa" -> String.valueOf(k.getMaKhoa());
+            case "Tên Khoa" -> k.getTenKhoa();
+            default -> "";
+        };
+        if (fieldValue == null) fieldValue = "";
+        return cond.evaluate(fieldValue);
     }
 }

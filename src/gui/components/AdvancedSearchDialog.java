@@ -5,14 +5,14 @@
  */
 package gui.components;
 
-import bus.SearchCondition;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import util.SearchCondition;
 
 public class AdvancedSearchDialog extends JDialog {
 

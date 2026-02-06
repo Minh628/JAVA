@@ -11,6 +11,7 @@ import dto.KhoaDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import util.SearchCondition;
 
 public class HocPhanBUS {
     private HocPhanDAO hocPhanDAO;
@@ -164,5 +165,59 @@ public class HocPhanBUS {
 
     public static void reloadCache() {
         danhSachHocPhan = null;
+    }
+
+    /**
+     * Tìm kiếm nâng cao với nhiều điều kiện
+     */
+    public List<HocPhanDTO> timKiemNangCao(List<SearchCondition> conditions, String logic) {
+        List<HocPhanDTO> result = new ArrayList<>();
+        try {
+            getDanhSachHocPhan();
+            for (HocPhanDTO hp : danhSachHocPhan) {
+                if (evaluateConditions(hp, conditions, logic)) {
+                    result.add(hp);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean evaluateConditions(HocPhanDTO hp, List<SearchCondition> conditions, String logic) {
+        if (conditions.isEmpty()) return true;
+        boolean result = "AND".equals(logic);
+        for (SearchCondition cond : conditions) {
+            boolean condResult = evaluateSingleCondition(hp, cond);
+            if ("AND".equals(logic)) {
+                result = result && condResult;
+                if (!result) return false;
+            } else if ("OR".equals(logic)) {
+                result = result || condResult;
+            } else if ("NOT".equals(logic)) {
+                result = !condResult;
+            }
+        }
+        return result;
+    }
+
+    private boolean evaluateSingleCondition(HocPhanDTO hp, SearchCondition cond) {
+        String fieldValue = switch (cond.getField()) {
+            case "Mã HP" -> String.valueOf(hp.getMaHocPhan());
+            case "Tên Học Phần" -> hp.getTenMon();
+            case "Số TC" -> String.valueOf(hp.getSoTin());
+            case "Khoa" -> {
+                try {
+                    KhoaDTO khoa = khoaDAO.getById(hp.getMaKhoa());
+                    yield khoa != null ? khoa.getTenKhoa() : "";
+                } catch (Exception e) {
+                    yield "";
+                }
+            }
+            default -> "";
+        };
+        if (fieldValue == null) fieldValue = "";
+        return cond.evaluate(fieldValue);
     }
 }

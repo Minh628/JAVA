@@ -12,7 +12,7 @@ import dto.CauHoiDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+import util.SearchCondition;
 public class CauHoiBUS {
     private CauHoiDAO cauHoiDAO;
     private ChiTietDeThiDAO chiTietDeThiDAO;

@@ -40,9 +40,7 @@ public abstract class BaseCrudPanel extends JPanel {
 
     private void initUI(String title, String[] columns, String[] searchOptions) {
         // Tiêu đề
-        JLabel lblTieuDe = new JLabel(title, SwingConstants.CENTER);
-        lblTieuDe.setFont(Constants.HEADER_FONT);
-        lblTieuDe.setForeground(Constants.PRIMARY_COLOR);
+        HeaderLabel lblTieuDe = HeaderLabel.createPrimary(title);
 
         // Form panel
         JPanel panelForm = createFormPanel();

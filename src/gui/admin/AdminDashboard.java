@@ -99,9 +99,7 @@ public class AdminDashboard extends BaseDashboardFrame {
         panel.setBackground(CONTENT_BG);
         panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         
-        JLabel lblTitle = new JLabel("📊 TỔNG QUAN HỆ THỐNG", SwingConstants.CENTER);
-        lblTitle.setFont(Constants.HEADER_FONT);
-        lblTitle.setForeground(Constants.PRIMARY_COLOR);
+        HeaderLabel lblTitle = HeaderLabel.createPrimary("📊 TỔNG QUAN HỆ THỐNG");
         panel.add(lblTitle, BorderLayout.NORTH);
         
         // Cards thống kê

@@ -10,12 +10,15 @@ import bus.NganhBUS;
 import config.Constants;
 import dto.KhoaDTO;
 import dto.NganhDTO;
+import gui.components.AdvancedSearchDialog;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
+import gui.components.HeaderLabel;
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import util.SearchCondition;
 
 public class QuanLyKhoaPanel extends JPanel {
     private KhoaBUS khoaBUS;
@@ -56,9 +59,7 @@ public class QuanLyKhoaPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Tiêu đề
-        JLabel lblTieuDe = new JLabel("QUẢN LÝ KHOA", SwingConstants.CENTER);
-        lblTieuDe.setFont(Constants.HEADER_FONT);
-        lblTieuDe.setForeground(Constants.PRIMARY_COLOR);
+        HeaderLabel lblTieuDe = HeaderLabel.createPrimary("QUẢN LÝ KHOA");
 
         // Form nhập liệu
         JPanel panelForm = new JPanel(new GridBagLayout());
@@ -190,6 +191,10 @@ public class QuanLyKhoaPanel extends JPanel {
             loadData();
         });
         panelTimKiem.add(btnHienTatCa);
+
+        CustomButton btnTimNangCao = new CustomButton("Tìm nâng cao", new Color(128, 0, 128), Constants.TEXT_COLOR);
+        btnTimNangCao.addActionListener(e -> moTimKiemNangCao());
+        panelTimKiem.add(btnTimNangCao);
 
         String[] columnsKhoa = { "Mã Khoa", "Tên Khoa", "Số ngành" };
         modelKhoa = new DefaultTableModel(columnsKhoa, 0) {
@@ -380,5 +385,33 @@ public class QuanLyKhoaPanel extends JPanel {
             return false;
         }
         return true;
+    }
+
+    private void moTimKiemNangCao() {
+        String[] searchFields = { "Mã Khoa", "Tên Khoa" };
+        AdvancedSearchDialog dialog = new AdvancedSearchDialog(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Tìm kiếm khoa nâng cao",
+                searchFields
+        );
+        dialog.setVisible(true);
+
+        if (dialog.isConfirmed()) {
+            List<SearchCondition> conditions = dialog.getConditions();
+            String logic = dialog.getLogic();
+            timKiemNangCao(conditions, logic);
+        }
+    }
+
+    private void timKiemNangCao(List<SearchCondition> conditions, String logic) {
+        modelKhoa.setRowCount(0);
+        List<KhoaDTO> danhSach = khoaBUS.timKiemNangCao(conditions, logic);
+        for (KhoaDTO khoa : danhSach) {
+            int soNganh = nganhBUS.getNganhTheoKhoa(khoa.getMaKhoa()).size();
+            modelKhoa.addRow(new Object[] {
+                khoa.getMaKhoa(), khoa.getTenKhoa(), soNganh
+            });
+        }
+        modelNganh.setRowCount(0);
     }
 }

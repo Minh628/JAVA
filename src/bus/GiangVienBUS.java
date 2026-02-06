@@ -19,6 +19,7 @@ import dto.VaiTroDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import util.SearchCondition;
 
 public class GiangVienBUS {
     private GiangVienDAO giangVienDAO;
@@ -248,5 +249,61 @@ public class GiangVienBUS {
 
     public static void reloadCache() {
         danhSachGiangVien = null;
+    }
+
+    /**
+     * Tìm kiếm nâng cao với nhiều điều kiện
+     */
+    public List<GiangVienDTO> timKiemNangCao(List<SearchCondition> conditions, String logic) {
+        List<GiangVienDTO> result = new ArrayList<>();
+        try {
+            getDanhSachGiangVien();
+            for (GiangVienDTO gv : danhSachGiangVien) {
+                if (evaluateConditions(gv, conditions, logic)) {
+                    result.add(gv);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean evaluateConditions(GiangVienDTO gv, List<SearchCondition> conditions, String logic) {
+        if (conditions.isEmpty()) return true;
+        boolean result = "AND".equals(logic);
+        for (SearchCondition cond : conditions) {
+            boolean condResult = evaluateSingleCondition(gv, cond);
+            if ("AND".equals(logic)) {
+                result = result && condResult;
+                if (!result) return false;
+            } else if ("OR".equals(logic)) {
+                result = result || condResult;
+            } else if ("NOT".equals(logic)) {
+                result = !condResult;
+            }
+        }
+        return result;
+    }
+
+    private boolean evaluateSingleCondition(GiangVienDTO gv, SearchCondition cond) {
+        String fieldValue = switch (cond.getField()) {
+            case "Mã GV" -> String.valueOf(gv.getMaGV());
+            case "Tên đăng nhập" -> gv.getTenDangNhap();
+            case "Họ tên" -> (gv.getHo() != null ? gv.getHo() : "") + " " + (gv.getTen() != null ? gv.getTen() : "");
+            case "Email" -> gv.getEmail();
+            case "Khoa" -> {
+                try {
+                    KhoaDTO khoa = khoaDAO.getById(gv.getMaKhoa());
+                    yield khoa != null ? khoa.getTenKhoa() : "";
+                } catch (Exception e) {
+                    yield "";
+                }
+            }
+            case "Trạng thái" -> gv.isTrangThai() ? "Hoạt động" : "Khóa";
+            default -> "";
+        };
+        if (fieldValue == null) fieldValue = "";
+        return cond.evaluate(fieldValue);
     }
 }

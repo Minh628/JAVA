@@ -22,7 +22,7 @@ import bus.CauHoiBUS;
 import bus.DeThiBUS;
 import bus.HocPhanBUS;
 import bus.KyThiBUS;
-import bus.SearchCondition;
+import util.SearchCondition;
 import config.Constants;
 import dto.CauHoiDTO;
 import dto.DeThiDTO;
@@ -33,6 +33,7 @@ import gui.components.AdvancedSearchDialog;
 import gui.components.BaseCrudPanel;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
+import gui.components.SelectEntityDialog;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -58,6 +59,9 @@ public class QuanLyDeThiPanel extends BaseCrudPanel {
     private JComboBox<HocPhanDTO> cboHocPhan;
     private JComboBox<KyThiDTO> cboKyThi;
     private JSpinner spnThoiGian;
+
+    private CustomButton btnChonHocPhan;
+    private CustomButton btnChonKyThi;
 
     private CustomButton btnQuanLyCauHoi;
 
@@ -108,6 +112,11 @@ public class QuanLyDeThiPanel extends BaseCrudPanel {
         cboHocPhan.setPreferredSize(new Dimension(200, 28));
         cboHocPhan.setFont(Constants.NORMAL_FONT);
         panelForm.add(cboHocPhan, gbc);
+        gbc.gridx = 4;
+        btnChonHocPhan = new CustomButton("...", Constants.INFO_COLOR, Constants.TEXT_COLOR);
+        btnChonHocPhan.setPreferredSize(new Dimension(45, 28));
+        btnChonHocPhan.addActionListener(e -> moChonHocPhan());
+        panelForm.add(btnChonHocPhan, gbc);
 
         // Row 2
         gbc.gridx = 0;
@@ -118,10 +127,15 @@ public class QuanLyDeThiPanel extends BaseCrudPanel {
         cboKyThi.setPreferredSize(new Dimension(200, 28));
         cboKyThi.setFont(Constants.NORMAL_FONT);
         panelForm.add(cboKyThi, gbc);
-
         gbc.gridx = 2;
-        panelForm.add(createLabel("Thời gian (phút):"), gbc);
+        btnChonKyThi = new CustomButton("...", Constants.INFO_COLOR, Constants.TEXT_COLOR);
+        btnChonKyThi.setPreferredSize(new Dimension(45, 28));
+        btnChonKyThi.addActionListener(e -> moChonKyThi());
+        panelForm.add(btnChonKyThi, gbc);
+
         gbc.gridx = 3;
+        panelForm.add(createLabel("Thời gian (phút):"), gbc);
+        gbc.gridx = 4;
         spnThoiGian = new JSpinner(new SpinnerNumberModel(45, 10, 180, 5));
         spnThoiGian.setPreferredSize(new Dimension(80, 28));
         spnThoiGian.setFont(Constants.NORMAL_FONT);
@@ -191,6 +205,66 @@ public class QuanLyDeThiPanel extends BaseCrudPanel {
             }
         }
         return "";
+    }
+
+    private void moChonHocPhan() {
+        SelectEntityDialog.clearSelection();
+        SelectEntityDialog<HocPhanDTO> dialog = new SelectEntityDialog<>(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Chọn học phần",
+                "HOC_PHAN",
+                danhSachHocPhan,
+                HocPhanDTO::getMaHocPhan,
+                HocPhanDTO::getTenMon
+        );
+        dialog.setVisible(true);
+
+        if ("HOC_PHAN".equals(SelectEntityDialog.getSelectedType())) {
+            int maHocPhan = SelectEntityDialog.getSelectedId();
+            if (maHocPhan >= 0) {
+                selectHocPhanById(maHocPhan);
+            }
+        }
+    }
+
+    private void moChonKyThi() {
+        SelectEntityDialog.clearSelection();
+        SelectEntityDialog<KyThiDTO> dialog = new SelectEntityDialog<>(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Chọn kỳ thi",
+                "KY_THI",
+                danhSachKyThi,
+                KyThiDTO::getMaKyThi,
+                KyThiDTO::getTenKyThi
+        );
+        dialog.setVisible(true);
+
+        if ("KY_THI".equals(SelectEntityDialog.getSelectedType())) {
+            int maKyThi = SelectEntityDialog.getSelectedId();
+            if (maKyThi >= 0) {
+                selectKyThiById(maKyThi);
+            }
+        }
+    }
+
+    private void selectHocPhanById(int maHocPhan) {
+        for (int i = 0; i < cboHocPhan.getItemCount(); i++) {
+            HocPhanDTO hp = cboHocPhan.getItemAt(i);
+            if (hp != null && hp.getMaHocPhan() == maHocPhan) {
+                cboHocPhan.setSelectedIndex(i);
+                return;
+            }
+        }
+    }
+
+    private void selectKyThiById(int maKyThi) {
+        for (int i = 0; i < cboKyThi.getItemCount(); i++) {
+            KyThiDTO kt = cboKyThi.getItemAt(i);
+            if (kt != null && kt.getMaKyThi() == maKyThi) {
+                cboKyThi.setSelectedIndex(i);
+                return;
+            }
+        }
     }
 
     private void loadDeThi() {

@@ -13,6 +13,7 @@ import dto.DeThiDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import util.SearchCondition;
 
 public class DeThiBUS {
     private DeThiDAO deThiDAO;

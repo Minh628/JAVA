@@ -13,7 +13,6 @@ package gui.teacher;
 import bus.CauHoiBUS;
 import bus.DeThiBUS;
 import bus.HocPhanBUS;
-import bus.SearchCondition;
 import config.Constants;
 import dto.CauHoiDKDTO;
 import dto.CauHoiDTO;
@@ -23,10 +22,12 @@ import dto.HocPhanDTO;
 import gui.components.AdvancedSearchDialog;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
+import gui.components.SelectEntityDialog;
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import util.SearchCondition;
 
 public class SoanCauHoiPanel extends JPanel {
     private GiangVienDTO giangVien;
@@ -123,8 +124,14 @@ public class SoanCauHoiPanel extends JPanel {
         panelForm.add(cboHocPhan, gbc);
 
         gbc.gridx = 6;
-        panelForm.add(new JLabel("Mức độ:"), gbc);
+        CustomButton btnChonHocPhan = new CustomButton("...", Constants.INFO_COLOR, Constants.TEXT_COLOR);
+        btnChonHocPhan.setPreferredSize(new Dimension(45, 25));
+        btnChonHocPhan.addActionListener(e -> moChonHocPhan());
+        panelForm.add(btnChonHocPhan, gbc);
+
         gbc.gridx = 7;
+        panelForm.add(new JLabel("Mức độ:"), gbc);
+        gbc.gridx = 8;
         cboMucDo = new JComboBox<>(new String[] { "Dễ", "Trung bình", "Khó" });
         panelForm.add(cboMucDo, gbc);
 
@@ -133,7 +140,7 @@ public class SoanCauHoiPanel extends JPanel {
         gbc.gridy = 1;
         panelForm.add(new JLabel("Nội dung:"), gbc);
         gbc.gridx = 1;
-        gbc.gridwidth = 7;
+        gbc.gridwidth = 8;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         txtNoiDung = new JTextArea(3, 50);
         txtNoiDung.setLineWrap(true);
@@ -146,7 +153,7 @@ public class SoanCauHoiPanel extends JPanel {
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 8;
+        gbc.gridwidth = 9;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
         cardLayoutForm = new CardLayout();
@@ -184,7 +191,7 @@ public class SoanCauHoiPanel extends JPanel {
 
         gbc.gridx = 0;
         gbc.gridy = 3;
-        gbc.gridwidth = 8;
+        gbc.gridwidth = 9;
         panelForm.add(panelNut, gbc);
 
         // Panel trên
@@ -742,5 +749,36 @@ public class SoanCauHoiPanel extends JPanel {
             }
         }
         return true;
+    }
+
+    private void moChonHocPhan() {
+        List<HocPhanDTO> hocPhanList = hocPhanBUS.getDanhSachHocPhan();
+        SelectEntityDialog.clearSelection();
+        SelectEntityDialog<HocPhanDTO> dialog = new SelectEntityDialog<>(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Chọn học phần",
+                "HOCPHAN",
+                hocPhanList,
+                HocPhanDTO::getMaHocPhan,
+                HocPhanDTO::getTenMon
+        );
+        dialog.setVisible(true);
+
+        if ("HOCPHAN".equals(SelectEntityDialog.getSelectedType())) {
+            int maHP = SelectEntityDialog.getSelectedId();
+            if (maHP >= 0) {
+                selectHocPhanById(maHP);
+            }
+        }
+    }
+
+    private void selectHocPhanById(int maHocPhan) {
+        for (int i = 0; i < cboHocPhan.getItemCount(); i++) {
+            HocPhanDTO hp = cboHocPhan.getItemAt(i);
+            if (hp != null && hp.getMaHocPhan() == maHocPhan) {
+                cboHocPhan.setSelectedIndex(i);
+                return;
+            }
+        }
     }
 }

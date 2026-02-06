@@ -12,6 +12,7 @@ import dto.NganhDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import util.SearchCondition;
 
 public class NganhBUS {
     private NganhDAO nganhDAO;
@@ -182,5 +183,58 @@ public class NganhBUS {
 
     public static void reloadCache() {
         danhSachNganh = null;
+    }
+
+    /**
+     * Tìm kiếm nâng cao với nhiều điều kiện
+     */
+    public List<NganhDTO> timKiemNangCao(List<SearchCondition> conditions, String logic) {
+        List<NganhDTO> result = new ArrayList<>();
+        try {
+            getDanhSachNganh();
+            for (NganhDTO n : danhSachNganh) {
+                if (evaluateConditions(n, conditions, logic)) {
+                    result.add(n);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean evaluateConditions(NganhDTO n, List<SearchCondition> conditions, String logic) {
+        if (conditions.isEmpty()) return true;
+        boolean result = "AND".equals(logic);
+        for (SearchCondition cond : conditions) {
+            boolean condResult = evaluateSingleCondition(n, cond);
+            if ("AND".equals(logic)) {
+                result = result && condResult;
+                if (!result) return false;
+            } else if ("OR".equals(logic)) {
+                result = result || condResult;
+            } else if ("NOT".equals(logic)) {
+                result = !condResult;
+            }
+        }
+        return result;
+    }
+
+    private boolean evaluateSingleCondition(NganhDTO n, SearchCondition cond) {
+        String fieldValue = switch (cond.getField()) {
+            case "Mã Ngành" -> String.valueOf(n.getMaNganh());
+            case "Tên Ngành" -> n.getTenNganh();
+            case "Thuộc Khoa" -> {
+                try {
+                    KhoaDTO khoa = khoaDAO.getById(n.getMaKhoa());
+                    yield khoa != null ? khoa.getTenKhoa() : "";
+                } catch (Exception e) {
+                    yield "";
+                }
+            }
+            default -> "";
+        };
+        if (fieldValue == null) fieldValue = "";
+        return cond.evaluate(fieldValue);
     }
 }

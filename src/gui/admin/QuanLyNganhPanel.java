@@ -5,12 +5,16 @@ import bus.NganhBUS;
 import config.Constants;
 import dto.KhoaDTO;
 import dto.NganhDTO;
+import gui.components.AdvancedSearchDialog;
 import gui.components.BaseCrudPanel;
+import gui.components.CustomButton;
+import gui.components.SelectEntityDialog;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
+import util.SearchCondition;
 
 public class QuanLyNganhPanel extends BaseCrudPanel {
     private NganhBUS nganhBUS = new NganhBUS();
@@ -18,6 +22,7 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
     private JTextField txtMaNganh;
     private JTextField txtTenNganh;
     private JComboBox<KhoaDTO> cboKhoa;
+    private CustomButton btnChonKhoa;
     private int selectedMaNganh = -1;
     private Map<Integer, String> khoaMap = new HashMap<>();
 
@@ -66,6 +71,11 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
         panel.add(createLabel("Thuộc khoa:"), gbc);
         gbc.gridx = 1;
         panel.add(cboKhoa, gbc);
+        gbc.gridx = 2;
+        btnChonKhoa = new CustomButton("...", Constants.INFO_COLOR, Constants.TEXT_COLOR);
+        btnChonKhoa.setPreferredSize(new Dimension(45, 28));
+        btnChonKhoa.addActionListener(e -> moChonKhoa());
+        panel.add(btnChonKhoa, gbc);
 
         return panel;
     }
@@ -94,6 +104,37 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
 
     private String getTenKhoa(int maKhoa) {
         return khoaMap.getOrDefault(maKhoa, String.valueOf(maKhoa));
+    }
+
+    private void moChonKhoa() {
+        List<KhoaDTO> khoaList = khoaBUS.getDanhSachKhoa();
+        SelectEntityDialog.clearSelection();
+        SelectEntityDialog<KhoaDTO> dialog = new SelectEntityDialog<>(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Chọn khoa",
+                "KHOA",
+                khoaList,
+                KhoaDTO::getMaKhoa,
+                KhoaDTO::getTenKhoa
+        );
+        dialog.setVisible(true);
+
+        if ("KHOA".equals(SelectEntityDialog.getSelectedType())) {
+            int maKhoa = SelectEntityDialog.getSelectedId();
+            if (maKhoa >= 0) {
+                selectKhoaById(maKhoa);
+            }
+        }
+    }
+
+    private void selectKhoaById(int maKhoa) {
+        for (int i = 0; i < cboKhoa.getItemCount(); i++) {
+            KhoaDTO k = cboKhoa.getItemAt(i);
+            if (k != null && k.getMaKhoa() == maKhoa) {
+                cboKhoa.setSelectedIndex(i);
+                return;
+            }
+        }
     }
 
     @Override
@@ -202,5 +243,38 @@ public class QuanLyNganhPanel extends BaseCrudPanel {
             cboKhoa.setSelectedIndex(0);
         table.clearSelection();
         selectedMaNganh = -1;
+    }
+
+    @Override
+    protected void addExtraSearchComponents(JPanel searchPanel) {
+        CustomButton btnTimNangCao = new CustomButton("Tìm nâng cao", new Color(128, 0, 128), Constants.TEXT_COLOR);
+        btnTimNangCao.addActionListener(e -> moTimKiemNangCao());
+        searchPanel.add(btnTimNangCao);
+    }
+
+    private void moTimKiemNangCao() {
+        String[] searchFields = { "Mã Ngành", "Tên Ngành", "Thuộc Khoa" };
+        AdvancedSearchDialog dialog = new AdvancedSearchDialog(
+                (Frame) SwingUtilities.getWindowAncestor(this),
+                "Tìm kiếm ngành nâng cao",
+                searchFields
+        );
+        dialog.setVisible(true);
+
+        if (dialog.isConfirmed()) {
+            List<SearchCondition> conditions = dialog.getConditions();
+            String logic = dialog.getLogic();
+            timKiemNangCao(conditions, logic);
+        }
+    }
+
+    private void timKiemNangCao(List<SearchCondition> conditions, String logic) {
+        tableModel.setRowCount(0);
+        List<NganhDTO> danhSach = nganhBUS.timKiemNangCao(conditions, logic);
+        for (NganhDTO n : danhSach) {
+            tableModel.addRow(new Object[] {
+                n.getMaNganh(), n.getTenNganh(), getTenKhoa(n.getMaKhoa())
+            });
+        }
     }
 }
