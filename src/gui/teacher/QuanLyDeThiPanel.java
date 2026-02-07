@@ -141,20 +141,14 @@ public class QuanLyDeThiPanel extends BaseCrudPanel {
         spnThoiGian.setFont(Constants.NORMAL_FONT);
         panelForm.add(spnThoiGian, gbc);
 
-        // Row 3: Nút quản lý câu hỏi (nút đặc biệt riêng)
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 4;
-        gbc.anchor = GridBagConstraints.CENTER;
-        
-        JPanel panelExtraBtn = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
-        panelExtraBtn.setBackground(Constants.CARD_COLOR);
+        return panelForm;
+    }
+
+    @Override
+    protected void addExtraButtons(JPanel buttonPanel) {
         btnQuanLyCauHoi = new CustomButton("Quản lý câu hỏi", new Color(128, 0, 128), Constants.TEXT_COLOR);
         btnQuanLyCauHoi.addActionListener(e -> moQuanLyCauHoi());
-        panelExtraBtn.add(btnQuanLyCauHoi);
-        panelForm.add(panelExtraBtn, gbc);
-
-        return panelForm;
+        buttonPanel.add(btnQuanLyCauHoi);
     }
 
     @Override

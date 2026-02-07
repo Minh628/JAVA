@@ -48,6 +48,7 @@ public abstract class BaseCrudPanel extends JPanel {
         // CRUD buttons
         CrudButtonPanel crudButtons = new CrudButtonPanel(Constants.CARD_COLOR);
         crudButtons.setAllListeners(e -> them(), e -> sua(), e -> xoa(), e -> lamMoi());
+        addExtraButtons(crudButtons);
 
         // Panel trên (form + buttons)
         JPanel panelFormWrapper = new JPanel(new BorderLayout(0, 10));
@@ -123,6 +124,14 @@ public abstract class BaseCrudPanel extends JPanel {
      * (ví dụ: nút tìm kiếm nâng cao)
      */
     protected void addExtraSearchComponents(JPanel searchPanel) {
+        // Default: không thêm gì
+    }
+
+    /**
+     * Hook method để subclass có thể thêm các nút chức năng bổ sung
+     * (ví dụ: Quản lý câu hỏi, Xuất Excel/PDF)
+     */
+    protected void addExtraButtons(JPanel buttonPanel) {
         // Default: không thêm gì
     }
 

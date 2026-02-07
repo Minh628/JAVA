@@ -11,7 +11,6 @@
 package gui.teacher;
 
 import bus.CauHoiBUS;
-import bus.DeThiBUS;
 import bus.HocPhanBUS;
 import config.Constants;
 import dto.CauHoiDKDTO;
@@ -20,23 +19,18 @@ import dto.CauHoiMCDTO;
 import dto.GiangVienDTO;
 import dto.HocPhanDTO;
 import gui.components.AdvancedSearchDialog;
+import gui.components.BaseCrudPanel;
 import gui.components.CustomButton;
-import gui.components.CustomTable;
 import gui.components.SelectEntityDialog;
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import util.SearchCondition;
 
-public class SoanCauHoiPanel extends JPanel {
+public class SoanCauHoiPanel extends BaseCrudPanel {
     private GiangVienDTO giangVien;
     private CauHoiBUS cauHoiBUS;
     private HocPhanBUS hocPhanBUS;
-    private DeThiBUS deThiBUS;
-
-    private CustomTable tblCauHoi;
-    private DefaultTableModel modelCauHoi;
 
     private JTextField txtMaCauHoi;
     private JTextArea txtNoiDung;
@@ -63,35 +57,20 @@ public class SoanCauHoiPanel extends JPanel {
     private JComboBox<String> cboMucDo;
     private JComboBox<String> cboLoaiCauHoi;
 
-    private JTextField txtTimKiem;
-    private JComboBox<String> cboLoaiTimKiem;
-    private CustomButton btnTimKiem;
-
-    private CustomButton btnThem;
-    private CustomButton btnSua;
-    private CustomButton btnXoa;
-    private CustomButton btnLamMoi;
 
     public SoanCauHoiPanel(GiangVienDTO giangVien) {
+        super(
+                "SOẠN CÂU HỎI",
+                new String[] { "Mã", "Loại", "Nội dung câu hỏi", "Môn học", "Mức độ", "Đáp án đúng" },
+                new String[] { "Tất cả", "Mã", "Nội dung", "Môn học", "Mức độ", "Loại" }
+        );
         this.giangVien = giangVien;
         this.cauHoiBUS = new CauHoiBUS();
         this.hocPhanBUS = new HocPhanBUS();
-        this.deThiBUS = new DeThiBUS();
-        initComponents();
-        loadData();
     }
 
-    private void initComponents() {
-        setLayout(new BorderLayout(10, 10));
-        setBackground(Constants.BACKGROUND_COLOR);
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // Tiêu đề
-        JLabel lblTieuDe = new JLabel("SOẠN CÂU HỎI", SwingConstants.CENTER);
-        lblTieuDe.setFont(Constants.HEADER_FONT);
-        lblTieuDe.setForeground(Constants.PRIMARY_COLOR);
-
-        // Form nhập liệu
+    @Override
+    protected JPanel createFormPanel() {
         JPanel panelForm = new JPanel(new GridBagLayout());
         panelForm.setBackground(Constants.BACKGROUND_COLOR);
         panelForm.setBorder(BorderFactory.createTitledBorder("Thông tin câu hỏi"));
@@ -155,106 +134,22 @@ public class SoanCauHoiPanel extends JPanel {
         gbc.gridy = 2;
         gbc.gridwidth = 9;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        
+
         cardLayoutForm = new CardLayout();
         panelFormContainer = new JPanel(cardLayoutForm);
         panelFormContainer.setBackground(Constants.BACKGROUND_COLOR);
-        
+
         // Form trắc nghiệm
         panelFormTracNghiem = createFormTracNghiem();
         panelFormContainer.add(panelFormTracNghiem, "TN");
-        
+
         // Form điền khuyết
         panelFormDienKhuyet = createFormDienKhuyet();
         panelFormContainer.add(panelFormDienKhuyet, "DK");
-        
+
         panelForm.add(panelFormContainer, gbc);
 
-        // Buttons
-        JPanel panelNut = new JPanel(new FlowLayout());
-        panelNut.setBackground(Constants.BACKGROUND_COLOR);
-
-        btnThem = new CustomButton("Thêm", Constants.SUCCESS_COLOR, Constants.TEXT_COLOR);
-        btnSua = new CustomButton("Sửa", Constants.PRIMARY_COLOR, Constants.TEXT_COLOR);
-        btnXoa = new CustomButton("Xóa", Constants.DANGER_COLOR, Constants.TEXT_COLOR);
-        btnLamMoi = new CustomButton("Làm mới", Constants.WARNING_COLOR, Constants.TEXT_COLOR);
-
-        btnThem.addActionListener(e -> themCauHoi());
-        btnSua.addActionListener(e -> suaCauHoi());
-        btnXoa.addActionListener(e -> xoaCauHoi());
-        btnLamMoi.addActionListener(e -> lamMoi());
-
-        panelNut.add(btnThem);
-        panelNut.add(btnSua);
-        panelNut.add(btnXoa);
-        panelNut.add(btnLamMoi);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 9;
-        panelForm.add(panelNut, gbc);
-
-        // Panel trên
-        JPanel panelTren = new JPanel(new BorderLayout());
-        panelTren.add(lblTieuDe, BorderLayout.NORTH);
-        panelTren.add(panelForm, BorderLayout.CENTER);
-        add(panelTren, BorderLayout.NORTH);
-
-        // Bảng câu hỏi
-        String[] columns = { "Mã", "Loại", "Nội dung câu hỏi", "Môn học", "Mức độ", "Đáp án đúng" };
-        modelCauHoi = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        tblCauHoi = new CustomTable(modelCauHoi);
-        tblCauHoi.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                hienThiThongTin();
-            }
-        });
-
-        // Panel tìm kiếm
-        JPanel panelTimKiem = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        panelTimKiem.setBackground(Constants.BACKGROUND_COLOR);
-
-        JLabel lblTimKiem = new JLabel("Tìm kiếm:");
-        lblTimKiem.setFont(Constants.NORMAL_FONT);
-        panelTimKiem.add(lblTimKiem);
-
-        cboLoaiTimKiem = new JComboBox<>(new String[] { "Tất cả", "Mã", "Nội dung", "Môn học", "Mức độ", "Loại" });
-        cboLoaiTimKiem.setFont(Constants.NORMAL_FONT);
-        panelTimKiem.add(cboLoaiTimKiem);
-
-        txtTimKiem = new JTextField(20);
-        txtTimKiem.setFont(Constants.NORMAL_FONT);
-        txtTimKiem.addActionListener(e -> timKiem());
-        panelTimKiem.add(txtTimKiem);
-
-        btnTimKiem = new CustomButton("Tìm", Constants.INFO_COLOR, Constants.TEXT_COLOR);
-        btnTimKiem.addActionListener(e -> timKiem());
-        panelTimKiem.add(btnTimKiem);
-
-        CustomButton btnHienTatCa = new CustomButton("Hiện tất cả", Constants.SECONDARY_COLOR, Constants.TEXT_COLOR);
-        btnHienTatCa.addActionListener(e -> {
-            txtTimKiem.setText("");
-            loadCauHoi();
-        });
-        panelTimKiem.add(btnHienTatCa);
-
-        CustomButton btnTimNangCao = new CustomButton("Tìm nâng cao", new Color(128, 0, 128), Constants.TEXT_COLOR);
-        btnTimNangCao.addActionListener(e -> moTimKiemNangCao());
-        panelTimKiem.add(btnTimNangCao);
-
-        // Panel center chứa tìm kiếm và bảng
-        JPanel panelCenter = new JPanel(new BorderLayout(0, 5));
-        panelCenter.setBackground(Constants.BACKGROUND_COLOR);
-        panelCenter.add(panelTimKiem, BorderLayout.NORTH);
-
-        JScrollPane scrollPane = new JScrollPane(tblCauHoi);
-        panelCenter.add(scrollPane, BorderLayout.CENTER);
-        add(panelCenter, BorderLayout.CENTER);
+        return panelForm;
     }
     
     /**
@@ -386,9 +281,17 @@ public class SoanCauHoiPanel extends JPanel {
         }
     }
 
-    private void loadData() {
+    @Override
+    protected void loadData() {
         loadHocPhan();
         loadCauHoi();
+    }
+
+    @Override
+    protected void addExtraSearchComponents(JPanel searchPanel) {
+        CustomButton btnTimNangCao = new CustomButton("Tìm nâng cao", new Color(128, 0, 128), Constants.TEXT_COLOR);
+        btnTimNangCao.addActionListener(e -> moTimKiemNangCao());
+        searchPanel.add(btnTimNangCao);
     }
 
     private void loadHocPhan() {
@@ -402,7 +305,7 @@ public class SoanCauHoiPanel extends JPanel {
     }
 
     private void loadCauHoi() {
-        modelCauHoi.setRowCount(0);
+        tableModel.setRowCount(0);
         List<CauHoiDTO> danhSach = cauHoiBUS.getDanhSachCauHoi(giangVien.getMaGV());
         if (danhSach != null) {
             for (CauHoiDTO ch : danhSach) {
@@ -416,7 +319,7 @@ public class SoanCauHoiPanel extends JPanel {
                 if (CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) && dapAn != null && dapAn.length() > 30) {
                     dapAn = dapAn.substring(0, 30) + "...";
                 }
-                modelCauHoi.addRow(new Object[] {
+                tableModel.addRow(new Object[] {
                         ch.getMaCauHoi(), loaiCH, noiDung, tenMon,
                         ch.getMucDo(), dapAn
                 });
@@ -432,10 +335,11 @@ public class SoanCauHoiPanel extends JPanel {
         return hp != null ? hp.getTenMon() : "";
     }
 
-    private void timKiem() {
+    @Override
+    protected void timKiem() {
         String keyword = txtTimKiem.getText().trim();
         String loaiTimKiem = (String) cboLoaiTimKiem.getSelectedItem();
-        modelCauHoi.setRowCount(0);
+        tableModel.setRowCount(0);
 
         // Sử dụng BUS để tìm kiếm
         List<CauHoiDTO> danhSach = cauHoiBUS.timKiem(
@@ -457,7 +361,7 @@ public class SoanCauHoiPanel extends JPanel {
                 if (CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) && dapAn != null && dapAn.length() > 30) {
                     dapAn = dapAn.substring(0, 30) + "...";
                 }
-                modelCauHoi.addRow(new Object[] {
+                tableModel.addRow(new Object[] {
                         ch.getMaCauHoi(), loaiCH, noiDung, tenMon,
                         ch.getMucDo(), dapAn
                 });
@@ -482,7 +386,7 @@ public class SoanCauHoiPanel extends JPanel {
     }
 
     private void timKiemNangCao(List<SearchCondition> conditions, String logic) {
-        modelCauHoi.setRowCount(0);
+        tableModel.setRowCount(0);
         
         List<CauHoiDTO> danhSach = cauHoiBUS.timKiemNangCao(
                 giangVien.getMaGV(),
@@ -503,20 +407,21 @@ public class SoanCauHoiPanel extends JPanel {
                 if (CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) && dapAn != null && dapAn.length() > 30) {
                     dapAn = dapAn.substring(0, 30) + "...";
                 }
-                modelCauHoi.addRow(new Object[] {
+                tableModel.addRow(new Object[] {
                         ch.getMaCauHoi(), loaiCH, noiDung, tenMon,
                         ch.getMucDo(), dapAn
                 });
             }
         }
-        
-        JOptionPane.showMessageDialog(this, "Tìm thấy " + modelCauHoi.getRowCount() + " kết quả.");
+
+        JOptionPane.showMessageDialog(this, "Tìm thấy " + tableModel.getRowCount() + " kết quả.");
     }
 
-    private void hienThiThongTin() {
-        int row = tblCauHoi.getSelectedRow();
+    @Override
+    protected void hienThiThongTin() {
+        int row = table.getSelectedRow();
         if (row >= 0) {
-            int maCauHoi = (int) modelCauHoi.getValueAt(row, 0);
+            int maCauHoi = (int) tableModel.getValueAt(row, 0);
             CauHoiDTO cauHoi = cauHoiBUS.getById(maCauHoi);
 
             if (cauHoi != null) {
@@ -573,7 +478,8 @@ public class SoanCauHoiPanel extends JPanel {
         }
     }
 
-    private void themCauHoi() {
+    @Override
+    protected void them() {
         if (!validateInput())
             return;
 
@@ -612,7 +518,8 @@ public class SoanCauHoiPanel extends JPanel {
         }
     }
 
-    private void suaCauHoi() {
+    @Override
+    protected void sua() {
         if (txtMaCauHoi.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn câu hỏi cần sửa!");
             return;
@@ -672,7 +579,8 @@ public class SoanCauHoiPanel extends JPanel {
         }
     }
 
-    private void xoaCauHoi() {
+    @Override
+    protected void xoa() {
         if (txtMaCauHoi.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn câu hỏi cần xóa!");
             return;
@@ -695,7 +603,8 @@ public class SoanCauHoiPanel extends JPanel {
         }
     }
 
-    private void lamMoi() {
+    @Override
+    protected void lamMoi() {
         txtMaCauHoi.setText("");
         txtNoiDung.setText("");
         txtDapAnA.setText("");
@@ -708,7 +617,7 @@ public class SoanCauHoiPanel extends JPanel {
         cboMucDo.setSelectedIndex(0);
         cboLoaiCauHoi.setSelectedIndex(0);
         cardLayoutForm.show(panelFormContainer, "TN");
-        tblCauHoi.clearSelection();
+        table.clearSelection();
     }
 
     private boolean validateInput() {
