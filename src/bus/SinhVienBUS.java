@@ -42,22 +42,6 @@ public class SinhVienBUS {
     }
 
     /**
-     * Lấy sinh viên theo ngành
-     */
-    public List<SinhVienDTO> getSinhVienTheoNganh(int maNganh) {
-        getDanhSachSinhVien();
-        ArrayList<SinhVienDTO> ketQua = new ArrayList<>();
-        if (danhSachSinhVien != null) {
-            for (SinhVienDTO sv : danhSachSinhVien) {
-                if (sv.getMaNganh() == maNganh) {
-                    ketQua.add(sv);
-                }
-            }
-        }
-        return ketQua;
-    }
-
-    /**
      * Lấy sinh viên theo mã
      */
     public SinhVienDTO getById(int maSV) {
@@ -111,13 +95,6 @@ public class SinhVienBUS {
     }
 
     /**
-     * Cập nhật thông tin sinh viên (alias cho capNhatSinhVien)
-     */
-    public boolean capNhatThongTin(SinhVienDTO sinhVien) {
-        return capNhatSinhVien(sinhVien);
-    }
-
-    /**
      * Xóa sinh viên
      */
     public boolean xoaSinhVien(int maSV) {
@@ -148,18 +125,6 @@ public class SinhVienBUS {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    /**
-     * Tìm kiếm sinh viên
-     */
-    public List<SinhVienDTO> timKiem(String keyword) {
-        try {
-            return sinhVienDAO.search(keyword);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
         }
     }
 

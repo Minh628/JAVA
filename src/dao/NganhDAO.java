@@ -30,25 +30,6 @@ public class NganhDAO {
         return danhSachNganh;
     }
 
-    /**
-     * Lấy ngành theo khoa
-     */
-    public List<NganhDTO> getByKhoa(int maKhoa) throws SQLException {
-        List<NganhDTO> danhSachNganh = new ArrayList<>();
-        String sql = "SELECT * FROM Nganh WHERE ma_khoa = ? ORDER BY ten_nganh";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, maKhoa);
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                danhSachNganh.add(mapResultSetToDTO(rs));
-            }
-        }
-        return danhSachNganh;
-    }
 
     /**
      * Lấy ngành theo mã
@@ -122,31 +103,6 @@ public class NganhDAO {
             pstmt.setInt(1, maNganh);
             return pstmt.executeUpdate() > 0;
         }
-    }
-
-    /**
-     * Tìm kiếm ngành theo từ khóa
-     * Tìm trong: mã ngành, tên ngành
-     */
-    public List<NganhDTO> search(String keyword) throws SQLException {
-        List<NganhDTO> danhSachNganh = new ArrayList<>();
-        String sql = "SELECT * FROM Nganh " +
-                "WHERE ma_nganh LIKE ? OR ten_nganh LIKE ? " +
-                "ORDER BY ten_nganh";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            String searchPattern = "%" + keyword + "%";
-            pstmt.setString(1, searchPattern);
-            pstmt.setString(2, searchPattern);
-
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                danhSachNganh.add(mapResultSetToDTO(rs));
-            }
-        }
-        return danhSachNganh;
     }
 
     /**

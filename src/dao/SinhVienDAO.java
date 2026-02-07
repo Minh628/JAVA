@@ -152,33 +152,6 @@ public class SinhVienDAO {
     }
 
     /**
-     * Tìm kiếm sinh viên theo từ khóa
-     * Tìm trong: mã sv, tên đăng nhập, họ, tên, email
-     */
-    public List<SinhVienDTO> search(String keyword) throws SQLException {
-        List<SinhVienDTO> danhSachSV = new ArrayList<>();
-        String sql = "SELECT * FROM SinhVien " +
-                "WHERE ma_sv LIKE ? OR ten_dang_nhap LIKE ? OR ho LIKE ? " +
-                "OR ten LIKE ? OR email LIKE ? OR CONCAT(ho, ' ', ten) LIKE ? " +
-                "ORDER BY ho, ten";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            String searchPattern = "%" + keyword + "%";
-            for (int i = 1; i <= 6; i++) {
-                pstmt.setString(i, searchPattern);
-            }
-
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                danhSachSV.add(mapResultSetToDTO(rs));
-            }
-        }
-        return danhSachSV;
-    }
-
-    /**
      * Map ResultSet sang DTO
      */
     private SinhVienDTO mapResultSetToDTO(ResultSet rs) throws SQLException {

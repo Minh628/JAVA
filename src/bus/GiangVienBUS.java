@@ -34,7 +34,7 @@ public class GiangVienBUS {
     }
 
     /**
-     * Lấy danh sách tất cả giảng viên (không bao gồm trưởng khoa)
+     * Lấy danh sách tất cả giảng viên (không bao gồm Admin)
      */
     public List<GiangVienDTO> getDanhSachGiangVien() {
         if (danhSachGiangVien == null) {
@@ -49,7 +49,7 @@ public class GiangVienBUS {
     }
 
     /**
-     * Lấy tất cả (bao gồm trưởng khoa)
+     * Lấy tất cả (bao gồm Admin)
      */
     public List<GiangVienDTO> getAll() {
         try {
@@ -179,19 +179,6 @@ public class GiangVienBUS {
             return false;
         }
     }
-
-    /**
-     * Tìm kiếm giảng viên
-     */
-    public List<GiangVienDTO> timKiem(String keyword) {
-        try {
-            return giangVienDAO.search(keyword);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
-
     /**
      * Tìm kiếm giảng viên theo loại
      */

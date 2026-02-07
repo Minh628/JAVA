@@ -109,30 +109,6 @@ public class KhoaBUS {
     }
 
     /**
-     * Kiểm tra có thể xóa khoa không
-     */
-    public boolean coTheXoaKhoa(int maKhoa) {
-        try {
-            return nganhDAO.countByKhoa(maKhoa) == 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * Tìm kiếm khoa
-     */
-    public List<KhoaDTO> timKiem(String keyword) {
-        try {
-            return khoaDAO.search(keyword);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
-
-    /**
      * Tìm kiếm khoa theo loại
      */
     public List<KhoaDTO> timKiem(String keyword, String loai) {

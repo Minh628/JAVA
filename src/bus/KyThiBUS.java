@@ -112,18 +112,6 @@ public class KyThiBUS {
     }
 
     /**
-     * Tìm kiếm kỳ thi
-     */
-    public List<KyThiDTO> timKiem(String keyword) {
-        try {
-            return kyThiDAO.search(keyword);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
-
-    /**
      * Tìm kiếm kỳ thi theo loại
      */
     public List<KyThiDTO> timKiem(String keyword, String loai) {

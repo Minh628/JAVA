@@ -124,28 +124,6 @@ public class KyThiDAO {
         }
     }
 
-    /**
-     * Tìm kiếm kỳ thi theo từ khóa
-     * Tìm trong: mã kỳ thi, tên kỳ thi
-     */
-    public List<KyThiDTO> search(String keyword) throws SQLException {
-        List<KyThiDTO> danhSachKT = new ArrayList<>();
-        String sql = "SELECT * FROM KyThi WHERE ma_ky_thi LIKE ? OR ten_ky_thi LIKE ? ORDER BY thoi_gian_bat_dau DESC";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            String searchPattern = "%" + keyword + "%";
-            pstmt.setString(1, searchPattern);
-            pstmt.setString(2, searchPattern);
-
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                danhSachKT.add(mapResultSetToDTO(rs));
-            }
-        }
-        return danhSachKT;
-    }
 
     /**
      * Map ResultSet sang DTO

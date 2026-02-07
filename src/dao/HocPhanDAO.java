@@ -118,27 +118,4 @@ public class HocPhanDAO {
         }
     }
 
-    /**
-     * Tìm kiếm học phần theo từ khóa
-     * Tìm trong: mã học phần, tên môn
-     */
-    public List<HocPhanDTO> search(String keyword) throws SQLException {
-        List<HocPhanDTO> danhSachHP = new ArrayList<>();
-        String sql = "SELECT * FROM HocPhan WHERE ma_hoc_phan LIKE ? OR ten_mon LIKE ? ORDER BY ten_mon";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            String searchPattern = "%" + keyword + "%";
-            pstmt.setString(1, searchPattern);
-            pstmt.setString(2, searchPattern);
-
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                danhSachHP.add(mapResultSetToDTO(rs));
-            }
-        }
-        return danhSachHP;
-    }
-
 }

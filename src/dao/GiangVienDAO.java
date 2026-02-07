@@ -171,32 +171,6 @@ public class GiangVienDAO {
         return false;
     }
 
-    /**
-     * Tìm kiếm giảng viên theo từ khóa
-     * Tìm trong: mã gv, tên đăng nhập, họ, tên, email
-     */
-    public List<GiangVienDTO> search(String keyword) throws SQLException {
-        List<GiangVienDTO> danhSachGV = new ArrayList<>();
-        String sql = "SELECT * FROM GiangVien " +
-                "WHERE ma_gv LIKE ? OR ten_dang_nhap LIKE ? OR ho LIKE ? " +
-                "OR ten LIKE ? OR email LIKE ? OR CONCAT(ho, ' ', ten) LIKE ? " +
-                "ORDER BY ho, ten";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            String searchPattern = "%" + keyword + "%";
-            for (int i = 1; i <= 6; i++) {
-                pstmt.setString(i, searchPattern);
-            }
-
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                danhSachGV.add(mapResultSetToDTO(rs));
-            }
-        }
-        return danhSachGV;
-    }
 
     /**
      * Map ResultSet sang DTO

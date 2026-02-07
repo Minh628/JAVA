@@ -108,30 +108,4 @@ public class KhoaDAO {
         }
     }
 
-    /**
-     * Tìm kiếm khoa theo từ khóa
-     * Tìm trong: mã khoa, tên khoa
-     */
-    public List<KhoaDTO> search(String keyword) throws SQLException {
-        List<KhoaDTO> danhSachKhoa = new ArrayList<>();
-        String sql = "SELECT * FROM Khoa WHERE ma_khoa LIKE ? OR ten_khoa LIKE ? ORDER BY ten_khoa";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            String searchPattern = "%" + keyword + "%";
-            pstmt.setString(1, searchPattern);
-            pstmt.setString(2, searchPattern);
-
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                KhoaDTO khoa = new KhoaDTO();
-                khoa.setMaKhoa(rs.getInt("ma_khoa"));
-                khoa.setTenKhoa(rs.getString("ten_khoa"));
-                danhSachKhoa.add(khoa);
-            }
-        }
-        return danhSachKhoa;
-    }
-
 }

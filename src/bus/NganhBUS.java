@@ -119,17 +119,6 @@ public class NganhBUS {
         return false;
     }
 
-    /**
-     * Tìm kiếm ngành
-     */
-    public List<NganhDTO> timKiem(String keyword) {
-        try {
-            return nganhDAO.search(keyword);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
 
     /**
      * Tìm kiếm ngành theo loại
