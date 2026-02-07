@@ -674,7 +674,7 @@ INSERT INTO DeThi (ma_de_thi, ma_hoc_phan, ma_ky_thi, ma_gv, ten_de_thi, thoi_gi
 (2, 1, 1, 3, 'Đề thi Giữa kỳ - Lập trình Java - Đề 02', 45, NOW(), 10),
 (3, 2, 1, 6, 'Đề thi Giữa kỳ - Cơ sở dữ liệu - Đề 01', 60, NOW(), 10),
 (4, 2, 2, 6, 'Đề thi Cuối kỳ - Cơ sở dữ liệu - Đề 01', 90, NOW(), 15),
-(5, 1, 2, 2, 'Đề thi Cuối kỳ - Lập trình Java - Đề 01', 90, NOW(), 10),
+(5, 1, 2, 2, 'Đề thi Cuối kỳ - Lập trình Java - Đề 01', 90, NOW(), 15),
 -- Đề thi Khoa Kinh tế
 (6, 9, 1, 9, 'Đề thi Giữa kỳ - Nguyên lý Kinh tế - Đề 01', 60, NOW(), 10),
 (7, 9, 2, 9, 'Đề thi Cuối kỳ - Nguyên lý Kinh tế - Đề 01', 90, NOW(), 15),
