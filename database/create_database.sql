@@ -674,7 +674,7 @@ INSERT INTO DeThi (ma_de_thi, ma_hoc_phan, ma_ky_thi, ma_gv, ten_de_thi, thoi_gi
 (2, 1, 1, 3, 'Đề thi Giữa kỳ - Lập trình Java - Đề 02', 45, NOW(), 10),
 (3, 2, 1, 6, 'Đề thi Giữa kỳ - Cơ sở dữ liệu - Đề 01', 60, NOW(), 10),
 (4, 2, 2, 6, 'Đề thi Cuối kỳ - Cơ sở dữ liệu - Đề 01', 90, NOW(), 15),
-(5, 1, 2, 2, 'Đề thi Cuối kỳ - Lập trình Java - Đề 01', 90, NOW(), 15),
+(5, 1, 2, 2, 'Đề thi Cuối kỳ - Lập trình Java - Đề 01', 90, NOW(), 10),
 -- Đề thi Khoa Kinh tế
 (6, 9, 1, 9, 'Đề thi Giữa kỳ - Nguyên lý Kinh tế - Đề 01', 60, NOW(), 10),
 (7, 9, 2, 9, 'Đề thi Cuối kỳ - Nguyên lý Kinh tế - Đề 01', 90, NOW(), 15),
@@ -883,9 +883,9 @@ INSERT INTO BaiThi (ma_bai_thi, ma_de_thi, ma_sv, thoi_gian_bat_dau, thoi_gian_n
 -- Sinh viên 20 (Tiếng Anh): 1 bài thi
 (25, 11, 20, '2024-12-24 10:00:00', '2024-12-24 11:30:00', '2024-12-24', 10, 5, 6.67),
 -- Sinh viên 21 (Tiếng Nhật): 1 bài thi
-(26, 13, 21, '2024-10-11 10:00:00', '2024-10-11 11:00:00', '2024-10-11', 8, 2, 8.0),
+(26, 12, 21, '2024-10-11 10:00:00', '2024-10-11 11:00:00', '2024-10-11', 8, 2, 8.0),
 -- Sinh viên 22 (Tiếng Nhật): 1 bài thi
-(27, 14, 22, '2024-12-25 10:00:00', '2024-12-25 11:30:00', '2024-12-25', 11, 4, 7.33),
+(27, 13, 22, '2024-12-25 10:00:00', '2024-12-25 11:30:00', '2024-12-25', 11, 4, 7.33),
 -- Sinh viên 23 (Kỹ thuật Điện): 2 bài thi
 (28, 14, 23, '2024-10-12 14:00:00', '2024-10-12 15:00:00', '2024-10-12', 8, 2, 8.0),
 (29, 15, 23, '2024-12-26 14:00:00', '2024-12-26 15:30:00', '2024-12-26', 12, 3, 8.0),
@@ -922,7 +922,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (2, 19, 'INSERT INTO'),
 (2, 20, 'Chuỗi ký tự'),
 (2, 21, 'Liên kết giữa các bảng'),
-(2, 22, 'FULL OUTER JOIN'),
+(2, 22, 'INNER JOIN'),  -- Sai
 (2, 23, 'Tăng tốc độ truy vấn'),
 (2, 34, 'DELETE'),
 (2, 35, 'ORDER BY');
@@ -974,7 +974,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (6, 6, 'do-while'),
 (6, 7, 'Một phương thức có thể có nhiều hành vi khác nhau'),
 (6, 9, '== so sánh tham chiếu, equals() so sánh nội dung'),
-(6, 10, 'ArrayList dùng mảng, LinkedList dùng danh sách liên kết'),
+(6, 10, 'LinkedList tốn ít bộ nhớ hơn'),  -- Sai
 (6, 13, 'Tự động giải phóng bộ nhớ không còn được tham chiếu'),
 (6, 14, 'Code không cần đồng bộ hóa'),  -- Sai
 (6, 15, 'Cho phép kiểm tra và thao tác class/method/field tại runtime');
@@ -1047,7 +1047,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (11, 27, 'Giảm dư thừa dữ liệu: 1NF, 2NF, 3NF, BCNF'),
 (11, 28, 'Hai transaction chờ đợi lẫn nhau vô hạn'),
 (11, 29, 'Procedure và Function giống nhau'),  -- Sai
-(11, 30, 'Sharding phân tán qua nhiều server, Partitioning trong cùng server');
+(11, 30, 'Giống nhau hoàn toàn'); -- Sai
 
 -- Chi tiết bài thi của sinh viên 9 - Bài thi 12 (ma_bai_thi = 12, Đề Java Cuối kỳ)
 INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
@@ -1065,7 +1065,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (12, 12, 'Singleton Pattern'),
 (12, 31, 'extends'),
 (12, 32, 'destructor'),  -- Sai
-(12, 33, 'final');
+(12, 33, 'static'); -- Sai
 
 -- Chi tiết bài thi của sinh viên 10 - Bài thi 13 (ma_bai_thi = 13, Đề CSDL Cuối kỳ)
 INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
@@ -1088,13 +1088,13 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 -- Chi tiết bài thi sinh viên 11 - Bài thi 14 (Đề Kinh tế 1)
 INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
 (14, 36, 'Sử dụng tài nguyên hiệu quả'),
-(14, 37, 'Tăng khi cầu tăng'),
+(14, 37, 'Giảm khi cung tăng'), -- Sai
 (14, 38, 'Gross Domestic Product'),
 (14, 39, 'Tất cả các đáp án trên'),
 (14, 40, 'Nhiều'),
 (14, 41, 'Cung và cầu'),
 (14, 42, 'Mức độ thay đổi lượng cầu khi giá thay đổi'),
-(14, 43, 'Giá trị một lựa chọn bị mất vì chọn khác'),
+(14, 43, 'Chi phí sản xuất'), -- Sai
 (14, 44, 'Tỷ lệ người không có việc làm'),
 (14, 45, 'Tiền lương danh nghĩa không điều chỉnh lạm phát, thực tế có');
 
@@ -1111,7 +1111,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (15, 44, 'Tỷ lệ lạm phát'),  -- Sai
 (15, 45, 'Tiền lương danh nghĩa không điều chỉnh lạm phát, thực tế có'),
 (15, 46, 'Kiểm soát cung tiền và lãi suất'),
-(15, 47, 'Mối quan hệ giữa đầu tư, tiết kiệm, lãi suất'),
+(15, 47, 'Mối quan hệ giữa cung cầu'), -- Sai
 (15, 48, 'Vượt quá khả năng sản xuất hiện tại'),
 (15, 49, 'Cả A và B đúng'),
 (15, 50, 'Bất đẳng thức thu nhập');
@@ -1121,13 +1121,13 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (16, 36, 'Sử dụng tài nguyên hiệu quả'),
 (16, 37, 'Giảm khi cung tăng'),  -- Sai
 (16, 38, 'Gross Domestic Product'),
-(16, 39, 'Mất sức mua'),
+(16, 39, 'Tất cả các đáp án trên'),
 (16, 40, 'Một'),  -- Sai
 (16, 41, 'Cung và cầu'),
 (16, 42, 'Tổng lượng cầu'),  -- Sai
 (16, 43, 'Giá trị một lựa chọn bị mất vì chọn khác'),
 (16, 44, 'Tỷ lệ người không có việc làm'),
-(16, 45, 'Giống nhau');  -- Sai
+(16, 45, 'Tiền lương danh nghĩa không điều chỉnh lạm phát, thực tế có'); -- Correct
 
 -- Chi tiết bài thi sinh viên 13 - Bài thi 17 (Đề Kinh tế Cuối kỳ)
 INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
@@ -1138,11 +1138,11 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (17, 40, 'Nhiều'),
 (17, 41, 'Cung và cầu'),
 (17, 42, 'Mức độ thay đổi lượng cầu khi giá thay đổi'),
-(17, 43, 'Giá trị một lựa chọn bị mất vì chọn khác'),
-(17, 44, 'Tỷ lệ người không có việc làm'),
+(17, 43, 'Chi phí sản xuất'), -- Sai
+(17, 44, 'Tỷ lệ lạm phát'), -- Sai
 (17, 45, 'Tiền lương danh nghĩa không điều chỉnh lạm phát, thực tế có'),
 (17, 46, 'Kiểm soát cung tiền và lãi suất'),
-(17, 47, 'Mối quan hệ giữa cung cầu'),  -- Sai
+(17, 47, 'Mối quan hệ giữa cung cầu'), -- Sai
 (17, 48, 'Vượt quá khả năng sản xuất hiện tại'),
 (17, 49, 'Tỷ giá không ảnh hưởng'),  -- Sai
 (17, 50, 'Bất đẳng thức thu nhập');
@@ -1157,7 +1157,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (18, 41, 'Cung và cầu'),
 (18, 42, 'Mức độ thay đổi lượng cầu khi giá thay đổi'),
 (18, 43, 'Giá trị một lựa chọn bị mất vì chọn khác'),
-(18, 44, 'Tỷ lệ người không có việc làm'),
+(18, 44, 'Tỷ lệ lạm phát'), -- Sai
 (18, 45, 'Tiền lương danh nghĩa không điều chỉnh lạm phát, thực tế có');
 
 -- Chi tiết bài thi sinh viên 15 - Bài thi 19 (Đề Quản lý Dự án)
@@ -1168,7 +1168,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (19, 39, 'Tất cả các đáp án trên'),
 (19, 40, 'Nhiều'),
 (19, 41, 'Cung và cầu'),
-(19, 42, 'Mức độ thay đổi lượng cầu khi giá thay đổi'),
+(19, 42, 'Tổng lượng cầu'), -- Sai
 (19, 43, 'Giá trị một lựa chọn bị mất vì chọn khác'),
 (19, 44, 'Tỷ lệ lạm phát'),  -- Sai
 (19, 45, 'Tiền lương danh nghĩa không điều chỉnh lạm phát, thực tế có');
@@ -1183,10 +1183,10 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (20, 41, 'Cung và cầu'),
 (20, 42, 'Mức độ thay đổi lượng cầu khi giá thay đổi'),
 (20, 43, 'Giá trị một lựa chọn bị mất vì chọn khác'),
-(20, 44, 'Tỷ lệ người không có việc làm'),
+(20, 44, 'Tỷ lệ lạm phát'), -- Sai
 (20, 45, 'Tiền lương danh nghĩa không điều chỉnh lạm phát, thực tế có'),
 (20, 46, 'Kiểm soát cung tiền và lãi suất'),
-(20, 47, 'Mối quan hệ giữa đầu tư, tiết kiệm, lãi suất'),
+(20, 47, 'Mối quan hệ giữa cung cầu'), -- Sai
 (20, 48, 'Vượt quá khả năng sản xuất hiện tại'),
 (20, 49, 'Cả A và B đúng'),
 (20, 50, 'Bất đẳng thức thu nhập');
@@ -1195,11 +1195,11 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
 (21, 51, 'Hello, how are you?'),
 (21, 52, 'pro-nun-see-ay-shun'),
-(21, 53, 'Tất cả các đáp án trên'),
+(21, 53, 'Diễn tả hành động lặp lại'), -- Sai
 (21, 54, 'Present Simple'),
 (21, 55, 'Câu hỏi nghi vấn với kinh nghiệm'),
 (21, 56, 'Hành động hoàn thành trước hành động quá khứ khác'),
-(21, 57, 'Tình huống khả thi trong tương lai'),
+(21, 57, 'Tình huống không thể xảy ra'), -- Sai
 (21, 58, 'Đề ra, gợi ý'),
 (21, 59, 'Hai hoặc nhiều từ thường đi cùng nhau'),
 (21, 60, 'Chỉ ra sự tương phản');
@@ -1208,7 +1208,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
 (22, 51, 'Hello, how are you?'),
 (22, 52, 'pro-nun-see-ay-shun'),
-(22, 53, 'Tất cả các đáp án trên'),
+(22, 53, 'Diễn tả hành động lặp lại'), -- Sai
 (22, 54, 'Present Simple'),
 (22, 55, 'Câu hỏi nghi vấn với kinh nghiệm'),
 (22, 56, 'Hành động hoàn thành trước hành động quá khứ khác'),
@@ -1217,7 +1217,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (22, 59, 'Hai hoặc nhiều từ thường đi cùng nhau'),
 (22, 60, 'Chỉ ra sự tương phản'),
 (22, 61, 'Chuyển từ trực tiếp sang lời nói gián tiếp'),
-(22, 62, 'Diễn tả điều kiện quá khứ với kết quả hiện tại'),
+(22, 62, 'Diễn tả tương lai'), -- Sai
 (22, 63, 'Between a rock and a hard place'),
 (22, 64, 'Thể hiện mức độ trang trọng hoặc bình thường'),
 (22, 65, 'Thể hiện cảm xúc, ý định, thái độ của người nói');
@@ -1232,7 +1232,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (23, 56, 'Hành động hoàn thành trước hành động quá khứ khác'),
 (23, 57, 'Tình huống không thể xảy ra'),  -- Sai
 (23, 58, 'Đề ra, gợi ý'),
-(23, 59, 'Hai hoặc nhiều từ thường đi cùng nhau'),
+(23, 59, 'Từ đồng nghĩa'), -- Sai
 (23, 60, 'Chỉ ra sự tương phản');
 
 -- Chi tiết bài thi sinh viên 19 - Bài thi 24 (Đề Ngữ pháp Tiếng Anh)
@@ -1240,7 +1240,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (24, 51, 'Hello, how are you?'),
 (24, 52, 'pro-nun-see-ay-shun'),
 (24, 53, 'Tất cả các đáp án trên'),
-(24, 54, 'Present Simple'),
+(24, 54, 'Past Tense'), -- Sai
 (24, 55, 'Câu hỏi nghi vấn với kinh nghiệm'),
 (24, 56, 'Hành động hoàn thành trước hành động quá khứ khác'),
 (24, 57, 'Tình huống khả thi trong tương lai'),
@@ -1271,12 +1271,12 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (26, 51, 'Hello, how are you?'),
 (26, 52, 'pro-nun-see-ay-shun'),
 (26, 53, 'Tất cả các đáp án trên'),
-(26, 54, 'Present Simple'),
+(26, 54, 'Past Tense'), -- Sai
 (26, 55, 'Câu hỏi nghi vấn với kinh nghiệm'),
 (26, 56, 'Hành động hoàn thành trước hành động quá khứ khác'),
 (26, 57, 'Tình huống khả thi trong tương lai'),
 (26, 58, 'Đề ra, gợi ý'),
-(26, 59, 'Hai hoặc nhiều từ thường đi cùng nhau'),
+(26, 59, 'Từ đồng nghĩa'), -- Sai
 (26, 60, 'Chỉ ra sự tương phản');
 
 -- Chi tiết bài thi sinh viên 22 - Bài thi 27 (Đề Ngữ pháp Tiếng Anh Cuối kỳ)
@@ -1284,7 +1284,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (27, 51, 'Hello, how are you?'),
 (27, 52, 'pro-nun-see-ay-shun'),
 (27, 53, 'Tất cả các đáp án trên'),
-(27, 54, 'Present Simple'),
+(27, 54, 'Past Tense'), -- Sai
 (27, 55, 'Câu hỏi nghi vấn với kinh nghiệm'),
 (27, 56, 'Hành động hoàn thành trước hành động quá khứ khác'),
 (27, 57, 'Tình huống khả thi trong tương lai'),
@@ -1300,12 +1300,12 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 -- Chi tiết bài thi sinh viên 23 - Bài thi 28 (Đề Điện 1)
 INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
 (28, 66, 'V = R * I'),
-(28, 67, 'I = V / R'),
+(28, 67, 'P = V * I'), -- Sai
 (28, 68, 'R'),
 (28, 69, 'Tổng dòng điện vào bằng tổng dòng ra'),
 (28, 70, 'Alternating Current'),
 (28, 71, 'Khả năng tạo từ trường'),
-(28, 72, 'Cả A và C'),
+(28, 72, 'P = V * I'), -- Sai
 (28, 73, 'Hiệu suất hệ thống'),
 (28, 74, 'Biến đổi điện áp AC'),
 (28, 75, 'Khi tần số bằng tần số cộng hưởng');
@@ -1318,14 +1318,14 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (29, 69, 'Tổng dòng điện vào bằng tổng dòng ra'),
 (29, 70, 'Alternating Current'),
 (29, 71, 'Khả năng tạo từ trường'),
-(29, 72, 'Cả A và C'),
+(29, 72, 'P = V * I'), -- Sai
 (29, 73, 'Hiệu suất hệ thống'),
 (29, 74, 'Biến đổi điện áp AC'),
 (29, 75, 'Khi tần số bằng tần số cộng hưởng'),
 (29, 76, 'Bốn phương trình cơ bản'),
 (29, 77, 'Phương pháp nút hoặc vòng'),
-(29, 78, 'Mất điện năng trong điện môi'),
-(29, 79, 'Từ thông trong vật liệu'),
+(29, 78, 'Tạo dòng điện'), -- Sai
+(29, 79, 'Dòng điện'), -- Sai
 (29, 80, 'F = I * l * B * sin(θ)');
 
 -- Chi tiết bài thi sinh viên 24 - Bài thi 30 (Đề Điện 1)
@@ -1336,9 +1336,9 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (30, 69, 'Tổng dòng điện vào bằng tổng dòng ra'),
 (30, 70, 'Alternating Current'),
 (30, 71, 'Khả năng tạo từ trường'),
-(30, 72, 'Cả A và C'),
+(30, 72, 'P = V * I'), -- Sai
 (30, 73, 'Hiệu suất hệ thống'),
-(30, 74, 'Biến đổi điện áp AC'),
+(30, 74, 'Chuyển DC thành AC'), -- Sai
 (30, 75, 'Khi tần số bằng tần số cộng hưởng');
 
 -- Chi tiết bài thi sinh viên 25 - Bài thi 31 (Đề Điện Cuối kỳ)
@@ -1351,10 +1351,10 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (31, 71, 'Khả năng tạo từ trường'),
 (31, 72, 'Cả A và C'),
 (31, 73, 'Hiệu suất hệ thống'),
-(31, 74, 'Biến đổi điện áp AC'),
+(31, 74, 'Chuyển DC thành AC'), -- Sai
 (31, 75, 'Khi tần số bằng tần số cộng hưởng'),
 (31, 76, 'Bốn phương trình cơ bản'),
-(31, 77, 'Phương pháp nút hoặc vòng'),
+(31, 77, 'Phương pháp đơn giản'), -- Sai
 (31, 78, 'Mất điện năng trong điện môi'),
 (31, 79, 'Từ thông trong vật liệu'),
 (31, 80, 'F = I * l * B * sin(θ)');
@@ -1363,7 +1363,7 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
 (32, 66, 'V = R * I'),
 (32, 67, 'I = V / R'),
-(32, 68, 'R'),
+(32, 68, 'Z'), -- Sai
 (32, 69, 'Tổng dòng điện vào bằng tổng dòng ra'),
 (32, 70, 'Alternating Current'),
 (32, 71, 'Khả năng tạo từ trường'),
@@ -1382,24 +1382,24 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (33, 71, 'Khả năng tạo từ trường'),
 (33, 72, 'P = V * I'),  -- Sai
 (33, 73, 'Hiệu suất hệ thống'),
-(33, 74, 'Chuyển DC thành AC'),  -- Sai
+(33, 74, 'Biến đổi điện áp AC'), -- Correct
 (33, 75, 'Khi tần số bằng tần số cộng hưởng');
 
 -- Chi tiết bài thi sinh viên 28 - Bài thi 34 (Đề Điện tử Cuối kỳ)
 INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES 
 (34, 66, 'V = R * I'),
 (34, 67, 'I = V / R'),
-(34, 68, 'R'),
+(34, 68, 'Z'), -- Sai
 (34, 69, 'Tổng dòng điện vào bằng tổng dòng ra'),
 (34, 70, 'Alternating Current'),
 (34, 71, 'Khả năng tạo từ trường'),
-(34, 72, 'Cả A và C'),
+(34, 72, 'P = V * I'), -- Sai
 (34, 73, 'Hiệu suất hệ thống'),
-(34, 74, 'Biến đổi điện áp AC'),
+(34, 74, 'Chuyển DC thành AC'), -- Sai
 (34, 75, 'Khi tần số bằng tần số cộng hưởng'),
 (34, 76, 'Bốn phương trình cơ bản'),
 (34, 77, 'Phương pháp nút hoặc vòng'),
-(34, 78, 'Mất điện năng trong điện môi'),   
+(34, 78, 'Tạo dòng điện'), -- Sai
 (34, 79, 'Từ thông trong vật liệu'),
 (34, 80, 'F = I * l * B * sin(θ)');
 
@@ -1591,4 +1591,3 @@ INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_ca
 INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES 
 (134, 'Emitting|Electric|Energy|Efficient', 'Emitting'),
 (135, '1|0|2|null', '1');
-

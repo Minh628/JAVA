@@ -85,7 +85,7 @@ public class SinhVienDAO {
      */
     public boolean update(SinhVienDTO sinhVien) throws SQLException {
         String sql = "UPDATE SinhVien SET ma_nganh = ?, ho = ?, ten = ?, " +
-                "email = ?, trang_thai = ? WHERE ma_sv = ?";
+                "email = ?, mat_khau = ?, trang_thai = ? WHERE ma_sv = ?";
 
         try (Connection conn = DatabaseHelper.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -94,8 +94,9 @@ public class SinhVienDAO {
             pstmt.setString(2, sinhVien.getHo());
             pstmt.setString(3, sinhVien.getTen());
             pstmt.setString(4, sinhVien.getEmail());
-            pstmt.setBoolean(5, sinhVien.isTrangThai());
-            pstmt.setInt(6, sinhVien.getMaSV());
+            pstmt.setString(5, sinhVien.getMatKhau());
+            pstmt.setBoolean(6, sinhVien.isTrangThai());
+            pstmt.setInt(7, sinhVien.getMaSV());
 
             return pstmt.executeUpdate() > 0;
         }

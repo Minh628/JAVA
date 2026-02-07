@@ -9,12 +9,13 @@ import bus.CauHoiBUS;
 import bus.DeThiBUS;
 import config.Constants;
 import dto.BaiThiDTO;
-import dto.CauHoiDTO;
 import dto.CauHoiDKDTO;
+import dto.CauHoiDTO;
 import dto.CauHoiMCDTO;
 import dto.ChiTietBaiThiDTO;
 import dto.DeThiDTO;
 import gui.components.CustomButton;
+import gui.components.CustomTable;
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
@@ -75,21 +76,7 @@ public class ChiTietDiemDialog extends JDialog {
             }
         };
         
-        tblChiTiet = new JTable(modelChiTiet);
-        tblChiTiet.setFont(Constants.NORMAL_FONT);
-        tblChiTiet.setRowHeight(40);
-        tblChiTiet.getTableHeader().setFont(Constants.NORMAL_FONT);
-        tblChiTiet.getTableHeader().setBackground(Constants.PRIMARY_COLOR);
-        tblChiTiet.getTableHeader().setForeground(Color.WHITE);
-        
-        // Thiết lập độ rộng cột
-        tblChiTiet.getColumnModel().getColumn(0).setPreferredWidth(40);   // STT
-        tblChiTiet.getColumnModel().getColumn(1).setPreferredWidth(80);   // Loại
-        tblChiTiet.getColumnModel().getColumn(2).setPreferredWidth(300);  // Nội dung
-        tblChiTiet.getColumnModel().getColumn(3).setPreferredWidth(150);  // Đáp án đúng
-        tblChiTiet.getColumnModel().getColumn(4).setPreferredWidth(150);  // Đáp án SV
-        tblChiTiet.getColumnModel().getColumn(5).setPreferredWidth(80);   // Kết quả
-        tblChiTiet.getColumnModel().getColumn(6).setPreferredWidth(60);   // Điểm
+        tblChiTiet = new CustomTable(modelChiTiet);
         
         // Renderer để tô màu kết quả
         tblChiTiet.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {

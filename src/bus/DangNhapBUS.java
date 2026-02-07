@@ -60,28 +60,6 @@ public class DangNhapBUS {
         return -1;
     }
 
-    /**
-     * Kiểm tra có phải trưởng khoa
-     */
-    public boolean laTruongKhoa(Object user) {
-        return user instanceof GiangVienDTO && 
-               ((GiangVienDTO) user).getMaVaiTro() == VaiTroDTO.ADMIN;
-    }
-
-    /**
-     * Kiểm tra có phải giảng viên
-     */
-    public boolean laGiangVien(Object user) {
-        return user instanceof GiangVienDTO && 
-               ((GiangVienDTO) user).getMaVaiTro() == VaiTroDTO.GIANG_VIEN;
-    }
-
-    /**
-     * Kiểm tra có phải sinh viên
-     */
-    public boolean laSinhVien(Object user) {
-        return user instanceof SinhVienDTO;
-    }
 
     /**
      * Đổi mật khẩu

@@ -134,17 +134,6 @@ public class SinhVienBUS {
         return false;
     }
 
-    /**
-     * Reset mật khẩu
-     */
-    public boolean resetMatKhau(int maSV, String matKhauMoi) {
-        try {
-            return sinhVienDAO.updatePassword(maSV, matKhauMoi);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
     /**
      * Đổi mật khẩu sinh viên
