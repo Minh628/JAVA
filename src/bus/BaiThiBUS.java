@@ -56,17 +56,6 @@ public class BaiThiBUS {
         return -1;
     }
 
-    /**
-     * Cập nhật kết quả bài thi
-     */
-    public boolean capNhatKetQua(BaiThiDTO baiThi) {
-        try {
-            return baiThiDAO.updateKetQua(baiThi);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
     /**
      * Cập nhật kết quả sau khi chấm điểm
@@ -99,17 +88,6 @@ public class BaiThiBUS {
         }
     }
 
-    /**
-     * Lấy danh sách bài thi theo đề thi
-     */
-    public List<BaiThiDTO> getBaiThiTheoDeThi(int maDeThi) {
-        try {
-            return baiThiDAO.getByDeThi(maDeThi);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
 
     /**
      * Lấy bài thi theo mã

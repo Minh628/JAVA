@@ -8,21 +8,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 public class SelectEntityDialog<T> extends JDialog {
+
+    // Kết quả trả về (static để dễ truy cập)
     private static int selectedId = -1;
     private static String selectedLabel = "";
     private static String selectedType = "";
 
+    // Dữ liệu đầu vào
     private final List<T> items;
     private final Function<T, Integer> getId;
     private final Function<T, String> getLabel;
     private final String typeKey;
 
+    // Components
     private JComboBox<String> cboFilter;
     private JTextField txtKeyword;
-    private DefaultListModel<T> listModel;
-    private JList<T> list;
+    private JTable table;
+    private DefaultTableModel tableModel;
 
     public SelectEntityDialog(Frame parent, String title, String typeKey,
             List<T> items, Function<T, Integer> getId, Function<T, String> getLabel) {
@@ -31,11 +39,15 @@ public class SelectEntityDialog<T> extends JDialog {
         this.getId = getId;
         this.getLabel = getLabel;
         this.typeKey = typeKey != null ? typeKey : "";
+
         initUI();
-        setSize(520, 360);
+        
+        // Kích thước mặc định hợp lý hơn
+        setSize(600, 450);
         setLocationRelativeTo(parent);
     }
 
+    // --- Các phương thức Static giữ nguyên để tương thích code cũ ---
     public static void clearSelection() {
         selectedId = -1;
         selectedLabel = "";
@@ -54,47 +66,52 @@ public class SelectEntityDialog<T> extends JDialog {
         return selectedType;
     }
 
+    // --- Giao diện mới ---
     private void initUI() {
-        setLayout(new BorderLayout(10, 10));
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-        mainPanel.setBackground(Constants.CONTENT_BG);
+        setLayout(new BorderLayout());
+        setBackground(Constants.CONTENT_BG);
 
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        searchPanel.setBackground(Constants.CONTENT_BG);
-        searchPanel.add(new JLabel("Tim theo:"));
+        // 1. Panel Tìm kiếm (North)
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+        topPanel.setBackground(Constants.CONTENT_BG);
+        topPanel.setBorder(new EmptyBorder(5, 5, 0, 5));
 
-        cboFilter = new JComboBox<>(new String[] { "Tat ca", "Ma", "Ten" });
-        cboFilter.setPreferredSize(new Dimension(100, 28));
-        searchPanel.add(cboFilter);
+        JLabel lblFilter = new JLabel("Tìm theo:");
+        lblFilter.setFont(Constants.NORMAL_FONT);
+        topPanel.add(lblFilter);
+
+        cboFilter = new JComboBox<>(new String[] { "Tất cả", "Mã", "Tên" });
+        cboFilter.setFont(Constants.NORMAL_FONT);
+        cboFilter.setPreferredSize(new Dimension(100, 32));
+        topPanel.add(cboFilter);
 
         txtKeyword = new JTextField(20);
+        txtKeyword.setFont(Constants.NORMAL_FONT);
+        txtKeyword.setPreferredSize(new Dimension(200, 32));
         txtKeyword.addActionListener(e -> applyFilter());
-        searchPanel.add(txtKeyword);
+        topPanel.add(txtKeyword);
 
-        CustomButton btnSearch = new CustomButton("Tim", Constants.INFO_COLOR, Constants.TEXT_COLOR);
+        CustomButton btnSearch = new CustomButton("Tìm kiếm", Constants.INFO_COLOR, Constants.TEXT_COLOR);
+        btnSearch.setPreferredSize(new Dimension(100, 32));
         btnSearch.addActionListener(e -> applyFilter());
-        searchPanel.add(btnSearch);
+        topPanel.add(btnSearch);
 
-        mainPanel.add(searchPanel, BorderLayout.NORTH);
+        add(topPanel, BorderLayout.NORTH);
 
-        listModel = new DefaultListModel<>();
-        list = new JList<>(listModel);
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setCellRenderer(new DefaultListCellRenderer() {
+        // 2. Bảng dữ liệu (Center) - Thay thế JList bằng JTable
+        String[] columnNames = {"Mã", "Tên hiển thị"};
+        tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                    boolean isSelected, boolean cellHasFocus) {
-                JLabel label = (JLabel) super.getListCellRendererComponent(
-                        list, value, index, isSelected, cellHasFocus);
-                @SuppressWarnings("unchecked")
-                T item = (T) value;
-                String text = String.valueOf(getId.apply(item)) + " - " + getLabel.apply(item);
-                label.setText(text);
-                return label;
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho sửa trực tiếp
             }
-        });
-        list.addMouseListener(new MouseAdapter() {
+        };
+
+        table = new JTable(tableModel);
+        styleTable(table); // Áp dụng style đẹp
+
+        // Sự kiện double click
+        table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -103,72 +120,117 @@ public class SelectEntityDialog<T> extends JDialog {
             }
         });
 
-        JScrollPane scrollPane = new JScrollPane(list);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.getViewport().setBackground(Constants.CONTENT_BG);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); // Padding xung quanh bảng
+        add(scrollPane, BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+        // 3. Panel Nút bấm (South)
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
         buttonPanel.setBackground(Constants.CONTENT_BG);
-        CustomButton btnChoose = new CustomButton("Chon", Constants.SUCCESS_COLOR, Constants.TEXT_COLOR);
-        CustomButton btnCancel = new CustomButton("Huy", Constants.SECONDARY_COLOR, Constants.TEXT_COLOR);
-        btnChoose.addActionListener(e -> confirmSelection());
+
+        CustomButton btnCancel = new CustomButton("Hủy bỏ", Constants.SECONDARY_COLOR, Constants.TEXT_COLOR);
+        btnCancel.setPreferredSize(new Dimension(100, 35));
         btnCancel.addActionListener(e -> dispose());
+
+        CustomButton btnChoose = new CustomButton("Chọn", Constants.SUCCESS_COLOR, Constants.TEXT_COLOR);
+        btnChoose.setPreferredSize(new Dimension(100, 35));
+        btnChoose.addActionListener(e -> confirmSelection());
+
         buttonPanel.add(btnCancel);
         buttonPanel.add(btnChoose);
 
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-        add(mainPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
 
+        // Load dữ liệu ban đầu
         loadAll();
     }
 
+    /**
+     * Hàm trang trí bảng cho đẹp
+     */
+    private void styleTable(JTable table) {
+        table.setFont(Constants.NORMAL_FONT);
+        table.setRowHeight(30); // Tăng chiều cao dòng cho thoáng
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setShowGrid(true);
+        table.setGridColor(Constants.LIGHT_COLOR);
+        
+        // Header style
+        JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        header.setBackground(Constants.PRIMARY_COLOR); // Dùng màu chủ đạo của app
+        header.setForeground(Constants.TEXT_COLOR);
+        header.setPreferredSize(new Dimension(header.getWidth(), 35));
+
+        // Căn giữa cột Mã (Cột 0)
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(0).setMaxWidth(100); // Mã không cần quá rộng
+    }
+
     private void loadAll() {
-        listModel.clear();
+        tableModel.setRowCount(0);
         for (T item : items) {
-            listModel.addElement(item);
+            tableModel.addRow(new Object[]{
+                getId.apply(item),
+                getLabel.apply(item)
+            });
         }
-        if (!listModel.isEmpty()) {
-            list.setSelectedIndex(0);
+        if (table.getRowCount() > 0) {
+            table.setRowSelectionInterval(0, 0);
         }
     }
 
     private void applyFilter() {
         String keyword = txtKeyword.getText().trim().toLowerCase();
         String filter = (String) cboFilter.getSelectedItem();
-        listModel.clear();
+        tableModel.setRowCount(0);
 
         for (T item : items) {
             String idText = String.valueOf(getId.apply(item));
             String labelText = getLabel.apply(item) != null ? getLabel.apply(item) : "";
             String labelLower = labelText.toLowerCase();
 
-            boolean match;
-            if ("Ma".equals(filter)) {
+            boolean match = false;
+            // Logic tìm kiếm tiếng Việt
+            if ("Mã".equals(filter)) { // Đã sửa thành tiếng Việt
                 match = idText.contains(keyword);
-            } else if ("Ten".equals(filter)) {
+            } else if ("Tên".equals(filter)) { // Đã sửa thành tiếng Việt
                 match = labelLower.contains(keyword);
-            } else {
+            } else { // Tất cả
                 match = idText.contains(keyword) || labelLower.contains(keyword);
             }
 
             if (keyword.isEmpty() || match) {
-                listModel.addElement(item);
+                tableModel.addRow(new Object[]{
+                    getId.apply(item),
+                    labelText // Giữ nguyên chữ hoa thường khi hiển thị
+                });
             }
         }
 
-        if (!listModel.isEmpty()) {
-            list.setSelectedIndex(0);
+        if (table.getRowCount() > 0) {
+            table.setRowSelectionInterval(0, 0);
         }
     }
 
     private void confirmSelection() {
-        T item = list.getSelectedValue();
-        if (item == null) {
-            JOptionPane.showMessageDialog(this, "Vui long chon mot dong!");
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn một dòng!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        selectedId = getId.apply(item);
-        selectedLabel = getLabel.apply(item);
+
+        // Lấy giá trị từ model bảng
+        Object idObj = table.getValueAt(row, 0);
+        Object nameObj = table.getValueAt(row, 1);
+
+        selectedId = Integer.parseInt(idObj.toString());
+        selectedLabel = nameObj.toString();
         selectedType = typeKey;
+        
         dispose();
     }
 }

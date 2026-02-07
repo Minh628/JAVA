@@ -7,6 +7,7 @@ public class Main {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception exception) {
+            
             exception.printStackTrace();
         }
         SwingUtilities.invokeLater(() -> {

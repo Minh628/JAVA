@@ -176,19 +176,6 @@ public class CauHoiBUS {
         }
     }
 
-    /**
-     * Kiểm tra có thể xóa câu hỏi không
-     */
-    public boolean coTheXoaCauHoi(int maCauHoi) {
-        try {
-            return !chiTietDeThiDAO.isCauHoiInAnyDeThi(maCauHoi)
-                    && chiTietBaiThiDAO.countByCauHoi(maCauHoi) == 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public static void reloadCache() {
         danhSachCauHoi = null;
         lastMaGV = -1;
