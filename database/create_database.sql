@@ -1403,191 +1403,193 @@ INSERT INTO ChiTietBaiThi (ma_bai_thi, ma_cau_hoi, dap_an_sv) VALUES
 (34, 79, 'Từ thông trong vật liệu'),
 (34, 80, 'F = I * l * B * sin(θ)');
 
--- ========== 18. THÊM CÂU HỎI MỚI CHO TẤT CẢ CÁC MÔN ==========
+-- =====================================================
+-- 18. THÊM CÂU HỎI MỚI CHO TẤT CẢ CÁC MÔN (SỬA LẠI ID ĐỂ KHÔNG TRÙNG)
+-- =====================================================
 
 -- ========== 18.1 Câu hỏi trắc nghiệm mới cho môn Java (ma_mon=1) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(81, 1, 2, 'Trong Java, từ khóa nào được sử dụng để tạo một giao diện?', 'De', 'MC'),
-(82, 1, 2, 'Giá trị mặc định của biến boolean trong Java là gì?', 'De', 'MC'),
-(83, 1, 3, 'Phương thức nào được dùng để so sánh hai chuỗi trong Java?', 'TrungBinh', 'MC'),
-(84, 1, 3, 'Exception nào xảy ra khi chia một số cho 0?', 'TrungBinh', 'MC'),
-(85, 1, 2, 'Từ khóa nào ngăn chặn việc ghi đè phương thức trong Java?', 'Kho', 'MC');
+(123, 1, 2, 'Trong Java, từ khóa nào được sử dụng để tạo một giao diện?', 'De', 'MC'),
+(124, 1, 2, 'Giá trị mặc định của biến boolean trong Java là gì?', 'De', 'MC'),
+(125, 1, 3, 'Phương thức nào được dùng để so sánh hai chuỗi trong Java?', 'TrungBinh', 'MC'),
+(126, 1, 3, 'Exception nào xảy ra khi chia một số cho 0?', 'TrungBinh', 'MC'),
+(127, 1, 2, 'Từ khóa nào ngăn chặn việc ghi đè phương thức trong Java?', 'Kho', 'MC');
 
 INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dung_D, noi_dung_dung) VALUES 
-(81, 'interface', 'class', 'abstract', 'implements', 'interface'),
-(82, 'true', 'false', 'null', '0', 'false'),
-(83, 'equals()', 'compare()', 'match()', 'isEqual()', 'equals()'),
-(84, 'NullPointerException', 'ArithmeticException', 'NumberFormatException', 'IOException', 'ArithmeticException'),
-(85, 'static', 'final', 'private', 'abstract', 'final');
+(123, 'interface', 'class', 'abstract', 'implements', 'interface'),
+(124, 'true', 'false', 'null', '0', 'false'),
+(125, 'equals()', 'compare()', 'match()', 'isEqual()', 'equals()'),
+(126, 'NullPointerException', 'ArithmeticException', 'NumberFormatException', 'IOException', 'ArithmeticException'),
+(127, 'static', 'final', 'private', 'abstract', 'final');
 
 -- ========== 18.2 Câu hỏi điền khuyết mới cho môn Java (ma_mon=1) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(86, 1, 2, 'Để xử lý ngoại lệ trong Java, ta dùng khối _____ - _____ - finally.', 'De', 'DK'),
-(87, 1, 3, 'Để khai báo một mảng số nguyên trong Java, ta dùng: _____ arr = new int[10];', 'De', 'DK'),
-(88, 1, 2, 'Từ khóa _____ được dùng để gọi constructor của lớp cha.', 'TrungBinh', 'DK');
+(128, 1, 2, 'Để xử lý ngoại lệ trong Java, ta dùng khối _____ - _____ - finally.', 'De', 'DK'),
+(129, 1, 3, 'Để khai báo một mảng số nguyên trong Java, ta dùng: _____ arr = new int[10];', 'De', 'DK'),
+(130, 1, 2, 'Từ khóa _____ được dùng để gọi constructor của lớp cha.', 'TrungBinh', 'DK');
 
 INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES 
-(86, 'try|catch|throw|throws', 'try|catch'),
-(87, 'int[]|int|Integer[]|array', 'int[]'),
-(88, 'super|this|parent|base', 'super');
+(128, 'try|catch|throw|throws', 'try|catch'),
+(129, 'int[]|int|Integer[]|array', 'int[]'),
+(130, 'super|this|parent|base', 'super');
 
 -- ========== 18.3 Câu hỏi trắc nghiệm mới cho môn CSDL (ma_mon=2) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(89, 2, 4, 'Lệnh nào dùng để thay đổi cấu trúc bảng trong SQL?', 'De', 'MC'),
-(90, 2, 4, 'Hàm nào dùng để đếm số bản ghi trong SQL?', 'De', 'MC'),
-(91, 2, 6, 'Ràng buộc nào đảm bảo giá trị trong cột không được trùng lặp?', 'TrungBinh', 'MC'),
-(92, 2, 6, 'Kiểu dữ liệu nào lưu trữ ngày tháng trong MySQL?', 'De', 'MC'),
-(93, 2, 4, 'Trigger trong SQL được kích hoạt khi nào?', 'Kho', 'MC');
+(131, 2, 4, 'Lệnh nào dùng để thay đổi cấu trúc bảng trong SQL?', 'De', 'MC'),
+(132, 2, 4, 'Hàm nào dùng để đếm số bản ghi trong SQL?', 'De', 'MC'),
+(133, 2, 6, 'Ràng buộc nào đảm bảo giá trị trong cột không được trùng lặp?', 'TrungBinh', 'MC'),
+(134, 2, 6, 'Kiểu dữ liệu nào lưu trữ ngày tháng trong MySQL?', 'De', 'MC'),
+(135, 2, 4, 'Trigger trong SQL được kích hoạt khi nào?', 'Kho', 'MC');
 
 INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dung_D, noi_dung_dung) VALUES 
-(89, 'ALTER TABLE', 'MODIFY TABLE', 'CHANGE TABLE', 'UPDATE TABLE', 'ALTER TABLE'),
-(90, 'COUNT()', 'SUM()', 'TOTAL()', 'NUMBER()', 'COUNT()'),
-(91, 'PRIMARY KEY', 'UNIQUE', 'NOT NULL', 'CHECK', 'UNIQUE'),
-(92, 'DATE', 'TIME', 'DATETIME', 'Tất cả các đáp án trên', 'Tất cả các đáp án trên'),
-(93, 'Khi có sự kiện INSERT, UPDATE, DELETE', 'Khi chạy SELECT', 'Khi tạo bảng', 'Khi kết nối database', 'Khi có sự kiện INSERT, UPDATE, DELETE');
+(131, 'ALTER TABLE', 'MODIFY TABLE', 'CHANGE TABLE', 'UPDATE TABLE', 'ALTER TABLE'),
+(132, 'COUNT()', 'SUM()', 'TOTAL()', 'NUMBER()', 'COUNT()'),
+(133, 'PRIMARY KEY', 'UNIQUE', 'NOT NULL', 'CHECK', 'UNIQUE'),
+(134, 'DATE', 'TIME', 'DATETIME', 'Tất cả các đáp án trên', 'Tất cả các đáp án trên'),
+(135, 'Khi có sự kiện INSERT, UPDATE, DELETE', 'Khi chạy SELECT', 'Khi tạo bảng', 'Khi kết nối database', 'Khi có sự kiện INSERT, UPDATE, DELETE');
 
 -- ========== 18.4 Câu hỏi điền khuyết mới cho môn CSDL (ma_mon=2) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(94, 2, 4, 'Lệnh _____ dùng để thêm dữ liệu vào bảng.', 'De', 'DK'),
-(95, 2, 6, 'Mệnh đề _____ dùng để lọc dữ liệu sau khi GROUP BY.', 'TrungBinh', 'DK'),
-(96, 2, 4, 'Khóa _____ được dùng để tham chiếu đến khóa chính của bảng khác.', 'TrungBinh', 'DK');
+(136, 2, 4, 'Lệnh _____ dùng để thêm dữ liệu vào bảng.', 'De', 'DK'),
+(137, 2, 6, 'Mệnh đề _____ dùng để lọc dữ liệu sau khi GROUP BY.', 'TrungBinh', 'DK'),
+(138, 2, 4, 'Khóa _____ được dùng để tham chiếu đến khóa chính của bảng khác.', 'TrungBinh', 'DK');
 
 INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES 
-(94, 'INSERT|ADD|PUT|CREATE', 'INSERT'),
-(95, 'HAVING|WHERE|FILTER|CONDITION', 'HAVING'),
-(96, 'ngoại|chính|phụ|tham chiếu', 'ngoại');
+(136, 'INSERT|ADD|PUT|CREATE', 'INSERT'),
+(137, 'HAVING|WHERE|FILTER|CONDITION', 'HAVING'),
+(138, 'ngoại|chính|phụ|tham chiếu', 'ngoại');
 
 -- ========== 18.5 Câu hỏi trắc nghiệm mới cho môn Kinh tế (ma_mon=9) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(97, 9, 9, 'Lạm phát là gì?', 'De', 'MC'),
-(98, 9, 9, 'Ngân hàng Trung ương điều tiết kinh tế bằng công cụ nào?', 'TrungBinh', 'MC'),
-(99, 9, 10, 'Chỉ số CPI đo lường điều gì?', 'TrungBinh', 'MC'),
-(100, 9, 10, 'Thị trường độc quyền có đặc điểm gì?', 'Kho', 'MC'),
-(101, 9, 9, 'Đường cung dốc lên vì lý do gì?', 'TrungBinh', 'MC');
+(139, 9, 9, 'Lạm phát là gì?', 'De', 'MC'),
+(140, 9, 9, 'Ngân hàng Trung ương điều tiết kinh tế bằng công cụ nào?', 'TrungBinh', 'MC'),
+(141, 9, 10, 'Chỉ số CPI đo lường điều gì?', 'TrungBinh', 'MC'),
+(142, 9, 10, 'Thị trường độc quyền có đặc điểm gì?', 'Kho', 'MC'),
+(143, 9, 9, 'Đường cung dốc lên vì lý do gì?', 'TrungBinh', 'MC');
 
 INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dung_D, noi_dung_dung) VALUES 
-(97, 'Mức giá chung tăng liên tục', 'Giảm giá hàng hóa', 'Tăng sản lượng', 'Giảm thất nghiệp', 'Mức giá chung tăng liên tục'),
-(98, 'Lãi suất và cung tiền', 'Thuế và chi tiêu', 'Nhập khẩu và xuất khẩu', 'Giá và lượng', 'Lãi suất và cung tiền'),
-(99, 'Mức giá tiêu dùng', 'Tỷ lệ thất nghiệp', 'Tổng sản phẩm quốc nội', 'Tỷ giá hối đoái', 'Mức giá tiêu dùng'),
-(100, 'Chỉ có một người bán', 'Nhiều người bán', 'Sản phẩm đồng nhất', 'Dễ gia nhập thị trường', 'Chỉ có một người bán'),
-(101, 'Giá cao hơn khuyến khích sản xuất nhiều hơn', 'Giá thấp hơn tăng lợi nhuận', 'Chi phí giảm khi sản xuất nhiều', 'Cầu tăng khi giá tăng', 'Giá cao hơn khuyến khích sản xuất nhiều hơn');
+(139, 'Mức giá chung tăng liên tục', 'Giảm giá hàng hóa', 'Tăng sản lượng', 'Giảm thất nghiệp', 'Mức giá chung tăng liên tục'),
+(140, 'Lãi suất và cung tiền', 'Thuế và chi tiêu', 'Nhập khẩu và xuất khẩu', 'Giá và lượng', 'Lãi suất và cung tiền'),
+(141, 'Mức giá tiêu dùng', 'Tỷ lệ thất nghiệp', 'Tổng sản phẩm quốc nội', 'Tỷ giá hối đoái', 'Mức giá tiêu dùng'),
+(142, 'Chỉ có một người bán', 'Nhiều người bán', 'Sản phẩm đồng nhất', 'Dễ gia nhập thị trường', 'Chỉ có một người bán'),
+(143, 'Giá cao hơn khuyến khích sản xuất nhiều hơn', 'Giá thấp hơn tăng lợi nhuận', 'Chi phí giảm khi sản xuất nhiều', 'Cầu tăng khi giá tăng', 'Giá cao hơn khuyến khích sản xuất nhiều hơn');
 
 -- ========== 18.6 Câu hỏi điền khuyết mới cho môn Kinh tế (ma_mon=9) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(102, 9, 9, 'Khi cung vượt quá cầu, giá sẽ có xu hướng _____.', 'De', 'DK'),
-(103, 9, 10, 'GDP là viết tắt của Gross _____ Product.', 'De', 'DK'),
-(104, 9, 9, 'Ngân hàng Trung ương có thể giảm lạm phát bằng cách _____ lãi suất.', 'TrungBinh', 'DK');
+(144, 9, 9, 'Khi cung vượt quá cầu, giá sẽ có xu hướng _____.', 'De', 'DK'),
+(145, 9, 10, 'GDP là viết tắt của Gross _____ Product.', 'De', 'DK'),
+(146, 9, 9, 'Ngân hàng Trung ương có thể giảm lạm phát bằng cách _____ lãi suất.', 'TrungBinh', 'DK');
 
 INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES 
-(102, 'giảm|tăng|ổn định|biến động', 'giảm'),
-(103, 'Domestic|National|Internal|Local', 'Domestic'),
-(104, 'tăng|giảm|giữ nguyên|điều chỉnh', 'tăng');
+(144, 'giảm|tăng|ổn định|biến động', 'giảm'),
+(145, 'Domestic|National|Internal|Local', 'Domestic'),
+(146, 'tăng|giảm|giữ nguyên|điều chỉnh', 'tăng');
 
 -- ========== 18.7 Câu hỏi trắc nghiệm mới cho môn Tiếng Anh (ma_mon=13) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(105, 13, 12, 'Choose the correct form: She _____ to school every day.', 'De', 'MC'),
-(106, 13, 12, 'Which word is a noun?', 'De', 'MC'),
-(107, 13, 13, 'What is the past tense of "go"?', 'De', 'MC'),
-(108, 13, 13, 'Choose the correct sentence:', 'TrungBinh', 'MC'),
-(109, 13, 12, 'Which preposition is correct: "I am interested _____ music"?', 'TrungBinh', 'MC');
+(147, 13, 12, 'Choose the correct form: She _____ to school every day.', 'De', 'MC'),
+(148, 13, 12, 'Which word is a noun?', 'De', 'MC'),
+(149, 13, 13, 'What is the past tense of "go"?', 'De', 'MC'),
+(150, 13, 13, 'Choose the correct sentence:', 'TrungBinh', 'MC'),
+(151, 13, 12, 'Which preposition is correct: "I am interested _____ music"?', 'TrungBinh', 'MC');
 
 INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dung_D, noi_dung_dung) VALUES 
-(105, 'goes', 'go', 'going', 'went', 'goes'),
-(106, 'beautiful', 'quickly', 'happiness', 'run', 'happiness'),
-(107, 'goed', 'went', 'gone', 'going', 'went'),
-(108, 'He don''t like coffee', 'He doesn''t like coffee', 'He not like coffee', 'He no like coffee', 'He doesn''t like coffee'),
-(109, 'in', 'on', 'at', 'for', 'in');
+(147, 'goes', 'go', 'going', 'went', 'goes'),
+(148, 'beautiful', 'quickly', 'happiness', 'run', 'happiness'),
+(149, 'goed', 'went', 'gone', 'going', 'went'),
+(150, 'He don''t like coffee', 'He doesn''t like coffee', 'He not like coffee', 'He no like coffee', 'He doesn''t like coffee'),
+(151, 'in', 'on', 'at', 'for', 'in');
 
 -- ========== 18.8 Câu hỏi điền khuyết mới cho môn Tiếng Anh (ma_mon=13) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(110, 13, 12, 'Complete: I _____ reading a book now.', 'De', 'DK'),
-(111, 13, 13, 'Fill in: She has _____ to Paris twice.', 'TrungBinh', 'DK'),
-(112, 13, 12, 'Complete: If I _____ rich, I would travel the world.', 'Kho', 'DK');
+(152, 13, 12, 'Complete: I _____ reading a book now.', 'De', 'DK'),
+(153, 13, 13, 'Fill in: She has _____ to Paris twice.', 'TrungBinh', 'DK'),
+(154, 13, 12, 'Complete: If I _____ rich, I would travel the world.', 'Kho', 'DK');
 
 INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES 
-(110, 'am|is|are|be', 'am'),
-(111, 'been|gone|went|go', 'been'),
-(112, 'were|was|am|be', 'were');
+(152, 'am|is|are|be', 'am'),
+(153, 'been|gone|went|go', 'been'),
+(154, 'were|was|am|be', 'were');
 
 -- ========== 18.9 Câu hỏi trắc nghiệm mới cho môn Điện (ma_mon=17) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(113, 17, 14, 'Đơn vị của điện trở là gì?', 'De', 'MC'),
-(114, 17, 14, 'Công thức tính công suất điện?', 'De', 'MC'),
-(115, 17, 15, 'Dòng điện một chiều ký hiệu là gì?', 'De', 'MC'),
-(116, 17, 15, 'Tụ điện có chức năng gì?', 'TrungBinh', 'MC'),
-(117, 17, 14, 'Đơn vị của điện dung là gì?', 'TrungBinh', 'MC');
+(155, 17, 14, 'Đơn vị của điện trở là gì?', 'De', 'MC'),
+(156, 17, 14, 'Công thức tính công suất điện?', 'De', 'MC'),
+(157, 17, 15, 'Dòng điện một chiều ký hiệu là gì?', 'De', 'MC'),
+(158, 17, 15, 'Tụ điện có chức năng gì?', 'TrungBinh', 'MC'),
+(159, 17, 14, 'Đơn vị của điện dung là gì?', 'TrungBinh', 'MC');
 
 INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dung_D, noi_dung_dung) VALUES 
-(113, 'Volt', 'Ampere', 'Ohm', 'Watt', 'Ohm'),
-(114, 'P = V x I', 'P = V / I', 'P = V + I', 'P = V - I', 'P = V x I'),
-(115, 'AC', 'DC', 'SC', 'CC', 'DC'),
-(116, 'Lưu trữ năng lượng điện trường', 'Tạo từ trường', 'Khuếch đại tín hiệu', 'Biến đổi điện áp', 'Lưu trữ năng lượng điện trường'),
-(117, 'Henry', 'Farad', 'Ohm', 'Weber', 'Farad');
+(155, 'Volt', 'Ampere', 'Ohm', 'Watt', 'Ohm'),
+(156, 'P = V x I', 'P = V / I', 'P = V + I', 'P = V - I', 'P = V x I'),
+(157, 'AC', 'DC', 'SC', 'CC', 'DC'),
+(158, 'Lưu trữ năng lượng điện trường', 'Tạo từ trường', 'Khuếch đại tín hiệu', 'Biến đổi điện áp', 'Lưu trữ năng lượng điện trường'),
+(159, 'Henry', 'Farad', 'Ohm', 'Weber', 'Farad');
 
 -- ========== 18.10 Câu hỏi điền khuyết mới cho môn Điện (ma_mon=17) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(118, 17, 14, 'Đơn vị của cường độ dòng điện là _____.', 'De', 'DK'),
-(119, 17, 15, 'Định luật _____ phát biểu rằng V = I x R.', 'De', 'DK'),
-(120, 17, 14, 'Trong mạch nối tiếp, dòng điện qua các phần tử là _____.', 'TrungBinh', 'DK');
+(160, 17, 14, 'Đơn vị của cường độ dòng điện là _____.', 'De', 'DK'),
+(161, 17, 15, 'Định luật _____ phát biểu rằng V = I x R.', 'De', 'DK'),
+(162, 17, 14, 'Trong mạch nối tiếp, dòng điện qua các phần tử là _____.', 'TrungBinh', 'DK');
 
 INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES 
-(118, 'Ampere|Volt|Ohm|Watt', 'Ampere'),
-(119, 'Ohm|Kirchhoff|Faraday|Coulomb', 'Ohm'),
-(120, 'bằng nhau|khác nhau|tăng dần|giảm dần', 'bằng nhau');
+(160, 'Ampere|Volt|Ohm|Watt', 'Ampere'),
+(161, 'Ohm|Kirchhoff|Faraday|Coulomb', 'Ohm'),
+(162, 'bằng nhau|khác nhau|tăng dần|giảm dần', 'bằng nhau');
 
 -- ========== 18.11 Câu hỏi mới cho môn Quản lý Dự án (ma_mon=10) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(121, 10, 10, 'Phương pháp Agile tập trung vào điều gì?', 'De', 'MC'),
-(122, 10, 10, 'Gantt Chart dùng để làm gì?', 'TrungBinh', 'MC'),
-(123, 10, 9, 'Stakeholder là gì?', 'De', 'MC');
+(163, 10, 10, 'Phương pháp Agile tập trung vào điều gì?', 'De', 'MC'),
+(164, 10, 10, 'Gantt Chart dùng để làm gì?', 'TrungBinh', 'MC'),
+(165, 10, 9, 'Stakeholder là gì?', 'De', 'MC');
 
 INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dung_D, noi_dung_dung) VALUES 
-(121, 'Linh hoạt và phản hồi nhanh', 'Kế hoạch cứng nhắc', 'Tài liệu chi tiết', 'Quy trình phức tạp', 'Linh hoạt và phản hồi nhanh'),
-(122, 'Hiển thị tiến độ dự án theo thời gian', 'Tính toán chi phí', 'Quản lý nhân sự', 'Phân tích rủi ro', 'Hiển thị tiến độ dự án theo thời gian'),
-(123, 'Các bên liên quan của dự án', 'Nhân viên IT', 'Khách hàng mua hàng', 'Nhà cung cấp', 'Các bên liên quan của dự án');
+(163, 'Linh hoạt và phản hồi nhanh', 'Kế hoạch cứng nhắc', 'Tài liệu chi tiết', 'Quy trình phức tạp', 'Linh hoạt và phản hồi nhanh'),
+(164, 'Hiển thị tiến độ dự án theo thời gian', 'Tính toán chi phí', 'Quản lý nhân sự', 'Phân tích rủi ro', 'Hiển thị tiến độ dự án theo thời gian'),
+(165, 'Các bên liên quan của dự án', 'Nhân viên IT', 'Khách hàng mua hàng', 'Nhà cung cấp', 'Các bên liên quan của dự án');
 
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(124, 10, 10, 'Sprint trong Scrum thường kéo dài _____ tuần.', 'De', 'DK'),
-(125, 10, 9, 'WBS là viết tắt của Work _____ Structure.', 'TrungBinh', 'DK');
+(166, 10, 10, 'Sprint trong Scrum thường kéo dài _____ tuần.', 'De', 'DK'),
+(167, 10, 9, 'WBS là viết tắt của Work _____ Structure.', 'TrungBinh', 'DK');
 
 INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES 
-(124, '1-4|5-6|7-8|9-10', '1-4'),
-(125, 'Breakdown|Building|Business|Budget', 'Breakdown');
+(166, '1-4|5-6|7-8|9-10', '1-4'),
+(167, 'Breakdown|Building|Business|Budget', 'Breakdown');
 
 -- ========== 18.12 Câu hỏi mới cho môn Ngữ pháp Tiếng Anh Nâng cao (ma_mon=14) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(126, 14, 13, 'Which sentence uses the subjunctive mood?', 'Kho', 'MC'),
-(127, 14, 13, 'Identify the correct use of "whom":', 'TrungBinh', 'MC'),
-(128, 14, 12, 'Which is a complex sentence?', 'TrungBinh', 'MC');
+(168, 14, 13, 'Which sentence uses the subjunctive mood?', 'Kho', 'MC'),
+(169, 14, 13, 'Identify the correct use of "whom":', 'TrungBinh', 'MC'),
+(170, 14, 12, 'Which is a complex sentence?', 'TrungBinh', 'MC');
 
 INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dung_D, noi_dung_dung) VALUES 
-(126, 'I suggest that he be promoted', 'He is being promoted', 'He will be promoted', 'He was promoted', 'I suggest that he be promoted'),
-(127, 'Whom did you see?', 'Whom is calling?', 'Whom went to the party?', 'Whom likes pizza?', 'Whom did you see?'),
-(128, 'I like coffee and tea', 'I went home', 'When it rains, I stay inside', 'She is happy', 'When it rains, I stay inside');
+(168, 'I suggest that he be promoted', 'He is being promoted', 'He will be promoted', 'He was promoted', 'I suggest that he be promoted'),
+(169, 'Whom did you see?', 'Whom is calling?', 'Whom went to the party?', 'Whom likes pizza?', 'Whom did you see?'),
+(170, 'I like coffee and tea', 'I went home', 'When it rains, I stay inside', 'She is happy', 'When it rains, I stay inside');
 
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(129, 14, 13, 'Complete: Had I known, I _____ have come earlier.', 'Kho', 'DK'),
-(130, 14, 12, 'The passive form of "write": The letter was _____ by her.', 'TrungBinh', 'DK');
+(171, 14, 13, 'Complete: Had I known, I _____ have come earlier.', 'Kho', 'DK'),
+(172, 14, 12, 'The passive form of "write": The letter was _____ by her.', 'TrungBinh', 'DK');
 
 INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES 
-(129, 'would|could|should|might', 'would'),
-(130, 'written|wrote|write|writing', 'written');
+(171, 'would|could|should|might', 'would'),
+(172, 'written|wrote|write|writing', 'written');
 
 -- ========== 18.13 Câu hỏi mới cho môn Điện tử Kỹ thuật (ma_mon=18) ==========
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(131, 18, 15, 'Diode bán dẫn có chức năng gì?', 'De', 'MC'),
-(132, 18, 15, 'Transistor loại NPN có bao nhiêu lớp bán dẫn?', 'De', 'MC'),
-(133, 18, 14, 'Op-Amp là viết tắt của gì?', 'TrungBinh', 'MC');
+(173, 18, 15, 'Diode bán dẫn có chức năng gì?', 'De', 'MC'),
+(174, 18, 15, 'Transistor loại NPN có bao nhiêu lớp bán dẫn?', 'De', 'MC'),
+(175, 18, 14, 'Op-Amp là viết tắt của gì?', 'TrungBinh', 'MC');
 
 INSERT INTO CauHoiMC (ma_cau_hoi_MC, noi_dung_A, noi_dung_B, noi_dung_C, noi_dung_D, noi_dung_dung) VALUES 
-(131, 'Chỉ cho dòng điện qua một chiều', 'Khuếch đại tín hiệu', 'Lưu trữ năng lượng', 'Tạo dao động', 'Chỉ cho dòng điện qua một chiều'),
-(132, 'Hai lớp', 'Ba lớp', 'Bốn lớp', 'Năm lớp', 'Ba lớp'),
-(133, 'Operational Amplifier', 'Optional Amplifier', 'Output Amplifier', 'Oscillating Amplifier', 'Operational Amplifier');
+(173, 'Chỉ cho dòng điện qua một chiều', 'Khuếch đại tín hiệu', 'Lưu trữ năng lượng', 'Tạo dao động', 'Chỉ cho dòng điện qua một chiều'),
+(174, 'Hai lớp', 'Ba lớp', 'Bốn lớp', 'Năm lớp', 'Ba lớp'),
+(175, 'Operational Amplifier', 'Optional Amplifier', 'Output Amplifier', 'Oscillating Amplifier', 'Operational Amplifier');
 
 INSERT INTO CauHoi (ma_cau_hoi, ma_mon, ma_gv, noi_dung_cau_hoi, muc_do, loai_cau_hoi) VALUES 
-(134, 18, 15, 'LED là viết tắt của Light _____ Diode.', 'De', 'DK'),
-(135, 18, 14, 'Trong cổng logic AND, đầu ra bằng 1 khi tất cả đầu vào bằng _____.', 'TrungBinh', 'DK');
+(176, 18, 15, 'LED là viết tắt của Light _____ Diode.', 'De', 'DK'),
+(177, 18, 14, 'Trong cổng logic AND, đầu ra bằng 1 khi tất cả đầu vào bằng _____.', 'TrungBinh', 'DK');
 
 INSERT INTO CauHoiDK (ma_cau_hoi_DK, danh_sach_tu, noi_dung_dung) VALUES 
-(134, 'Emitting|Electric|Energy|Efficient', 'Emitting'),
-(135, '1|0|2|null', '1');
+(176, 'Emitting|Electric|Energy|Efficient', 'Emitting'),
+(177, '1|0|2|null', '1');
