@@ -241,19 +241,34 @@ public class SinhVienBUS {
 
     private boolean evaluateConditions(SinhVienDTO sv, List<SearchCondition> conditions, String logic) {
         if (conditions.isEmpty()) return true;
-        boolean result = "AND".equals(logic);
-        for (SearchCondition cond : conditions) {
-            boolean condResult = evaluateSingleCondition(sv, cond);
-            if ("AND".equals(logic)) {
-                result = result && condResult;
-                if (!result) return false;
-            } else if ("OR".equals(logic)) {
-                result = result || condResult;
-            } else if ("NOT".equals(logic)) {
-                result = !condResult;
+        if ("AND".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (!evaluateSingleCondition(sv, cond)) {
+                    return false;
+                }
             }
+            return true;
         }
-        return result;
+
+        if ("OR".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (evaluateSingleCondition(sv, cond)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if ("NOT".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (evaluateSingleCondition(sv, cond)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     private boolean evaluateSingleCondition(SinhVienDTO sv, SearchCondition cond) {

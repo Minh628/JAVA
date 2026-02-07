@@ -267,22 +267,34 @@ public class DeThiBUS {
             java.util.function.Function<Integer, String> getTenHocPhan,
             java.util.function.Function<Integer, String> getTenKyThi) {
         if (conditions.isEmpty()) return true;
-        
-        boolean result = "AND".equals(logic);
-        
-        for (SearchCondition cond : conditions) {
-            boolean condResult = evaluateSingleCondition(dt, cond, getTenHocPhan, getTenKyThi);
-            
-            if ("AND".equals(logic)) {
-                result = result && condResult;
-                if (!result) return false;
-            } else if ("OR".equals(logic)) {
-                result = result || condResult;
-            } else if ("NOT".equals(logic)) {
-                result = !condResult;
+        if ("AND".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (!evaluateSingleCondition(dt, cond, getTenHocPhan, getTenKyThi)) {
+                    return false;
+                }
             }
+            return true;
         }
-        return result;
+
+        if ("OR".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (evaluateSingleCondition(dt, cond, getTenHocPhan, getTenKyThi)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if ("NOT".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (evaluateSingleCondition(dt, cond, getTenHocPhan, getTenKyThi)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     private boolean evaluateSingleCondition(DeThiDTO dt, SearchCondition cond,

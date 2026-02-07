@@ -187,23 +187,51 @@ public class HocPhanBUS {
 
     private boolean evaluateConditions(HocPhanDTO hp, List<SearchCondition> conditions, String logic) {
         if (conditions.isEmpty()) return true;
-        boolean result = "AND".equals(logic);
-        for (SearchCondition cond : conditions) {
-            boolean condResult = evaluateSingleCondition(hp, cond);
-            if ("AND".equals(logic)) {
-                result = result && condResult;
-                if (!result) return false;
-            } else if ("OR".equals(logic)) {
-                result = result || condResult;
-            } else if ("NOT".equals(logic)) {
-                result = !condResult;
+
+        // --- TRƯỜNG HỢP 1: AND (VÀ) ---
+        // Tất cả điều kiện phải đúng. Chỉ cần 1 cái sai => SAI HẾT.
+        if ("AND".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                boolean isMatch = evaluateSingleCondition(hp, cond);
+                if (!isMatch) {
+                    return false; // Gặp sai là dừng ngay
+                }
             }
+            return true; // Chạy hết vòng lặp mà không sai cái nào => ĐÚNG
         }
-        return result;
+
+        // --- TRƯỜNG HỢP 2: OR (HOẶC) ---
+        // Chỉ cần 1 điều kiện đúng => ĐÚNG HẾT.
+        if ("OR".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                boolean isMatch = evaluateSingleCondition(hp, cond);
+                if (isMatch) {
+                    return true; // Gặp đúng là dừng ngay (lấy luôn)
+                }
+            }
+            return false; // Chạy hết vòng lặp mà không có cái nào đúng => SAI
+        }
+
+        // --- TRƯỜNG HỢP 3: NOT (KHÔNG / NOR) ---
+        // Không được thỏa mãn bất kỳ điều kiện nào.
+        // Ví dụ: Tìm môn KHÔNG phải khoa CNTT và KHÔNG có 3 tín chỉ.
+        // Chỉ cần dính 1 điều kiện => LOẠI NGAY.
+        if ("NOT".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                boolean isMatch = evaluateSingleCondition(hp, cond);
+                if (isMatch) {
+                    return false; // Dính điều kiện cấm => SAI (Loại bỏ bản ghi này)
+                }
+            }
+            return true; // Không dính điều kiện nào => ĐÚNG (Giữ lại)
+        }
+
+        return false; // Mặc định trả về false nếu logic không hợp lệ
     }
 
     private boolean evaluateSingleCondition(HocPhanDTO hp, SearchCondition cond) {
         String fieldValue = switch (cond.getField()) {
+            
             case "Mã HP" -> String.valueOf(hp.getMaHocPhan());
             case "Tên Học Phần" -> hp.getTenMon();
             case "Số TC" -> String.valueOf(hp.getSoTin());

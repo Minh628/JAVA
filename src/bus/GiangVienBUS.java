@@ -271,19 +271,34 @@ public class GiangVienBUS {
 
     private boolean evaluateConditions(GiangVienDTO gv, List<SearchCondition> conditions, String logic) {
         if (conditions.isEmpty()) return true;
-        boolean result = "AND".equals(logic);
-        for (SearchCondition cond : conditions) {
-            boolean condResult = evaluateSingleCondition(gv, cond);
-            if ("AND".equals(logic)) {
-                result = result && condResult;
-                if (!result) return false;
-            } else if ("OR".equals(logic)) {
-                result = result || condResult;
-            } else if ("NOT".equals(logic)) {
-                result = !condResult;
+        if ("AND".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (!evaluateSingleCondition(gv, cond)) {
+                    return false;
+                }
             }
+            return true;
         }
-        return result;
+
+        if ("OR".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (evaluateSingleCondition(gv, cond)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if ("NOT".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (evaluateSingleCondition(gv, cond)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     private boolean evaluateSingleCondition(GiangVienDTO gv, SearchCondition cond) {

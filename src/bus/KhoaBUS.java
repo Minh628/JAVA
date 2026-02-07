@@ -193,19 +193,34 @@ public class KhoaBUS {
 
     private boolean evaluateConditions(KhoaDTO k, List<SearchCondition> conditions, String logic) {
         if (conditions.isEmpty()) return true;
-        boolean result = "AND".equals(logic);
-        for (SearchCondition cond : conditions) {
-            boolean condResult = evaluateSingleCondition(k, cond);
-            if ("AND".equals(logic)) {
-                result = result && condResult;
-                if (!result) return false;
-            } else if ("OR".equals(logic)) {
-                result = result || condResult;
-            } else if ("NOT".equals(logic)) {
-                result = !condResult;
+        if ("AND".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (!evaluateSingleCondition(k, cond)) {
+                    return false;
+                }
             }
+            return true;
         }
-        return result;
+
+        if ("OR".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (evaluateSingleCondition(k, cond)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if ("NOT".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (evaluateSingleCondition(k, cond)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     private boolean evaluateSingleCondition(KhoaDTO k, SearchCondition cond) {

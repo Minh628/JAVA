@@ -200,19 +200,34 @@ public class KyThiBUS {
 
     private boolean evaluateConditions(KyThiDTO kt, List<SearchCondition> conditions, String logic, java.sql.Timestamp now) {
         if (conditions.isEmpty()) return true;
-        boolean result = "AND".equals(logic);
-        for (SearchCondition cond : conditions) {
-            boolean condResult = evaluateSingleCondition(kt, cond, now);
-            if ("AND".equals(logic)) {
-                result = result && condResult;
-                if (!result) return false;
-            } else if ("OR".equals(logic)) {
-                result = result || condResult;
-            } else if ("NOT".equals(logic)) {
-                result = !condResult;
+        if ("AND".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (!evaluateSingleCondition(kt, cond, now)) {
+                    return false;
+                }
             }
+            return true;
         }
-        return result;
+
+        if ("OR".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (evaluateSingleCondition(kt, cond, now)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if ("NOT".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (evaluateSingleCondition(kt, cond, now)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     private boolean evaluateSingleCondition(KyThiDTO kt, SearchCondition cond, java.sql.Timestamp now) {

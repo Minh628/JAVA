@@ -199,8 +199,8 @@ public class ChiTietDiemDialog extends JDialog {
     private String getDapAnDungHienThi(CauHoiDTO cauHoi) {
         if (cauHoi instanceof CauHoiMCDTO) {
             CauHoiMCDTO mc = (CauHoiMCDTO) cauHoi;
-            String dapAnDung = mc.getDapAnDung();
-            String noiDungDapAn = mc.getNoiDungDung();
+            String dapAnDung = mc.getDapAnDung(); 
+            String noiDungDapAn = "";
             return dapAnDung + ". " + (noiDungDapAn != null ? noiDungDapAn : "");
         } else if (cauHoi instanceof CauHoiDKDTO) {
             CauHoiDKDTO dk = (CauHoiDKDTO) cauHoi;

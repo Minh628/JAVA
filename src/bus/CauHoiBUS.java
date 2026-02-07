@@ -257,22 +257,34 @@ public class CauHoiBUS {
     private boolean evaluateConditions(CauHoiDTO ch, List<SearchCondition> conditions, String logic,
             java.util.function.Function<Integer, String> getTenMon) {
         if (conditions.isEmpty()) return true;
-        
-        boolean result = "AND".equals(logic);
-        
-        for (SearchCondition cond : conditions) {
-            boolean condResult = evaluateSingleCondition(ch, cond, getTenMon);
-            
-            if ("AND".equals(logic)) {
-                result = result && condResult;
-                if (!result) return false;
-            } else if ("OR".equals(logic)) {
-                result = result || condResult;
-            } else if ("NOT".equals(logic)) {
-                result = !condResult;
+        if ("AND".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (!evaluateSingleCondition(ch, cond, getTenMon)) {
+                    return false;
+                }
             }
+            return true;
         }
-        return result;
+
+        if ("OR".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (evaluateSingleCondition(ch, cond, getTenMon)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if ("NOT".equals(logic)) {
+            for (SearchCondition cond : conditions) {
+                if (evaluateSingleCondition(ch, cond, getTenMon)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     private boolean evaluateSingleCondition(CauHoiDTO ch, SearchCondition cond,

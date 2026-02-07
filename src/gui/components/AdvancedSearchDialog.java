@@ -12,7 +12,7 @@ import util.SearchCondition;
 public class AdvancedSearchDialog extends JDialog {
 
     private static final String[] OPERATORS = {"=", "<>", ">", ">=", "<", "<=", "LIKE"};
-    private static final String[] LOGIC_OPTIONS = {"AND (Và)", "OR (Hoặc)"};
+    private static final String[] LOGIC_OPTIONS = {"AND (Và)", "OR (Hoặc)", "NOT (Không)"};
 
     private final String[] searchFields;
     private JComboBox<String> cboLogic;
@@ -161,7 +161,14 @@ public class AdvancedSearchDialog extends JDialog {
         }
         
         String logicRaw = (String) cboLogic.getSelectedItem();
-        selectedLogic = logicRaw.contains("AND") ? "AND" : "OR"; // Xử lý chuỗi "AND (Và)"
+        // Xử lý chuỗi logic: "AND (Và)", "OR (Hoặc)", "NOT (Không)"
+        if (logicRaw.contains("AND")) {
+            selectedLogic = "AND";
+        } else if (logicRaw.contains("OR")) {
+            selectedLogic = "OR";
+        } else if (logicRaw.contains("NOT")) {
+            selectedLogic = "NOT";
+        }
         confirmed = true;
         dispose();
     }
