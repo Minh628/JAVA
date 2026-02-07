@@ -21,6 +21,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import util.SearchCondition;
+import com.toedter.calendar.JDateChooser;
 
 public class QuanLyKyThiPanel extends JPanel {
     private KyThiBUS kyThiBUS;
@@ -30,8 +31,8 @@ public class QuanLyKyThiPanel extends JPanel {
 
     private JTextField txtMaKyThi;
     private JTextField txtTenKyThi;
-    private JSpinner spnNgayBatDau;
-    private JSpinner spnNgayKetThuc;
+    private JDateChooser dcsNgayBatDau;
+    private JDateChooser dcsNgayKetThuc;
     private JTextField txtTimKiem;
     private JComboBox<String> cboLoaiTimKiem;
 
@@ -114,12 +115,11 @@ public class QuanLyKyThiPanel extends JPanel {
         panelForm.add(lblBatDau, gbc);
 
         gbc.gridx = 1;
-        spnNgayBatDau = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor deBatDau = new JSpinner.DateEditor(spnNgayBatDau, "dd/MM/yyyy HH:mm");
-        spnNgayBatDau.setEditor(deBatDau);
-        spnNgayBatDau.setPreferredSize(new Dimension(180, 28));
-        spnNgayBatDau.setFont(Constants.NORMAL_FONT);
-        panelForm.add(spnNgayBatDau, gbc);
+        dcsNgayBatDau = new JDateChooser();
+        dcsNgayBatDau.setDateFormatString("dd/MM/yyyy HH:mm");
+        dcsNgayBatDau.setPreferredSize(new Dimension(180, 28));
+        dcsNgayBatDau.setFont(Constants.NORMAL_FONT);
+        panelForm.add(dcsNgayBatDau, gbc);
 
         gbc.gridx = 2;
         JLabel lblKetThuc = new JLabel("Thời gian kết thúc:");
@@ -127,12 +127,11 @@ public class QuanLyKyThiPanel extends JPanel {
         panelForm.add(lblKetThuc, gbc);
 
         gbc.gridx = 3;
-        spnNgayKetThuc = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor deKetThuc = new JSpinner.DateEditor(spnNgayKetThuc, "dd/MM/yyyy HH:mm");
-        spnNgayKetThuc.setEditor(deKetThuc);
-        spnNgayKetThuc.setPreferredSize(new Dimension(180, 28));
-        spnNgayKetThuc.setFont(Constants.NORMAL_FONT);
-        panelForm.add(spnNgayKetThuc, gbc);
+        dcsNgayKetThuc = new JDateChooser();
+        dcsNgayKetThuc.setDateFormatString("dd/MM/yyyy HH:mm");
+        dcsNgayKetThuc.setPreferredSize(new Dimension(180, 28));
+        dcsNgayKetThuc.setFont(Constants.NORMAL_FONT);
+        panelForm.add(dcsNgayKetThuc, gbc);
 
         // Buttons
         JPanel panelNut = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
@@ -289,10 +288,10 @@ public class QuanLyKyThiPanel extends JPanel {
 
             try {
                 if (!batDauStr.isEmpty()) {
-                    spnNgayBatDau.setValue(dateFormat.parse(batDauStr));
+                    dcsNgayBatDau.setDate(dateFormat.parse(batDauStr));
                 }
                 if (!ketThucStr.isEmpty()) {
-                    spnNgayKetThuc.setValue(dateFormat.parse(ketThucStr));
+                    dcsNgayKetThuc.setDate(dateFormat.parse(ketThucStr));
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -306,8 +305,8 @@ public class QuanLyKyThiPanel extends JPanel {
 
         KyThiDTO kyThi = new KyThiDTO();
         kyThi.setTenKyThi(txtTenKyThi.getText().trim());
-        kyThi.setThoiGianBatDau(new Timestamp(((Date) spnNgayBatDau.getValue()).getTime()));
-        kyThi.setThoiGianKetThuc(new Timestamp(((Date) spnNgayKetThuc.getValue()).getTime()));
+        kyThi.setThoiGianBatDau(new Timestamp(dcsNgayBatDau.getDate().getTime()));
+        kyThi.setThoiGianKetThuc(new Timestamp(dcsNgayKetThuc.getDate().getTime()));
 
         if (kyThiBUS.themKyThi(kyThi)) {
             JOptionPane.showMessageDialog(this, "Thêm kỳ thi thành công!");
@@ -329,8 +328,8 @@ public class QuanLyKyThiPanel extends JPanel {
         KyThiDTO kyThi = new KyThiDTO();
         kyThi.setMaKyThi(selectedMaKyThi);
         kyThi.setTenKyThi(txtTenKyThi.getText().trim());
-        kyThi.setThoiGianBatDau(new Timestamp(((Date) spnNgayBatDau.getValue()).getTime()));
-        kyThi.setThoiGianKetThuc(new Timestamp(((Date) spnNgayKetThuc.getValue()).getTime()));
+        kyThi.setThoiGianBatDau(new Timestamp(dcsNgayBatDau.getDate().getTime()));
+        kyThi.setThoiGianKetThuc(new Timestamp(dcsNgayKetThuc.getDate().getTime()));
 
         if (kyThiBUS.capNhatKyThi(kyThi)) {
             JOptionPane.showMessageDialog(this, "Cập nhật kỳ thi thành công!");
@@ -364,8 +363,8 @@ public class QuanLyKyThiPanel extends JPanel {
     private void lamMoi() {
         txtMaKyThi.setText("");
         txtTenKyThi.setText("");
-        spnNgayBatDau.setValue(new Date());
-        spnNgayKetThuc.setValue(new Date());
+        dcsNgayBatDau.setDate(new Date());
+        dcsNgayKetThuc.setDate(new Date());
         tblKyThi.clearSelection();
         selectedMaKyThi = -1;
     }
@@ -377,8 +376,13 @@ public class QuanLyKyThiPanel extends JPanel {
             return false;
         }
 
-        Date batDau = (Date) spnNgayBatDau.getValue();
-        Date ketThuc = (Date) spnNgayKetThuc.getValue();
+        Date batDau = dcsNgayBatDau.getDate();
+        Date ketThuc = dcsNgayKetThuc.getDate();
+
+        if (batDau == null || ketThuc == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn đầy đủ thời gian bắt đầu và kết thúc!");
+            return false;
+        }
 
         if (ketThuc.before(batDau)) {
             JOptionPane.showMessageDialog(this, "Thời gian kết thúc phải sau thời gian bắt đầu!");
