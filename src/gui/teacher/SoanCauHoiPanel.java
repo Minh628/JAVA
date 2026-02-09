@@ -227,7 +227,7 @@ public class SoanCauHoiPanel extends BaseCrudPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 4;
-        lblHuongDanDK = new JLabel("💡 Trong nội dung câu hỏi, dùng _____ (5 dấu gạch dưới) để đánh dấu chỗ trống");
+        lblHuongDanDK = new JLabel(" Trong nội dung câu hỏi, dùng _____ (5 dấu gạch dưới) để đánh dấu chỗ trống");
         lblHuongDanDK.setFont(new Font("Segoe UI", Font.ITALIC, 12));
         lblHuongDanDK.setForeground(new Color(100, 100, 100));
         panel.add(lblHuongDanDK, gbc);
@@ -427,7 +427,8 @@ public class SoanCauHoiPanel extends BaseCrudPanel {
             if (cauHoi != null) {
                 txtMaCauHoi.setText(String.valueOf(cauHoi.getMaCauHoi()));
                 txtNoiDung.setText(cauHoi.getNoiDungCauHoi());
-                
+                String mucDo = cauHoi.getMucDo();
+                cboMucDo.setSelectedItem(mucDo);
                 // Chọn loại câu hỏi
                 if (CauHoiDTO.LOAI_DIEN_KHUYET.equals(cauHoi.getLoaiCauHoi())) {
                     cboLoaiCauHoi.setSelectedItem("Điền khuyết");
@@ -436,12 +437,6 @@ public class SoanCauHoiPanel extends BaseCrudPanel {
                     CauHoiDKDTO dk = (CauHoiDKDTO) cauHoi;
                     txtDapAnDienKhuyet.setText(dk.getDapAnDung() != null ? dk.getDapAnDung() : "");
                     txtTuGoiY.setText(dk.getDanhSachTu() != null ? dk.getDanhSachTu() : "");
-                    
-                    // Xóa thông tin trắc nghiệm
-                    txtDapAnA.setText("");
-                    txtDapAnB.setText("");
-                    txtDapAnC.setText("");
-                    txtDapAnD.setText("");
                 } else {
                     cboLoaiCauHoi.setSelectedItem("Trắc nghiệm");
                     cardLayoutForm.show(panelFormContainer, "TN");
@@ -452,19 +447,6 @@ public class SoanCauHoiPanel extends BaseCrudPanel {
                     txtDapAnC.setText(mc.getNoiDungC() != null ? mc.getNoiDungC() : "");
                     txtDapAnD.setText(mc.getNoiDungD() != null ? mc.getNoiDungD() : "");
                     cboDapAnDung.setSelectedItem(mc.getDapAnDung());
-                    
-                    // Xóa thông tin điền khuyết
-                    txtDapAnDienKhuyet.setText("");
-                    txtTuGoiY.setText("");
-                }
-
-                // Chọn mức độ
-                String mucDo = cauHoi.getMucDo();
-                for (int i = 0; i < cboMucDo.getItemCount(); i++) {
-                    if (cboMucDo.getItemAt(i).equals(mucDo)) {
-                        cboMucDo.setSelectedIndex(i);
-                        break;
-                    }
                 }
 
                 // Chọn học phần
@@ -536,16 +518,6 @@ public class SoanCauHoiPanel extends BaseCrudPanel {
         }
         
         String loaiMoi = (String) cboLoaiCauHoi.getSelectedItem();
-        String loaiCu = CauHoiDTO.LOAI_DIEN_KHUYET.equals(cauHoiCu.getLoaiCauHoi()) ? "Điền khuyết" : "Trắc nghiệm";
-        
-        // Không cho đổi loại câu hỏi khi sửa
-        if (!loaiMoi.equals(loaiCu)) {
-            JOptionPane.showMessageDialog(this, 
-                "Không thể thay đổi loại câu hỏi!\nNếu muốn đổi loại, hãy xóa và tạo câu hỏi mới.",
-                "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
         CauHoiDTO cauHoi;
         if ("Điền khuyết".equals(loaiMoi)) {
             CauHoiDKDTO dk = new CauHoiDKDTO();
@@ -575,7 +547,8 @@ public class SoanCauHoiPanel extends BaseCrudPanel {
             JOptionPane.showMessageDialog(this, "Cập nhật câu hỏi thành công!");
             loadCauHoi();
         } else {
-            JOptionPane.showMessageDialog(this, "Cập nhật câu hỏi thất bại!");
+            JOptionPane.showMessageDialog(this, "Không thể cập nhật câu hỏi này!\nCâu hỏi đang được sử dụng trong đề thi hoặc đã được thi.",
+                        "Cảnh báo", JOptionPane.WARNING_MESSAGE);
         }
     }
 

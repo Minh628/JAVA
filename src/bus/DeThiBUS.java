@@ -116,6 +116,10 @@ public class DeThiBUS {
      */
     public boolean capNhatDeThi(DeThiDTO deThi) {
         try {
+            // Không cho cập nhật nếu đã có bài thi sử dụng đề thi này
+            if (baiThiDAO.countByDeThi(deThi.getMaDeThi()) > 0) {
+                return false;
+            }
             if (deThiDAO.update(deThi)) {
                 DeThiDTO updated = deThiDAO.getById(deThi.getMaDeThi());
                 if (danhSachDeThi != null) {
@@ -155,17 +159,6 @@ public class DeThiBUS {
         return false;
     }
 
-    /**
-     * Kiểm tra có thể xóa đề thi không
-     */
-    public boolean coTheXoaDeThi(int maDeThi) {
-        try {
-            return baiThiDAO.countByDeThi(maDeThi) == 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
     /**
      * Cập nhật số câu hỏi trong đề thi

@@ -102,6 +102,7 @@ public class ThiTracNghiemPanel extends JPanel {
         panelNut.add(btnVaoThi);
 
         CustomButton btnLamMoi = new CustomButton("🔄  Làm mới", Constants.PRIMARY_COLOR, Constants.TEXT_COLOR);
+        btnLamMoi.setPreferredSize(new Dimension(150, 45));
         btnLamMoi.addActionListener(e -> loadData());
         panelNut.add(btnLamMoi);
 

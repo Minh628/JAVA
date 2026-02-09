@@ -12,6 +12,7 @@ import dto.CauHoiDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import util.SearchCondition;
 public class CauHoiBUS {
     private CauHoiDAO cauHoiDAO;
@@ -68,17 +69,6 @@ public class CauHoiBUS {
         }
     }
 
-    /**
-     * Lấy câu hỏi theo môn và mức độ (cho tạo đề thi)
-     */
-    public List<CauHoiDTO> getCauHoiTheoMucDo(int maMon, String mucDo) {
-        try {
-            return cauHoiDAO.getByMucDo(maMon, mucDo);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
 
     /**
      * Lấy câu hỏi theo ID
@@ -130,6 +120,14 @@ public class CauHoiBUS {
      */
     public boolean capNhatCauHoi(CauHoiDTO cauHoi) {
         try {
+            // Không cho cập nhật nếu câu hỏi đã nằm trong đề thi
+            if (chiTietDeThiDAO.isCauHoiInAnyDeThi(cauHoi.getMaCauHoi())) {
+                return false;
+            }
+            // Không cho cập nhật nếu câu hỏi đã xuất hiện trong bài thi
+            if (chiTietBaiThiDAO.countByCauHoi(cauHoi.getMaCauHoi()) > 0) {
+                return false;
+            }
             if (cauHoiDAO.update(cauHoi)) {
                 // Cập nhật cache
                 if (danhSachCauHoi != null) {
@@ -185,7 +183,7 @@ public class CauHoiBUS {
      * Tìm kiếm câu hỏi theo keyword và loại tìm kiếm
      */
     public List<CauHoiDTO> timKiem(int maGV, String keyword, String loai,
-            java.util.function.Function<Integer, String> getTenMon) {
+            Function<Integer, String> getTenMon) {
         List<CauHoiDTO> result = new ArrayList<>();
         try {
             keyword = keyword.toLowerCase();
@@ -206,7 +204,7 @@ public class CauHoiBUS {
      * Tìm kiếm nâng cao với nhiều điều kiện
      */
     public List<CauHoiDTO> timKiemNangCao(int maGV, List<SearchCondition> conditions, String logic,
-            java.util.function.Function<Integer, String> getTenMon) {
+            Function<Integer, String> getTenMon) {
         List<CauHoiDTO> result = new ArrayList<>();
         try {
             getDanhSachCauHoi(maGV);
@@ -224,7 +222,7 @@ public class CauHoiBUS {
     }
 
     private boolean matchFilter(CauHoiDTO ch, String keyword, String loai,
-            java.util.function.Function<Integer, String> getTenMon) {
+            Function<Integer, String> getTenMon) {
         if (keyword.isEmpty()) return true;
         
         String tenMon = getTenMon.apply(ch.getMaMon());
@@ -255,7 +253,7 @@ public class CauHoiBUS {
     }
 
     private boolean evaluateConditions(CauHoiDTO ch, List<SearchCondition> conditions, String logic,
-            java.util.function.Function<Integer, String> getTenMon) {
+            Function<Integer, String> getTenMon) {
         if (conditions.isEmpty()) return true;
         if ("AND".equals(logic)) {
             for (SearchCondition cond : conditions) {
@@ -288,7 +286,7 @@ public class CauHoiBUS {
     }
 
     private boolean evaluateSingleCondition(CauHoiDTO ch, SearchCondition cond,
-            java.util.function.Function<Integer, String> getTenMon) {
+            Function<Integer, String> getTenMon) {
         String loaiCH = CauHoiDTO.LOAI_DIEN_KHUYET.equals(ch.getLoaiCauHoi()) ? "Điền khuyết" : "Trắc nghiệm";
         
         String fieldValue = switch (cond.getField()) {

@@ -722,7 +722,8 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
         if (maHocPhan > 0) {
             // Lọc theo môn học
             danhSachCauHoi = cauHoiBUS.getCauHoiTheoMon(maHocPhan);
-        } else {
+        } 
+        else {
             danhSachCauHoi = cauHoiBUS.getDanhSachCauHoi(maGV);
         }
 

@@ -4,41 +4,29 @@ import config.Constants;
 import java.awt.*;
 import java.util.function.Function;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 /**
  * Base class cho tất cả các panel quản lý CRUD
  * Giúp tái sử dụng code cho phần tìm kiếm, bảng, và các nút chức năng
  */
-public abstract class BaseCrudPanel extends JPanel {
-    protected CustomTable table;
-    protected DefaultTableModel tableModel;
-    protected JTextField txtTimKiem;
-    protected JComboBox<String> cboLoaiTimKiem;
-    private boolean dataLoaded = false; // Flag để tránh load nhiều lần
+public abstract class BaseCrudPanel extends SearchPanel {
 
     public BaseCrudPanel(String title, String[] columns, String[] searchOptions) {
-        setLayout(new BorderLayout(10, 10));
-        setBackground(Constants.CONTENT_BG);
+        super(columns, searchOptions);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        initUI(title, columns, searchOptions);
+        initUI(title);
         // Không gọi loadData() ở đây vì subclass chưa khởi tạo xong
     }
 
-    /**
-     * Override addNotify để gọi loadData() SAU KHI tất cả initialization hoàn tất
-     * addNotify() được gọi khi component được add vào container
-     */
-    @Override
-    public void addNotify() {
-        super.addNotify();
-        if (!dataLoaded) {
-            dataLoaded = true;
-            loadData();
-        }
+    public BaseCrudPanel(String title, String leftTitle, String[] leftColumns,
+            String rightTitle, String[] rightColumns, String[] searchOptions) {
+        super(leftTitle, leftColumns, rightTitle, rightColumns, searchOptions);
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        initUI(title);
+        // Không gọi loadData() ở đây vì subclass chưa khởi tạo xong
     }
 
-    private void initUI(String title, String[] columns, String[] searchOptions) {
+    private void initUI(String title) {
         // Tiêu đề
         HeaderLabel lblTieuDe = HeaderLabel.createPrimary(title);
 
@@ -62,69 +50,7 @@ public abstract class BaseCrudPanel extends JPanel {
         panelTren.add(panelFormWrapper, BorderLayout.CENTER);
         add(panelTren, BorderLayout.NORTH);
 
-        // Bảng
-        tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        table = new CustomTable(tableModel);
-        table.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting())
-                hienThiThongTin();
-        });
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.getViewport().setBackground(Constants.CARD_COLOR);
-
-        // Panel center (search + table)
-        JPanel panelCenter = new JPanel(new BorderLayout(0, 5));
-        panelCenter.setBackground(Constants.CONTENT_BG);
-        panelCenter.add(createSearchPanel(searchOptions), BorderLayout.NORTH);
-        panelCenter.add(scrollPane, BorderLayout.CENTER);
-        add(panelCenter, BorderLayout.CENTER);
-    }
-
-    private JPanel createSearchPanel(String[] searchOptions) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        panel.setBackground(Constants.CONTENT_BG);
-
-        panel.add(createLabel("Tìm theo:"));
-        cboLoaiTimKiem = new JComboBox<>(searchOptions);
-        cboLoaiTimKiem.setFont(Constants.NORMAL_FONT);
-        cboLoaiTimKiem.setPreferredSize(new Dimension(130, 28));
-        panel.add(cboLoaiTimKiem);
-
-        txtTimKiem = new JTextField(20);
-        txtTimKiem.setFont(Constants.NORMAL_FONT);
-        txtTimKiem.addActionListener(e -> timKiem());
-        panel.add(txtTimKiem);
-
-        CustomButton btnTim = new CustomButton("Tìm", Constants.INFO_COLOR, Constants.TEXT_COLOR);
-        btnTim.addActionListener(e -> timKiem());
-        panel.add(btnTim);
-
-        CustomButton btnTatCa = new CustomButton("Hiện tất cả", Constants.SECONDARY_COLOR, Constants.TEXT_COLOR);
-        btnTatCa.addActionListener(e -> {
-            txtTimKiem.setText("");
-            cboLoaiTimKiem.setSelectedIndex(0);
-            loadData();
-        });
-        panel.add(btnTatCa);
-
-        // Hook for subclass to add extra search components
-        addExtraSearchComponents(panel);
-
-        return panel;
-    }
-
-    /**
-     * Hook method để subclass có thể thêm các component tìm kiếm bổ sung
-     * (ví dụ: nút tìm kiếm nâng cao)
-     */
-    protected void addExtraSearchComponents(JPanel searchPanel) {
-        // Default: không thêm gì
+        // Panel center (search + table) đã được tạo trong SearchPanel
     }
 
     /**
@@ -136,12 +62,6 @@ public abstract class BaseCrudPanel extends JPanel {
     }
 
     // === Utility methods ===
-    protected JLabel createLabel(String text) {
-        JLabel lbl = new JLabel(text);
-        lbl.setFont(Constants.NORMAL_FONT);
-        return lbl;
-    }
-
     protected JTextField createTextField(int columns, boolean editable) {
         JTextField txt = new JTextField(columns);
         txt.setFont(Constants.NORMAL_FONT);
@@ -184,12 +104,6 @@ public abstract class BaseCrudPanel extends JPanel {
 
     // === Abstract methods ===
     protected abstract JPanel createFormPanel();
-
-    protected abstract void loadData();
-
-    protected abstract void hienThiThongTin();
-
-    protected abstract void timKiem();
 
     protected abstract void them();
 
