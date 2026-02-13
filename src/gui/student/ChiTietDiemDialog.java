@@ -55,7 +55,7 @@ public class ChiTietDiemDialog extends JDialog {
         panelHeader.setBackground(Constants.PRIMARY_COLOR);
         panelHeader.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
         
-        JLabel lblTieuDe = new JLabel("📊 CHI TIẾT ĐIỂM BÀI THI #" + maBaiThi);
+        JLabel lblTieuDe = new JLabel(" CHI TIẾT ĐIỂM BÀI THI #" + maBaiThi);
         lblTieuDe.setFont(Constants.HEADER_FONT);
         lblTieuDe.setForeground(Color.WHITE);
         panelHeader.add(lblTieuDe, BorderLayout.WEST);
@@ -84,10 +84,10 @@ public class ChiTietDiemDialog extends JDialog {
             public Component getTableCellRendererComponent(JTable table, Object value, 
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if ("✓ Đúng".equals(value)) {
+                if ("Đúng".equals(value)) {
                     c.setForeground(new Color(34, 139, 34));
                     c.setFont(c.getFont().deriveFont(Font.BOLD));
-                } else if ("✗ Sai".equals(value)) {
+                } else if ("Sai".equals(value)) {
                     c.setForeground(Color.RED);
                     c.setFont(c.getFont().deriveFont(Font.BOLD));
                 } else {
@@ -171,7 +171,7 @@ public class ChiTietDiemDialog extends JDialog {
             String dapAnSV = getDapAnSVHienThi(cauHoi, ct.getDapAnSV());
             
             boolean ketQua = kiemTraDapAn(cauHoi, ct.getDapAnSV());
-            String ketQuaStr = ketQua ? "✓ Đúng" : "✗ Sai";
+            String ketQuaStr = ketQua ? "Đúng" : "Sai";
             String diemStr;
             
             if (ketQua) {

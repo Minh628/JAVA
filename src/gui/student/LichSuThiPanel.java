@@ -143,8 +143,8 @@ public class LichSuThiPanel extends JPanel {
         String loaiTimKiem = (String) cboLoaiTimKiem.getSelectedItem();
         modelLichSu.setRowCount(0);
 
-        // Gọi BaiThiBUS để lấy lịch sử bài thi
-        List<BaiThiDTO> danhSach = baiThiBUS.getLichSuBaiThi(nguoiDung.getMaSV());
+        // Gọi BaiThiBUS để tìm kiếm lịch sử bài thi
+        List<BaiThiDTO> danhSach = baiThiBUS.timKiemLichSu(nguoiDung.getMaSV(), keyword, loaiTimKiem);
         if (danhSach != null) {
             for (BaiThiDTO bt : danhSach) {
                 DeThiDTO deThi = deThiBUS.getById(bt.getMaDeThi());
@@ -152,33 +152,11 @@ public class LichSuThiPanel extends JPanel {
                 String tenHocPhan = deThi != null ? getTenHocPhan(deThi.getMaHocPhan()) : "";
                 int tongSoCau = deThi != null ? deThi.getSoCauHoi() : 0;
 
-                boolean match = true;
-                if (!keyword.isEmpty() && !loaiTimKiem.equals("Tất cả")) {
-                    String keyLower = keyword.toLowerCase();
-                    switch (loaiTimKiem) {
-                        case "Mã bài thi":
-                            match = String.valueOf(bt.getMaBaiThi()).contains(keyword);
-                            break;
-                        case "Đề thi":
-                            match = tenDeThi.toLowerCase().contains(keyLower);
-                            break;
-                        case "Môn học":
-                            match = tenHocPhan.toLowerCase().contains(keyLower);
-                            break;
-                    }
-                } else if (!keyword.isEmpty()) {
-                    String keyLower = keyword.toLowerCase();
-                    match = String.valueOf(bt.getMaBaiThi()).contains(keyword)
-                            || tenDeThi.toLowerCase().contains(keyLower)
-                            || tenHocPhan.toLowerCase().contains(keyLower);
-                }
-                if (match) {
-                    modelLichSu.addRow(new Object[] {
-                            bt.getMaBaiThi(), tenDeThi, tenHocPhan,
-                            bt.getNgayThi(), bt.getSoCauDung() + "/" + tongSoCau,
-                            String.format("%.2f", bt.getDiemSo())
-                    });
-                }
+                modelLichSu.addRow(new Object[] {
+                        bt.getMaBaiThi(), tenDeThi, tenHocPhan,
+                        bt.getNgayThi(), bt.getSoCauDung() + "/" + tongSoCau,
+                        String.format("%.2f", bt.getDiemSo())
+                });
             }
         }
     }

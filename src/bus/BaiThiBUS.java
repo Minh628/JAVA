@@ -8,6 +8,8 @@ package bus;
 import dao.BaiThiDAO;
 import dao.CauHoiDAO;
 import dao.ChiTietBaiThiDAO;
+import dao.DeThiDAO;
+import dao.HocPhanDAO;
 import dto.*;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -19,11 +21,15 @@ public class BaiThiBUS {
     private BaiThiDAO baiThiDAO;
     private ChiTietBaiThiDAO chiTietBaiThiDAO;
     private CauHoiDAO cauHoiDAO;
+    private DeThiDAO deThiDAO;
+    private HocPhanDAO hocPhanDAO;
 
     public BaiThiBUS() {
         this.baiThiDAO = new BaiThiDAO();
         this.chiTietBaiThiDAO = new ChiTietBaiThiDAO();
         this.cauHoiDAO = new CauHoiDAO();
+        this.deThiDAO = new DeThiDAO();
+        this.hocPhanDAO = new HocPhanDAO();
     }
 
     /**
@@ -86,6 +92,68 @@ public class BaiThiBUS {
             e.printStackTrace();
             return new ArrayList<>();
         }
+    }
+
+    /**
+     * Tìm kiếm lịch sử bài thi theo từ khóa và loại tìm kiếm
+     */
+    public List<BaiThiDTO> timKiemLichSu(int maSV, String keyword, String loai) {
+        List<BaiThiDTO> result = new ArrayList<>();
+        try {
+            String key = keyword == null ? "" : keyword.trim().toLowerCase();
+            List<BaiThiDTO> danhSach = getLichSuBaiThi(maSV);
+
+            for (BaiThiDTO bt : danhSach) {
+                if (matchLichSuFilter(bt, key, loai)) {
+                    result.add(bt);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean matchLichSuFilter(BaiThiDTO bt, String keyword, String loai) {
+        if (keyword == null || keyword.isEmpty()) {
+            return true;
+        }
+
+        DeThiDTO deThi = null;
+        try {
+            deThi = deThiDAO.getById(bt.getMaDeThi());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String tenDeThi = deThi != null && deThi.getTenDeThi() != null
+                ? deThi.getTenDeThi().toLowerCase()
+                : "";
+        String tenHocPhan = "";
+        if (deThi != null) {
+            try {
+                HocPhanDTO hocPhan = hocPhanDAO.getById(deThi.getMaHocPhan());
+                if (hocPhan != null && hocPhan.getTenMon() != null) {
+                    tenHocPhan = hocPhan.getTenMon().toLowerCase();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (loai == null || loai.trim().isEmpty()) {
+            loai = "Tất cả";
+        }
+
+        return switch (loai) {
+            case "Mã bài thi" -> String.valueOf(bt.getMaBaiThi()).contains(keyword);
+            case "Đề thi" -> tenDeThi.contains(keyword);
+            case "Môn học" -> tenHocPhan.contains(keyword);
+            case "Tất cả" -> String.valueOf(bt.getMaBaiThi()).contains(keyword)
+                    || tenDeThi.contains(keyword)
+                    || tenHocPhan.contains(keyword);
+            default -> true;
+        };
     }
 
 
