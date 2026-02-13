@@ -1,8 +1,14 @@
 package gui.admin;
 
+import bus.BaiThiBUS;
+import bus.DeThiBUS;
+import bus.HocPhanBUS;
 import bus.NganhBUS;
 import bus.SinhVienBUS;
 import config.Constants;
+import dto.BaiThiDTO;
+import dto.DeThiDTO;
+import dto.HocPhanDTO;
 import dto.NganhDTO;
 import dto.SinhVienDTO;
 import gui.components.AdvancedSearchDialog;
@@ -19,18 +25,25 @@ import util.SearchCondition;
 public class QuanLySinhVienPanel extends BaseCrudPanel {
     private SinhVienBUS sinhVienBUS = new SinhVienBUS();
     private NganhBUS nganhBUS = new NganhBUS();
+    private BaiThiBUS baiThiBUS = new BaiThiBUS();
+    private DeThiBUS deThiBUS = new DeThiBUS();
+    private HocPhanBUS hocPhanBUS = new HocPhanBUS();
+    
     private JTextField txtMaSV, txtTenDangNhap, txtHo, txtTen, txtEmail;
     private JPasswordField txtMatKhau;
     private JComboBox<NganhDTO> cboNganh;
     private CustomButton btnChonNganh;
     private Map<Integer, String> nganhMap = new HashMap<>();
+    
+    private int selectedMaSV = -1;
 
     public QuanLySinhVienPanel() {
         super("QUẢN LÝ SINH VIÊN",
+                "Danh sách Sinh viên",
                 new String[] { "Mã SV", "Họ", "Tên", "Tên đăng nhập", "Mật khẩu", "Email", "Ngành", "Trạng thái" },
+                "Điểm thi của Sinh viên",
+                new String[] { "Mã bài thi", "Đề thi", "Môn học", "Ngày thi", "Số câu đúng", "Điểm" },
                 new String[] { "Tất cả", "Mã SV", "Tên đăng nhập", "Họ tên", "Email", "Ngành" });
-        
-    
     }
 
     @Override
@@ -124,6 +137,9 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
                     sv.isTrangThai() ? "Hoạt động" : "Khóa"
             }));
         }
+        // Clear bảng điểm
+        secondaryTableModel.setRowCount(0);
+        selectedMaSV = -1;
     }
 
     private String getTenNganh(int maNganh) {
@@ -147,19 +163,54 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
                 sv.isTrangThai() ? "Hoạt động" : "Khóa"
             });
         }
+        // Clear bảng điểm
+        secondaryTableModel.setRowCount(0);
+        selectedMaSV = -1;
     }
 
     @Override
     protected void hienThiThongTin() {
         int row = table.getSelectedRow();
         if (row >= 0) {
-            txtMaSV.setText(String.valueOf(tableModel.getValueAt(row, 0)));
+            selectedMaSV = (int) tableModel.getValueAt(row, 0);
+            txtMaSV.setText(String.valueOf(selectedMaSV));
             txtHo.setText((String) tableModel.getValueAt(row, 1));
             txtTen.setText((String) tableModel.getValueAt(row, 2));
             txtTenDangNhap.setText((String) tableModel.getValueAt(row, 3));
             txtMatKhau.setText((String) tableModel.getValueAt(row, 4));
             txtEmail.setText((String) tableModel.getValueAt(row, 5));
             selectComboByName(cboNganh, (String) tableModel.getValueAt(row, 6), NganhDTO::getTenNganh);
+            loadDiemTheoSinhVien();
+        }
+    }
+
+    /**
+     * Load danh sách điểm thi của sinh viên đang được chọn
+     */
+    private void loadDiemTheoSinhVien() {
+        secondaryTableModel.setRowCount(0);
+        if (selectedMaSV == -1) {
+            return;
+        }
+
+        List<BaiThiDTO> danhSachBaiThi = baiThiBUS.getLichSuBaiThi(selectedMaSV);
+        if (danhSachBaiThi != null) {
+            for (BaiThiDTO bt : danhSachBaiThi) {
+                DeThiDTO deThi = deThiBUS.getById(bt.getMaDeThi());
+                String tenDeThi = deThi != null ? deThi.getTenDeThi() : "";
+                String tenHocPhan = "";
+                int tongSoCau = 0;
+                if (deThi != null) {
+                    tongSoCau = deThi.getSoCauHoi();
+                    HocPhanDTO hocPhan = hocPhanBUS.getById(deThi.getMaHocPhan());
+                    tenHocPhan = hocPhan != null ? hocPhan.getTenMon() : "";
+                }
+                secondaryTableModel.addRow(new Object[] {
+                        bt.getMaBaiThi(), tenDeThi, tenHocPhan,
+                        bt.getNgayThi(), bt.getSoCauDung() + "/" + tongSoCau,
+                        String.format("%.2f", bt.getDiemSo())
+                });
+            }
         }
     }
 
@@ -224,17 +275,21 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
 
     @Override
     protected void xoa() {
-        if (txtMaSV.getText().isEmpty()) {
+        if (selectedMaSV == -1) {
             showMessage("Vui lòng chọn sinh viên cần xóa!");
             return;
         }
-        if (confirmDelete("sinh viên")) {
-            if (sinhVienBUS.xoaSinhVien(Integer.parseInt(txtMaSV.getText()))) {
+        if (confirmDelete("sinh viên (bao gồm tất cả bài thi và chi tiết bài thi)")) {
+            // Xóa bài thi và chi tiết bài thi của sinh viên trước
+            baiThiBUS.xoaBaiThiTheoSinhVien(selectedMaSV);
+            // Xóa sinh viên
+            if (sinhVienBUS.xoaSinhVien(selectedMaSV)) {
                 showMessage("Xóa sinh viên thành công!");
                 loadData();
                 lamMoi();
-            } else
+            } else {
                 showMessage("Xóa sinh viên thất bại!");
+            }
         }
     }
 
@@ -249,6 +304,8 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
         if (cboNganh.getItemCount() > 0)
             cboNganh.setSelectedIndex(0);
         table.clearSelection();
+        selectedMaSV = -1;
+        secondaryTableModel.setRowCount(0); // Clear bảng điểm
     }
 
     @Override
@@ -316,5 +373,8 @@ public class QuanLySinhVienPanel extends BaseCrudPanel {
                 sv.isTrangThai() ? "Hoạt động" : "Khóa"
             });
         }
+        // Clear bảng điểm
+        secondaryTableModel.setRowCount(0);
+        selectedMaSV = -1;
     }
 }

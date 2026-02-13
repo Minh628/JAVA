@@ -156,6 +156,20 @@ public class BaiThiDAO {
     }
 
     /**
+     * Xóa tất cả bài thi theo sinh viên
+     */
+    public boolean deleteBySinhVien(int maSV) throws SQLException {
+        String sql = "DELETE FROM BaiThi WHERE ma_sv = ?";
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, maSV);
+            return pstmt.executeUpdate() >= 0;
+        }
+    }
+
+    /**
      * Đếm số bài thi theo đề thi
      */
     public int countByDeThi(int maDeThi) throws SQLException {

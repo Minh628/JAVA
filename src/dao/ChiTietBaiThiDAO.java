@@ -140,6 +140,20 @@ public class ChiTietBaiThiDAO {
     }
 
     /**
+     * Xóa tất cả chi tiết bài thi theo sinh viên
+     */
+    public boolean deleteBySinhVien(int maSV) throws SQLException {
+        String sql = "DELETE FROM ChiTietBaiThi WHERE ma_bai_thi IN (SELECT ma_bai_thi FROM BaiThi WHERE ma_sv = ?)";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, maSV);
+            return pstmt.executeUpdate() >= 0;
+        }
+    }
+
+    /**
      * Đếm số lần câu hỏi xuất hiện trong các bài thi
      */
     public int countByCauHoi(int maCauHoi) throws SQLException {

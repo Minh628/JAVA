@@ -193,6 +193,21 @@ public class BaiThiBUS {
         }
     }
 
+    /**
+     * Xóa tất cả bài thi và chi tiết bài thi theo sinh viên
+     */
+    public boolean xoaBaiThiTheoSinhVien(int maSV) {
+        try {
+            // Xóa chi tiết bài thi trước
+            chiTietBaiThiDAO.deleteBySinhVien(maSV);
+            // Xóa bài thi
+            return baiThiDAO.deleteBySinhVien(maSV);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     // ============== Quản lý Chi tiết bài thi ==============
 
     /**
