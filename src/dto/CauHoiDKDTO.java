@@ -109,27 +109,6 @@ public class CauHoiDKDTO extends CauHoiDTO {
     }
 
     /**
-     * Lấy danh sách từ gợi ý dưới dạng List
-     */
-    public List<String> getDanhSachTuList() {
-        if (danhSachTu == null || danhSachTu.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return Arrays.asList(danhSachTu.split("\\|"));
-    }
-
-    /**
-     * Đặt danh sách từ gợi ý từ List
-     */
-    public void setDanhSachTuList(List<String> tuList) {
-        if (tuList == null || tuList.isEmpty()) {
-            this.danhSachTu = "";
-        } else {
-            this.danhSachTu = String.join("|", tuList);
-        }
-    }
-
-    /**
      * Lấy danh sách đáp án đúng dưới dạng List
      */
     public List<String> getDapAnDungList() {
@@ -139,16 +118,6 @@ public class CauHoiDKDTO extends CauHoiDTO {
         return Arrays.asList(dapAnDung.split("\\|"));
     }
 
-    /**
-     * Đặt danh sách đáp án đúng từ List
-     */
-    public void setDapAnDungList(List<String> dapAnList) {
-        if (dapAnList == null || dapAnList.isEmpty()) {
-            this.dapAnDung = "";
-        } else {
-            this.dapAnDung = String.join("|", dapAnList);
-        }
-    }
 
     /**
      * Đếm số chỗ trống trong câu hỏi (đánh dấu bằng _____)
@@ -184,27 +153,6 @@ public class CauHoiDKDTO extends CauHoiDTO {
             }
         }
         return true;
-    }
-
-    /**
-     * Kiểm tra từng đáp án và trả về danh sách kết quả
-     * @param dapAnNhap Danh sách đáp án người dùng nhập (phân cách bởi |)
-     * @return Mảng boolean, true nếu đáp án đúng
-     */
-    public boolean[] kiemTraTungDapAn(String dapAnNhap) {
-        List<String> dapAnDungList = getDapAnDungList();
-        List<String> dapAnNhapList = Arrays.asList(dapAnNhap.split("\\|"));
-        
-        boolean[] ketQua = new boolean[dapAnDungList.size()];
-        
-        for (int i = 0; i < dapAnDungList.size(); i++) {
-            if (i < dapAnNhapList.size()) {
-                ketQua[i] = dapAnDungList.get(i).trim().equalsIgnoreCase(dapAnNhapList.get(i).trim());
-            } else {
-                ketQua[i] = false;
-            }
-        }
-        return ketQua;
     }
 
     @Override

@@ -85,25 +85,6 @@ public class LamBaiThiFrame extends JFrame {
         batDauDemGio();
     }
 
-    // Constructor đầy đủ - truyền câu hỏi từ bên ngoài
-    public LamBaiThiFrame(StudentDashboard parent, int maSV, int maDeThi, 
-                          int maBaiThi, List<CauHoiDTO> danhSachCauHoi, int thoiGianPhut) {
-        this.parentDashboard = parent;
-        this.maBaiThi = maBaiThi;
-        this.danhSachCauHoi = danhSachCauHoi;
-        this.thoiGianConLai = thoiGianPhut * 60;
-        this.baiThiBUS = new BaiThiBUS();
-        
-        // Khởi tạo danh sách đáp án
-        this.dapAnChon = new ArrayList<>();
-        for (int i = 0; i < danhSachCauHoi.size(); i++) {
-            dapAnChon.add("");
-        }
-        
-        initComponents();
-        hienThiCauHoi(0);
-        batDauDemGio();
-    }
 
     private void initComponents() {
         setTitle("Làm bài thi trắc nghiệm");
