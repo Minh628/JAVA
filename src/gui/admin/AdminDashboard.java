@@ -59,6 +59,7 @@ public class AdminDashboard extends BaseDashboardFrame {
         // Nhóm: HỆ THỐNG
         addMenuGroup(sidebar, "HỆ THỐNG");
         JButton btnTongQuan = addMenuItem(sidebar, "📊", "Tổng Quan", "TONG_QUAN");
+        addMenuItem(sidebar, "📈", "Thống Kê", "THONG_KE");
         
         // Nhóm: QUẢN LÝ ĐÀO TẠO
         sidebar.add(Box.createVerticalStrut(15));
@@ -85,6 +86,7 @@ public class AdminDashboard extends BaseDashboardFrame {
     @Override
     protected void initContentPanels() {
         panelNoiDung.add(createTongQuanPanel(), "TONG_QUAN");
+        panelNoiDung.add(new ThongKePanel(), "THONG_KE");
         panelNoiDung.add(new QuanLyHocPhanPanel(), "HOC_PHAN");
         panelNoiDung.add(new QuanLyKhoaPanel(), "KHOA");
         panelNoiDung.add(new QuanLyNganhPanel(), "NGANH");
