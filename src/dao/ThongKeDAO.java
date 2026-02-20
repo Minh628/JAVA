@@ -436,4 +436,301 @@ public class ThongKeDAO {
         
         return result;
     }
+    
+    // ==================== THỐNG KÊ THEO QUÝ (MỤC 12.a) ====================
+    
+    /**
+     * Thống kê Giảng viên theo Quý (số lượng bài thi)
+     * Cấu trúc: Tên GV | Q1 | Q2 | Q3 | Q4 | TC
+     */
+    public List<Object[]> getThongKeGiangVienTheoQuy(int nam) throws SQLException {
+        List<Object[]> result = new ArrayList<>();
+        
+        String sql = """
+            SELECT 
+                CONCAT(gv.ho, ' ', gv.ten) as ho_ten,
+                SUM(CASE WHEN QUARTER(bt.ngay_thi) = 1 THEN 1 ELSE 0 END) as Q1,
+                SUM(CASE WHEN QUARTER(bt.ngay_thi) = 2 THEN 1 ELSE 0 END) as Q2,
+                SUM(CASE WHEN QUARTER(bt.ngay_thi) = 3 THEN 1 ELSE 0 END) as Q3,
+                SUM(CASE WHEN QUARTER(bt.ngay_thi) = 4 THEN 1 ELSE 0 END) as Q4,
+                COUNT(bt.ma_bai_thi) as TC
+            FROM GiangVien gv
+            LEFT JOIN DeThi dt ON gv.ma_gv = dt.ma_gv
+            LEFT JOIN BaiThi bt ON dt.ma_de_thi = bt.ma_de_thi AND YEAR(bt.ngay_thi) = ?
+            WHERE gv.ma_vai_tro = 2
+            GROUP BY gv.ma_gv, gv.ho, gv.ten
+            HAVING COUNT(bt.ma_bai_thi) > 0
+            ORDER BY TC DESC
+        """;
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, nam);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                result.add(new Object[]{
+                    rs.getString("ho_ten"),
+                    rs.getInt("Q1"),
+                    rs.getInt("Q2"),
+                    rs.getInt("Q3"),
+                    rs.getInt("Q4"),
+                    rs.getInt("TC")
+                });
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Thống kê Sinh viên theo Quý (số lượng bài thi)
+     * Cấu trúc: Tên SV | Q1 | Q2 | Q3 | Q4 | TC
+     */
+    public List<Object[]> getThongKeSinhVienTheoQuy(int nam) throws SQLException {
+        List<Object[]> result = new ArrayList<>();
+        
+        String sql = """
+            SELECT 
+                CONCAT(sv.ho, ' ', sv.ten) as ho_ten,
+                SUM(CASE WHEN QUARTER(bt.ngay_thi) = 1 THEN 1 ELSE 0 END) as Q1,
+                SUM(CASE WHEN QUARTER(bt.ngay_thi) = 2 THEN 1 ELSE 0 END) as Q2,
+                SUM(CASE WHEN QUARTER(bt.ngay_thi) = 3 THEN 1 ELSE 0 END) as Q3,
+                SUM(CASE WHEN QUARTER(bt.ngay_thi) = 4 THEN 1 ELSE 0 END) as Q4,
+                COUNT(bt.ma_bai_thi) as TC
+            FROM SinhVien sv
+            LEFT JOIN BaiThi bt ON sv.ma_sv = bt.ma_sv AND YEAR(bt.ngay_thi) = ?
+            GROUP BY sv.ma_sv, sv.ho, sv.ten
+            HAVING COUNT(bt.ma_bai_thi) > 0
+            ORDER BY TC DESC
+        """;
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, nam);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                result.add(new Object[]{
+                    rs.getString("ho_ten"),
+                    rs.getInt("Q1"),
+                    rs.getInt("Q2"),
+                    rs.getInt("Q3"),
+                    rs.getInt("Q4"),
+                    rs.getInt("TC")
+                });
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Thống kê Học phần theo Quý (số lượng bài thi)
+     * Cấu trúc: Tên môn | Q1 | Q2 | Q3 | Q4 | TC
+     */
+    public List<Object[]> getThongKeHocPhanTheoQuy(int nam) throws SQLException {
+        List<Object[]> result = new ArrayList<>();
+        
+        String sql = """
+            SELECT 
+                hp.ten_mon,
+                SUM(CASE WHEN QUARTER(bt.ngay_thi) = 1 THEN 1 ELSE 0 END) as Q1,
+                SUM(CASE WHEN QUARTER(bt.ngay_thi) = 2 THEN 1 ELSE 0 END) as Q2,
+                SUM(CASE WHEN QUARTER(bt.ngay_thi) = 3 THEN 1 ELSE 0 END) as Q3,
+                SUM(CASE WHEN QUARTER(bt.ngay_thi) = 4 THEN 1 ELSE 0 END) as Q4,
+                COUNT(bt.ma_bai_thi) as TC
+            FROM HocPhan hp
+            LEFT JOIN DeThi dt ON hp.ma_hoc_phan = dt.ma_hoc_phan
+            LEFT JOIN BaiThi bt ON dt.ma_de_thi = bt.ma_de_thi AND YEAR(bt.ngay_thi) = ?
+            GROUP BY hp.ma_hoc_phan, hp.ten_mon
+            HAVING COUNT(bt.ma_bai_thi) > 0
+            ORDER BY TC DESC
+        """;
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, nam);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                result.add(new Object[]{
+                    rs.getString("ten_mon"),
+                    rs.getInt("Q1"),
+                    rs.getInt("Q2"),
+                    rs.getInt("Q3"),
+                    rs.getInt("Q4"),
+                    rs.getInt("TC")
+                });
+            }
+        }
+        return result;
+    }
+    
+    // ==================== THỐNG KÊ NHIỀU KHÓA (MỤC 12.b.ii và 12.b.iii) ====================
+    
+    /**
+     * Thống kê Sinh viên và Học phần (12.b.ii - Khách hàng và Sản phẩm)
+     * Cấu trúc: Mã SV | Họ tên SV | Tên Môn | Số bài thi | Điểm TB
+     */
+    public List<Object[]> getThongKeSinhVienVaHocPhan(Date tuNgay, Date denNgay) throws SQLException {
+        List<Object[]> result = new ArrayList<>();
+        
+        String sql = """
+            SELECT 
+                sv.ten_dang_nhap,
+                CONCAT(sv.ho, ' ', sv.ten) as ho_ten,
+                hp.ten_mon,
+                COUNT(bt.ma_bai_thi) as so_bai_thi,
+                AVG(bt.diem_so) as diem_tb
+            FROM SinhVien sv
+            JOIN BaiThi bt ON sv.ma_sv = bt.ma_sv
+            JOIN DeThi dt ON bt.ma_de_thi = dt.ma_de_thi
+            JOIN HocPhan hp ON dt.ma_hoc_phan = hp.ma_hoc_phan
+            WHERE bt.ngay_thi BETWEEN ? AND ?
+            GROUP BY sv.ma_sv, sv.ten_dang_nhap, sv.ho, sv.ten, hp.ma_hoc_phan, hp.ten_mon
+            ORDER BY sv.ten, hp.ten_mon
+        """;
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setDate(1, tuNgay);
+            pstmt.setDate(2, denNgay);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                result.add(new Object[]{
+                    rs.getString("ten_dang_nhap"),
+                    rs.getString("ho_ten"),
+                    rs.getString("ten_mon"),
+                    rs.getInt("so_bai_thi"),
+                    rs.getFloat("diem_tb")
+                });
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Thống kê Giảng viên và Học phần theo Năm (12.b.iii - Nhân viên và Sản phẩm và Năm)
+     * Cấu trúc: Họ tên GV | Tên Môn | Năm | Số đề thi | Số bài thi | Điểm TB
+     */
+    public List<Object[]> getThongKeGiangVienVaHocPhanTheoNam(int nam) throws SQLException {
+        List<Object[]> result = new ArrayList<>();
+        
+        String sql = """
+            SELECT 
+                CONCAT(gv.ho, ' ', gv.ten) as ho_ten_gv,
+                hp.ten_mon,
+                ? as nam,
+                COUNT(DISTINCT dt.ma_de_thi) as so_de_thi,
+                COUNT(bt.ma_bai_thi) as so_bai_thi,
+                AVG(bt.diem_so) as diem_tb
+            FROM GiangVien gv
+            JOIN DeThi dt ON gv.ma_gv = dt.ma_gv
+            JOIN HocPhan hp ON dt.ma_hoc_phan = hp.ma_hoc_phan
+            LEFT JOIN BaiThi bt ON dt.ma_de_thi = bt.ma_de_thi AND YEAR(bt.ngay_thi) = ?
+            WHERE gv.ma_vai_tro = 2
+            GROUP BY gv.ma_gv, gv.ho, gv.ten, hp.ma_hoc_phan, hp.ten_mon
+            HAVING COUNT(bt.ma_bai_thi) > 0
+            ORDER BY gv.ten, hp.ten_mon
+        """;
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, nam);
+            pstmt.setInt(2, nam);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                result.add(new Object[]{
+                    rs.getString("ho_ten_gv"),
+                    rs.getString("ten_mon"),
+                    rs.getInt("nam"),
+                    rs.getInt("so_de_thi"),
+                    rs.getInt("so_bai_thi"),
+                    rs.getFloat("diem_tb")
+                });
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Thống kê tổng hợp theo Tháng trong năm (cho hiển thị bảng mục 12.a)
+     * Cấu trúc: Tháng | Tổng bài thi | Điểm TB | Tỷ lệ đạt | Số đạt | Số rớt
+     */
+    public List<Object[]> getThongKeChiTietTheoThang(int nam) throws SQLException {
+        List<Object[]> result = new ArrayList<>();
+        
+        String sql = """
+            SELECT 
+                MONTH(ngay_thi) as thang,
+                COUNT(*) as tong_bai_thi,
+                AVG(diem_so) as diem_tb,
+                SUM(CASE WHEN diem_so >= 5 THEN 1 ELSE 0 END) * 100.0 / COUNT(*) as ty_le_dat,
+                SUM(CASE WHEN diem_so >= 5 THEN 1 ELSE 0 END) as so_dat,
+                SUM(CASE WHEN diem_so < 5 THEN 1 ELSE 0 END) as so_rot
+            FROM BaiThi 
+            WHERE YEAR(ngay_thi) = ?
+            GROUP BY MONTH(ngay_thi)
+            ORDER BY thang
+        """;
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, nam);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                result.add(new Object[]{
+                    "Tháng " + rs.getInt("thang"),
+                    rs.getInt("tong_bai_thi"),
+                    rs.getFloat("diem_tb"),
+                    rs.getFloat("ty_le_dat"),
+                    rs.getInt("so_dat"),
+                    rs.getInt("so_rot")
+                });
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Thống kê tổng hợp theo Quý trong năm (cho hiển thị bảng mục 12.a)
+     * Cấu trúc: Quý | Tổng bài thi | Điểm TB | Tỷ lệ đạt | Số đạt | Số rớt
+     */
+    public List<Object[]> getThongKeChiTietTheoQuy(int nam) throws SQLException {
+        List<Object[]> result = new ArrayList<>();
+        
+        String sql = """
+            SELECT 
+                QUARTER(ngay_thi) as quy,
+                COUNT(*) as tong_bai_thi,
+                AVG(diem_so) as diem_tb,
+                SUM(CASE WHEN diem_so >= 5 THEN 1 ELSE 0 END) * 100.0 / COUNT(*) as ty_le_dat,
+                SUM(CASE WHEN diem_so >= 5 THEN 1 ELSE 0 END) as so_dat,
+                SUM(CASE WHEN diem_so < 5 THEN 1 ELSE 0 END) as so_rot
+            FROM BaiThi 
+            WHERE YEAR(ngay_thi) = ?
+            GROUP BY QUARTER(ngay_thi)
+            ORDER BY quy
+        """;
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, nam);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                result.add(new Object[]{
+                    "Quý " + rs.getInt("quy"),
+                    rs.getInt("tong_bai_thi"),
+                    rs.getFloat("diem_tb"),
+                    rs.getFloat("ty_le_dat"),
+                    rs.getInt("so_dat"),
+                    rs.getInt("so_rot")
+                });
+            }
+        }
+        return result;
+    }
 }

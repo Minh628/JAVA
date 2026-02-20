@@ -265,4 +265,92 @@ public class ThongKeBUS {
         }
         return value.toString();
     }
+    
+    // ==================== THỐNG KÊ THEO QUÝ (MỤC 12.a) ====================
+    
+    /**
+     * Thống kê Giảng viên theo Quý (cross-tabulation số lượng bài thi)
+     */
+    public List<Object[]> getThongKeGiangVienTheoQuy(int nam) {
+        try {
+            return thongKeDAO.getThongKeGiangVienTheoQuy(nam);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê Sinh viên theo Quý (cross-tabulation số lượng bài thi)
+     */
+    public List<Object[]> getThongKeSinhVienTheoQuy(int nam) {
+        try {
+            return thongKeDAO.getThongKeSinhVienTheoQuy(nam);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê Học phần theo Quý (cross-tabulation số lượng bài thi)
+     */
+    public List<Object[]> getThongKeHocPhanTheoQuy(int nam) {
+        try {
+            return thongKeDAO.getThongKeHocPhanTheoQuy(nam);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    // ==================== THỐNG KÊ NHIỀU KHÓA (MỤC 12.b) ====================
+    
+    /**
+     * Thống kê Sinh viên và Học phần (12.b.ii)
+     */
+    public List<Object[]> getThongKeSinhVienVaHocPhan(Date tuNgay, Date denNgay) {
+        try {
+            return thongKeDAO.getThongKeSinhVienVaHocPhan(tuNgay, denNgay);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê Giảng viên và Học phần theo Năm (12.b.iii)
+     */
+    public List<Object[]> getThongKeGiangVienVaHocPhanTheoNam(int nam) {
+        try {
+            return thongKeDAO.getThongKeGiangVienVaHocPhanTheoNam(nam);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê chi tiết theo Tháng (cho bảng mục 12.a)
+     */
+    public List<Object[]> getThongKeChiTietTheoThang(int nam) {
+        try {
+            return thongKeDAO.getThongKeChiTietTheoThang(nam);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê chi tiết theo Quý (cho bảng mục 12.a)
+     */
+    public List<Object[]> getThongKeChiTietTheoQuy(int nam) {
+        try {
+            return thongKeDAO.getThongKeChiTietTheoQuy(nam);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
