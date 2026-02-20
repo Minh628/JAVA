@@ -158,7 +158,7 @@ public class ThongKeDAO {
                 k.ten_khoa,
                 COUNT(bt.ma_bai_thi) as tong_bai_thi,
                 AVG(bt.diem_so) as diem_tb,
-                SUM(CASE WHEN bt.diem_so >= 5 THEN 1 ELSE 0 END) * 100.0 / COUNT(*) as ty_le_dat
+                SUM(CASE WHEN bt.diem_so >= 5 THEN 1 ELSE 0 END) * 100.0 / COUNT(bt.ma_bai_thi) as ty_le_dat
             FROM Khoa k
             LEFT JOIN HocPhan hp ON k.ma_khoa = hp.ma_khoa
             LEFT JOIN DeThi dt ON hp.ma_hoc_phan = dt.ma_hoc_phan
@@ -247,7 +247,7 @@ public class ThongKeDAO {
                 k.ten_khoa,
                 COUNT(bt.ma_bai_thi) as tong_bai_thi,
                 AVG(bt.diem_so) as diem_tb,
-                SUM(CASE WHEN bt.diem_so >= 5 THEN 1 ELSE 0 END) * 100.0 / COUNT(*) as ty_le_dat
+                SUM(CASE WHEN bt.diem_so >= 5 THEN 1 ELSE 0 END) * 100.0 / COUNT(bt.ma_bai_thi) as ty_le_dat
             FROM Nganh n
             INNER JOIN Khoa k ON n.ma_khoa = k.ma_khoa
             LEFT JOIN SinhVien sv ON n.ma_nganh = sv.ma_nganh
@@ -292,7 +292,7 @@ public class ThongKeDAO {
                 k.ten_khoa,
                 COUNT(bt.ma_bai_thi) as tong_bai_thi,
                 AVG(bt.diem_so) as diem_tb,
-                SUM(CASE WHEN bt.diem_so >= 5 THEN 1 ELSE 0 END) * 100.0 / COUNT(*) as ty_le_dat
+                SUM(CASE WHEN bt.diem_so >= 5 THEN 1 ELSE 0 END) * 100.0 / COUNT(bt.ma_bai_thi) as ty_le_dat
             FROM HocPhan hp
             INNER JOIN Khoa k ON hp.ma_khoa = k.ma_khoa
             LEFT JOIN DeThi dt ON hp.ma_hoc_phan = dt.ma_hoc_phan

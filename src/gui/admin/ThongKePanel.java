@@ -696,45 +696,6 @@ public class ThongKePanel extends JPanel {
         applyCenterRenderer();
     }
     
-    private void showThongKeKhoaTheoQuy() {
-        int nam = (Integer) cboNam.getSelectedItem();
-        if (cboLoaiThoiGian.getSelectedIndex() != 3) {
-            // Nếu không chọn "Năm", lấy năm từ combo khác
-            if (cboNamQuy.getSelectedItem() != null) {
-                nam = (Integer) cboNamQuy.getSelectedItem();
-            } else if (cboNamThang.getSelectedItem() != null) {
-                nam = (Integer) cboNamThang.getSelectedItem();
-            }
-        }
-        
-        List<Object[]> data = thongKeBUS.getThongKeKhoaTheoQuy(nam);
-        
-        String[] columns = {"Tên Khoa", "Q1", "Q2", "Q3", "Q4", "TB Năm"};
-        modelThongKe.setRowCount(0);
-        modelThongKe.setColumnIdentifiers(columns);
-        
-        // Lưu data để export
-        this.currentTableData = data;
-        this.currentColumnNames = columns;
-        this.currentTieuDe = "Thống kê Khoa theo Quý - Năm " + nam;
-        this.currentTongQuanData = null;
-        
-        if (data != null) {
-            for (Object[] row : data) {
-                modelThongKe.addRow(new Object[]{
-                    row[0],
-                    row[1] != null ? String.format("%.2f", ((Number) row[1]).floatValue()) : "-",
-                    row[2] != null ? String.format("%.2f", ((Number) row[2]).floatValue()) : "-",
-                    row[3] != null ? String.format("%.2f", ((Number) row[3]).floatValue()) : "-",
-                    row[4] != null ? String.format("%.2f", ((Number) row[4]).floatValue()) : "-",
-                    String.format("%.2f", ((Number) row[5]).floatValue())
-                });
-            }
-        }
-        
-        applyCenterRenderer();
-    }
-    
     // ==================== THỐNG KÊ THEO QUÝ (MỤC 12.a) ====================
     
     /**
