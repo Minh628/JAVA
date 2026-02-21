@@ -128,17 +128,19 @@ public class ThongKePanel extends JPanel {
         pnlFilters.add(createLabel("Thống kê theo:"));
         cboLoaiThongKe = new JComboBox<>(new String[]{
             "Tổng quan",
-            "Theo Tháng/Quý (bảng)",
             "Theo Khoa",
             "Theo Ngành", 
             "Theo Học phần",
-            "Theo Giảng viên",
             "Theo Kỳ thi",
+            "Đề thi theo Quý",
+            "Bài thi theo Quý",
+            "Tỉ lệ đạt theo Quý",
             "Giảng viên theo Quý",
             "Sinh viên theo Quý",
             "Học phần theo Quý",
             "Sinh viên & Học phần",
             "Giảng viên & Học phần theo Năm"
+            
         });
         cboLoaiThongKe.setFont(Constants.NORMAL_FONT);
         cboLoaiThongKe.setPreferredSize(new Dimension(220, 30));
@@ -390,47 +392,51 @@ public class ThongKePanel extends JPanel {
                 showThongKeTongQuan(tuNgay, denNgay);
                 cardLayoutKetQua.show(pnlKetQua, "TONG_QUAN");
                 break;
-            case 1: // Theo Tháng/Quý (bảng) - Mục 12.a
-                showThongKeTheoThangQuyBang();
-                cardLayoutKetQua.show(pnlKetQua, "BANG");
-                break;
-            case 2: // Theo Khoa
+            case 1: // Theo Khoa
                 showThongKeTheoKhoa(tuNgay, denNgay);
                 cardLayoutKetQua.show(pnlKetQua, "BANG");
                 break;
-            case 3: // Theo Ngành
+            case 2: // Theo Ngành
                 showThongKeTheoNganh(tuNgay, denNgay);
                 cardLayoutKetQua.show(pnlKetQua, "BANG");
                 break;
-            case 4: // Theo Học phần
+            case 3: // Theo Học phần
                 showThongKeTheoHocPhan(tuNgay, denNgay);
                 cardLayoutKetQua.show(pnlKetQua, "BANG");
                 break;
-            case 5: // Theo Giảng viên
-                showThongKeTheoGiangVien(tuNgay, denNgay);
-                cardLayoutKetQua.show(pnlKetQua, "BANG");
-                break;
-            case 6: // Theo Kỳ thi
+            case 4: // Theo Kỳ thi
                 showThongKeTheoKyThi(tuNgay, denNgay);
                 cardLayoutKetQua.show(pnlKetQua, "BANG");
                 break;
-            case 7: // Giảng viên theo Quý - Mục 12.a (Nhân viên)
-                showThongKeGiangVienTheoQuy();
+            case 5: // Đề thi theo Quý
+                showThongKeDeThiTheoQuy(tuNgay, denNgay);
                 cardLayoutKetQua.show(pnlKetQua, "BANG");
                 break;
-            case 8: // Sinh viên theo Quý - Mục 12.a (Khách hàng)
-                showThongKeSinhVienTheoQuy();
+            case 6: // Bài thi theo Quý
+                showThongKeBaiThiTheoQuy(tuNgay, denNgay);
                 cardLayoutKetQua.show(pnlKetQua, "BANG");
                 break;
-            case 9: // Học phần theo Quý - Mục 12.a (Sản phẩm)
-                showThongKeHocPhanTheoQuy();
+            case 7: // Tỉ lệ đạt theo Quý
+                showThongKeTyLeDatTheoQuy(tuNgay, denNgay);
                 cardLayoutKetQua.show(pnlKetQua, "BANG");
                 break;
-            case 10: // Sinh viên & Học phần - Mục 12.b.ii
+            case 8: // Giảng viên theo Quý
+                showThongKeGiangVienTheoQuy(tuNgay, denNgay);
+                cardLayoutKetQua.show(pnlKetQua, "BANG");
+                break;
+            case 9: // Sinh viên theo Quý
+                showThongKeSinhVienTheoQuy(tuNgay, denNgay);
+                cardLayoutKetQua.show(pnlKetQua, "BANG");
+                break;
+            case 10: // Học phần theo Quý
+                showThongKeHocPhanTheoQuy(tuNgay, denNgay);
+                cardLayoutKetQua.show(pnlKetQua, "BANG");
+                break;
+            case 11: // Sinh viên & Học phần
                 showThongKeSinhVienVaHocPhan(tuNgay, denNgay);
                 cardLayoutKetQua.show(pnlKetQua, "BANG");
                 break;
-            case 11: // Giảng viên & Học phần theo Năm - Mục 12.b.iii
+            case 12: // Giảng viên & Học phần theo Năm
                 showThongKeGiangVienVaHocPhanTheoNam();
                 cardLayoutKetQua.show(pnlKetQua, "BANG");
                 break;
@@ -631,39 +637,6 @@ public class ThongKePanel extends JPanel {
         applyCenterRenderer();
     }
     
-    private void showThongKeTheoGiangVien(Date tuNgay, Date denNgay) {
-        List<Object[]> data = thongKeBUS.getThongKeTheoGiangVien(tuNgay, denNgay);
-        
-        String[] columns = {"Mã GV", "Họ tên", "Thuộc Khoa", "Số đề thi", "Số bài thi", "Điểm TB"};
-        modelThongKe.setRowCount(0);
-        modelThongKe.setColumnIdentifiers(columns);
-        
-        // Lưu data để export
-        this.currentTableData = data;
-        this.currentColumnNames = columns;
-        this.currentTieuDe = "Thống kê theo Giảng viên";
-        this.currentTuNgay = tuNgay;
-        this.currentDenNgay = denNgay;
-        this.currentTongQuanData = null;
-        
-        if (data != null) {
-            for (Object[] row : data) {
-                modelThongKe.addRow(new Object[]{
-                    row[0],
-                    row[1],
-                    row[2],
-                    row[3],
-                    row[4],
-                    String.format("%.2f", ((Number) row[5]).floatValue())
-                });
-            }
-            
-            updateBarChartFromTable(data, 1, 5, "Điểm TB đề thi theo GV");
-        }
-        
-        applyCenterRenderer();
-    }
-    
     private void showThongKeTheoKyThi(Date tuNgay, Date denNgay) {
         List<Object[]> data = thongKeBUS.getThongKeTheoKyThi(tuNgay, denNgay);
         
@@ -696,105 +669,71 @@ public class ThongKePanel extends JPanel {
         applyCenterRenderer();
     }
     
-    // ==================== THỐNG KÊ THEO QUÝ (MỤC 12.a) ====================
-    
-    /**
-     * Hiển thị thống kê theo Tháng/Quý dưới dạng bảng (Mục 12.a)
-     */
-    private void showThongKeTheoThangQuyBang() {
-        int nam = getSelectedNam();
-        int loaiThoiGian = cboLoaiThoiGian.getSelectedIndex();
-        
-        List<Object[]> data;
-        String tieuDe;
-        
-        if (loaiThoiGian == 3) { // Chọn Năm -> hiển thị theo Quý
-            data = thongKeBUS.getThongKeChiTietTheoQuy(nam);
-            tieuDe = "Thống kê theo Quý - Năm " + nam;
-        } else { // Các trường hợp khác -> hiển thị theo Tháng
-            data = thongKeBUS.getThongKeChiTietTheoThang(nam);
-            tieuDe = "Thống kê theo Tháng - Năm " + nam;
-        }
-        
-        String[] columns = {"Thời gian", "Tổng bài thi", "Điểm TB", "Tỷ lệ đạt (%)", "Số đạt", "Số rớt"};
-        modelThongKe.setRowCount(0);
-        modelThongKe.setColumnIdentifiers(columns);
-        
-        // Lưu data để export
-        this.currentTableData = data;
-        this.currentColumnNames = columns;
-        this.currentTieuDe = tieuDe;
-        this.currentTongQuanData = null;
-        
-        if (data != null && !data.isEmpty()) {
-            int tongBaiThi = 0, tongDat = 0, tongRot = 0;
-            double tongDiem = 0;
-            
-            for (Object[] row : data) {
-                modelThongKe.addRow(new Object[]{
-                    row[0],
-                    row[1],
-                    String.format("%.2f", ((Number) row[2]).floatValue()),
-                    String.format("%.1f", ((Number) row[3]).floatValue()),
-                    row[4],
-                    row[5]
-                });
-                
-                tongBaiThi += ((Number) row[1]).intValue();
-                tongDiem += ((Number) row[2]).floatValue() * ((Number) row[1]).intValue();
-                tongDat += ((Number) row[4]).intValue();
-                tongRot += ((Number) row[5]).intValue();
-            }
-            
-            // Thêm hàng tổng cộng
-            double diemTB = tongBaiThi > 0 ? tongDiem / tongBaiThi : 0;
-            double tyLeDat = tongBaiThi > 0 ? (double) tongDat * 100 / tongBaiThi : 0;
-            modelThongKe.addRow(new Object[]{
-                "TỔNG CỘNG",
-                tongBaiThi,
-                String.format("%.2f", diemTB),
-                String.format("%.1f", tyLeDat),
-                tongDat,
-                tongRot
-            });
-            
-            updateBarChartFromTable(data, 0, 2, "Điểm TB " + (loaiThoiGian == 3 ? "theo Quý" : "theo Tháng"));
-        }
-        
-        applyCenterRenderer();
-    }
-    
     /**
      * Thống kê Giảng viên theo Quý (Mục 12.a - Nhân viên)
+     * Nếu chọn "Năm": Hiển thị cross-tab Q1|Q2|Q3|Q4|TC
+     * Nếu chọn loại khác: Hiển thị bảng thống kê theo khoảng thời gian
      */
-    private void showThongKeGiangVienTheoQuy() {
-        int nam = getSelectedNam();
-        List<Object[]> data = thongKeBUS.getThongKeGiangVienTheoQuy(nam);
+    private void showThongKeGiangVienTheoQuy(Date tuNgay, Date denNgay) {
+        int loaiThoiGian = cboLoaiThoiGian.getSelectedIndex();
         
-        String[] columns = {"Giảng viên", "Q1", "Q2", "Q3", "Q4", "TC"};
-        modelThongKe.setRowCount(0);
-        modelThongKe.setColumnIdentifiers(columns);
-        
-        // Lưu data để export
-        this.currentTableData = data;
-        this.currentColumnNames = columns;
-        this.currentTieuDe = "Thống kê Giảng viên theo Quý - Năm " + nam;
-        this.currentTongQuanData = null;
-        
-        if (data != null && !data.isEmpty()) {
-            int[] tongQuy = new int[5]; // Q1, Q2, Q3, Q4, TC
+        if (loaiThoiGian == 3) { // Năm - hiển thị cross-tab 4 quý
+            int nam = getSelectedNam();
+            List<Object[]> data = thongKeBUS.getThongKeGiangVienTheoQuy(nam);
             
-            for (Object[] row : data) {
-                modelThongKe.addRow(row);
-                for (int i = 1; i <= 5; i++) {
-                    tongQuy[i-1] += ((Number) row[i]).intValue();
+            String[] columns = {"Giảng viên", "Q1", "Q2", "Q3", "Q4", "TC"};
+            modelThongKe.setRowCount(0);
+            modelThongKe.setColumnIdentifiers(columns);
+            
+            // Lưu data để export
+            this.currentTableData = data;
+            this.currentColumnNames = columns;
+            this.currentTieuDe = "Thống kê Giảng viên theo Quý - Năm " + nam;
+            this.currentTongQuanData = null;
+            
+            if (data != null && !data.isEmpty()) {
+                int[] tongQuy = new int[5]; // Q1, Q2, Q3, Q4, TC
+                
+                for (Object[] row : data) {
+                    modelThongKe.addRow(row);
+                    for (int i = 1; i <= 5; i++) {
+                        tongQuy[i-1] += ((Number) row[i]).intValue();
+                    }
                 }
+                
+                // Thêm hàng tổng cộng
+                modelThongKe.addRow(new Object[]{"TỔNG CỘNG", tongQuy[0], tongQuy[1], tongQuy[2], tongQuy[3], tongQuy[4]});
+                
+                updateBarChartCrossTab(data, "Số bài thi theo Giảng viên");
             }
+        } else { // Các loại khác: từ ngày-đến ngày, tháng, quý
+            List<Object[]> data = thongKeBUS.getThongKeGiangVienTheoThoiGian(tuNgay, denNgay);
             
-            // Thêm hàng tổng cộng
-            modelThongKe.addRow(new Object[]{"TỔNG CỘNG", tongQuy[0], tongQuy[1], tongQuy[2], tongQuy[3], tongQuy[4]});
+            String[] columns = {"Giảng viên", "Số đề thi", "Số bài thi", "Điểm TB", "Tỷ lệ đạt (%)"};
+            modelThongKe.setRowCount(0);
+            modelThongKe.setColumnIdentifiers(columns);
             
-            updateBarChartCrossTab(data, "Số bài thi theo Giảng viên");
+            // Lưu data để export
+            this.currentTableData = data;
+            this.currentColumnNames = columns;
+            this.currentTieuDe = "Thống kê Giảng viên (" + sdf.format(tuNgay) + " - " + sdf.format(denNgay) + ")";
+            this.currentTuNgay = tuNgay;
+            this.currentDenNgay = denNgay;
+            this.currentTongQuanData = null;
+            
+            if (data != null && !data.isEmpty()) {
+                for (Object[] row : data) {
+                    modelThongKe.addRow(new Object[]{
+                        row[0],
+                        row[1],
+                        row[2],
+                        String.format("%.2f", ((Number) row[3]).floatValue()),
+                        String.format("%.1f", ((Number) row[4]).floatValue())
+                    });
+                }
+                
+                updateBarChartFromTable(data, 0, 2, "Số bài thi theo Giảng viên");
+            }
         }
         
         applyCenterRenderer();
@@ -802,35 +741,68 @@ public class ThongKePanel extends JPanel {
     
     /**
      * Thống kê Sinh viên theo Quý (Mục 12.a - Khách hàng)
+     * Nếu chọn "Năm": Hiển thị cross-tab Q1|Q2|Q3|Q4|TC
+     * Nếu chọn loại khác: Hiển thị bảng thống kê theo khoảng thời gian
      */
-    private void showThongKeSinhVienTheoQuy() {
-        int nam = getSelectedNam();
-        List<Object[]> data = thongKeBUS.getThongKeSinhVienTheoQuy(nam);
+    private void showThongKeSinhVienTheoQuy(Date tuNgay, Date denNgay) {
+        int loaiThoiGian = cboLoaiThoiGian.getSelectedIndex();
         
-        String[] columns = {"Sinh viên", "Q1", "Q2", "Q3", "Q4", "TC"};
-        modelThongKe.setRowCount(0);
-        modelThongKe.setColumnIdentifiers(columns);
-        
-        // Lưu data để export
-        this.currentTableData = data;
-        this.currentColumnNames = columns;
-        this.currentTieuDe = "Thống kê Sinh viên theo Quý - Năm " + nam;
-        this.currentTongQuanData = null;
-        
-        if (data != null && !data.isEmpty()) {
-            int[] tongQuy = new int[5]; // Q1, Q2, Q3, Q4, TC
+        if (loaiThoiGian == 3) { // Năm - hiển thị cross-tab 4 quý
+            int nam = getSelectedNam();
+            List<Object[]> data = thongKeBUS.getThongKeSinhVienTheoQuy(nam);
             
-            for (Object[] row : data) {
-                modelThongKe.addRow(row);
-                for (int i = 1; i <= 5; i++) {
-                    tongQuy[i-1] += ((Number) row[i]).intValue();
+            String[] columns = {"Sinh viên", "Q1", "Q2", "Q3", "Q4", "TC"};
+            modelThongKe.setRowCount(0);
+            modelThongKe.setColumnIdentifiers(columns);
+            
+            // Lưu data để export
+            this.currentTableData = data;
+            this.currentColumnNames = columns;
+            this.currentTieuDe = "Thống kê Sinh viên theo Quý - Năm " + nam;
+            this.currentTongQuanData = null;
+            
+            if (data != null && !data.isEmpty()) {
+                int[] tongQuy = new int[5]; // Q1, Q2, Q3, Q4, TC
+                
+                for (Object[] row : data) {
+                    modelThongKe.addRow(row);
+                    for (int i = 1; i <= 5; i++) {
+                        tongQuy[i-1] += ((Number) row[i]).intValue();
+                    }
                 }
+                
+                // Thêm hàng tổng cộng
+                modelThongKe.addRow(new Object[]{"TỔNG CỘNG", tongQuy[0], tongQuy[1], tongQuy[2], tongQuy[3], tongQuy[4]});
+                
+                updateBarChartCrossTab(data, "Số bài thi theo Sinh viên");
             }
+        } else { // Các loại khác: từ ngày-đến ngày, tháng, quý
+            List<Object[]> data = thongKeBUS.getThongKeSinhVienTheoThoiGian(tuNgay, denNgay);
             
-            // Thêm hàng tổng cộng
-            modelThongKe.addRow(new Object[]{"TỔNG CỘNG", tongQuy[0], tongQuy[1], tongQuy[2], tongQuy[3], tongQuy[4]});
+            String[] columns = {"Sinh viên", "Số bài thi", "Điểm TB", "Tỷ lệ đạt (%)"};
+            modelThongKe.setRowCount(0);
+            modelThongKe.setColumnIdentifiers(columns);
             
-            updateBarChartCrossTab(data, "Số bài thi theo Sinh viên");
+            // Lưu data để export
+            this.currentTableData = data;
+            this.currentColumnNames = columns;
+            this.currentTieuDe = "Thống kê Sinh viên (" + sdf.format(tuNgay) + " - " + sdf.format(denNgay) + ")";
+            this.currentTuNgay = tuNgay;
+            this.currentDenNgay = denNgay;
+            this.currentTongQuanData = null;
+            
+            if (data != null && !data.isEmpty()) {
+                for (Object[] row : data) {
+                    modelThongKe.addRow(new Object[]{
+                        row[0],
+                        row[1],
+                        String.format("%.2f", ((Number) row[2]).floatValue()),
+                        String.format("%.1f", ((Number) row[3]).floatValue())
+                    });
+                }
+                
+                updateBarChartFromTable(data, 0, 1, "Số bài thi theo Sinh viên");
+            }
         }
         
         applyCenterRenderer();
@@ -838,35 +810,297 @@ public class ThongKePanel extends JPanel {
     
     /**
      * Thống kê Học phần theo Quý (Mục 12.a - Sản phẩm)
+     * Nếu chọn "Năm": Hiển thị cross-tab Q1|Q2|Q3|Q4|TC
+     * Nếu chọn loại khác: Hiển thị bảng thống kê theo khoảng thời gian
      */
-    private void showThongKeHocPhanTheoQuy() {
-        int nam = getSelectedNam();
-        List<Object[]> data = thongKeBUS.getThongKeHocPhanTheoQuy(nam);
+    private void showThongKeHocPhanTheoQuy(Date tuNgay, Date denNgay) {
+        int loaiThoiGian = cboLoaiThoiGian.getSelectedIndex();
         
-        String[] columns = {"Học phần", "Q1", "Q2", "Q3", "Q4", "TC"};
-        modelThongKe.setRowCount(0);
-        modelThongKe.setColumnIdentifiers(columns);
-        
-        // Lưu data để export
-        this.currentTableData = data;
-        this.currentColumnNames = columns;
-        this.currentTieuDe = "Thống kê Học phần theo Quý - Năm " + nam;
-        this.currentTongQuanData = null;
-        
-        if (data != null && !data.isEmpty()) {
-            int[] tongQuy = new int[5]; // Q1, Q2, Q3, Q4, TC
+        if (loaiThoiGian == 3) { // Năm - hiển thị cross-tab 4 quý
+            int nam = getSelectedNam();
+            List<Object[]> data = thongKeBUS.getThongKeHocPhanTheoQuy(nam);
             
-            for (Object[] row : data) {
-                modelThongKe.addRow(row);
-                for (int i = 1; i <= 5; i++) {
-                    tongQuy[i-1] += ((Number) row[i]).intValue();
+            String[] columns = {"Học phần", "Q1", "Q2", "Q3", "Q4", "TC"};
+            modelThongKe.setRowCount(0);
+            modelThongKe.setColumnIdentifiers(columns);
+            
+            // Lưu data để export
+            this.currentTableData = data;
+            this.currentColumnNames = columns;
+            this.currentTieuDe = "Thống kê Học phần theo Quý - Năm " + nam;
+            this.currentTongQuanData = null;
+            
+            if (data != null && !data.isEmpty()) {
+                int[] tongQuy = new int[5]; // Q1, Q2, Q3, Q4, TC
+                
+                for (Object[] row : data) {
+                    modelThongKe.addRow(row);
+                    for (int i = 1; i <= 5; i++) {
+                        tongQuy[i-1] += ((Number) row[i]).intValue();
+                    }
                 }
+                
+                // Thêm hàng tổng cộng
+                modelThongKe.addRow(new Object[]{"TỔNG CỘNG", tongQuy[0], tongQuy[1], tongQuy[2], tongQuy[3], tongQuy[4]});
+            
+                updateBarChartCrossTab(data, "Số bài thi theo Học phần");
             }
+        } else { // Các loại khác: từ ngày-đến ngày, tháng, quý
+            List<Object[]> data = thongKeBUS.getThongKeHocPhanTheoThoiGian(tuNgay, denNgay);
             
-            // Thêm hàng tổng cộng
-            modelThongKe.addRow(new Object[]{"TỔNG CỘNG", tongQuy[0], tongQuy[1], tongQuy[2], tongQuy[3], tongQuy[4]});
+            String[] columns = {"Học phần", "Số bài thi", "Điểm TB", "Tỷ lệ đạt (%)"};
+            modelThongKe.setRowCount(0);
+            modelThongKe.setColumnIdentifiers(columns);
             
-            updateBarChartCrossTab(data, "Số bài thi theo Học phần");
+            // Lưu data để export
+            this.currentTableData = data;
+            this.currentColumnNames = columns;
+            this.currentTieuDe = "Thống kê Học phần (" + sdf.format(tuNgay) + " - " + sdf.format(denNgay) + ")";
+            this.currentTuNgay = tuNgay;
+            this.currentDenNgay = denNgay;
+            this.currentTongQuanData = null;
+            
+            if (data != null && !data.isEmpty()) {
+                for (Object[] row : data) {
+                    modelThongKe.addRow(new Object[]{
+                        row[0],
+                        row[1],
+                        String.format("%.2f", ((Number) row[2]).floatValue()),
+                        String.format("%.1f", ((Number) row[3]).floatValue())
+                    });
+                }
+                
+                updateBarChartFromTable(data, 0, 1, "Số bài thi theo Học phần");
+            }
+        }
+        
+        applyCenterRenderer();
+    }
+    
+    // ==================== THỐNG KÊ ĐỀ THI, BÀI THI, TỈ LỆ ĐẠT THEO QUÝ (MỤC 12.a) ====================
+    
+    /**
+     * Thống kê Đề thi theo Quý
+     * Nếu chọn "Năm": Hiển thị cross-tab Q1|Q2|Q3|Q4|TC
+     * Nếu chọn loại khác: Hiển thị bảng thống kê theo khoảng thời gian
+     */
+    private void showThongKeDeThiTheoQuy(Date tuNgay, Date denNgay) {
+        int loaiThoiGian = cboLoaiThoiGian.getSelectedIndex();
+        
+        if (loaiThoiGian == 3) { // Năm - hiển thị cross-tab 4 quý
+            int nam = getSelectedNam();
+            List<Object[]> data = thongKeBUS.getThongKeDeThiTheoQuy(nam);
+            
+            String[] columns = {"Học phần", "Q1", "Q2", "Q3", "Q4", "TC"};
+            modelThongKe.setRowCount(0);
+            modelThongKe.setColumnIdentifiers(columns);
+            
+            // Lưu data để export
+            this.currentTableData = data;
+            this.currentColumnNames = columns;
+            this.currentTieuDe = "Thống kê Đề thi theo Quý - Năm " + nam;
+            this.currentTongQuanData = null;
+            
+            if (data != null && !data.isEmpty()) {
+                int[] tongQuy = new int[5]; // Q1, Q2, Q3, Q4, TC
+                
+                for (Object[] row : data) {
+                    modelThongKe.addRow(row);
+                    for (int i = 1; i <= 5; i++) {
+                        tongQuy[i-1] += ((Number) row[i]).intValue();
+                    }
+                }
+                
+                // Thêm hàng tổng cộng
+                modelThongKe.addRow(new Object[]{"TỔNG CỘNG", tongQuy[0], tongQuy[1], tongQuy[2], tongQuy[3], tongQuy[4]});
+                
+                updateBarChartCrossTab(data, "Số đề thi theo Học phần");
+            }
+        } else { // Các loại khác: từ ngày-đến ngày, tháng, quý
+            List<Object[]> data = thongKeBUS.getThongKeDeThiTheoThoiGian(tuNgay, denNgay);
+            
+            String[] columns = {"Học phần", "Số đề thi", "Số bài thi", "Điểm TB"};
+            modelThongKe.setRowCount(0);
+            modelThongKe.setColumnIdentifiers(columns);
+            
+            // Lưu data để export
+            this.currentTableData = data;
+            this.currentColumnNames = columns;
+            this.currentTieuDe = "Thống kê Đề thi (" + sdf.format(tuNgay) + " - " + sdf.format(denNgay) + ")";
+            this.currentTuNgay = tuNgay;
+            this.currentDenNgay = denNgay;
+            this.currentTongQuanData = null;
+            
+            if (data != null && !data.isEmpty()) {
+                for (Object[] row : data) {
+                    modelThongKe.addRow(new Object[]{
+                        row[0],
+                        row[1],
+                        row[2],
+                        String.format("%.2f", ((Number) row[3]).floatValue())
+                    });
+                }
+                
+                updateBarChartFromTable(data, 0, 1, "Số đề thi theo Học phần");
+            }
+        }
+        
+        applyCenterRenderer();
+    }
+    
+    /**
+     * Thống kê Bài thi theo Quý
+     * Nếu chọn "Năm": Hiển thị cross-tab Q1|Q2|Q3|Q4|TC
+     * Nếu chọn loại khác: Hiển thị bảng thống kê theo khoảng thời gian
+     */
+    private void showThongKeBaiThiTheoQuy(Date tuNgay, Date denNgay) {
+        int loaiThoiGian = cboLoaiThoiGian.getSelectedIndex();
+        
+        if (loaiThoiGian == 3) { // Năm - hiển thị cross-tab 4 quý
+            int nam = getSelectedNam();
+            List<Object[]> data = thongKeBUS.getThongKeBaiThiTheoQuy(nam);
+            
+            String[] columns = {"Học phần", "Q1", "Q2", "Q3", "Q4", "TC"};
+            modelThongKe.setRowCount(0);
+            modelThongKe.setColumnIdentifiers(columns);
+            
+            // Lưu data để export
+            this.currentTableData = data;
+            this.currentColumnNames = columns;
+            this.currentTieuDe = "Thống kê Bài thi theo Quý - Năm " + nam;
+            this.currentTongQuanData = null;
+            
+            if (data != null && !data.isEmpty()) {
+                int[] tongQuy = new int[5]; // Q1, Q2, Q3, Q4, TC
+                
+                for (Object[] row : data) {
+                    modelThongKe.addRow(row);
+                    for (int i = 1; i <= 5; i++) {
+                        tongQuy[i-1] += ((Number) row[i]).intValue();
+                    }
+                }
+                
+                // Thêm hàng tổng cộng
+                modelThongKe.addRow(new Object[]{"TỔNG CỘNG", tongQuy[0], tongQuy[1], tongQuy[2], tongQuy[3], tongQuy[4]});
+                
+                updateBarChartCrossTab(data, "Số bài thi theo Học phần");
+            }
+        } else { // Các loại khác: từ ngày-đến ngày, tháng, quý
+            List<Object[]> data = thongKeBUS.getThongKeBaiThiTheoThoiGian(tuNgay, denNgay);
+            
+            String[] columns = {"Học phần", "Số bài thi", "Điểm TB", "Tỷ lệ đạt (%)"};
+            modelThongKe.setRowCount(0);
+            modelThongKe.setColumnIdentifiers(columns);
+            
+            // Lưu data để export
+            this.currentTableData = data;
+            this.currentColumnNames = columns;
+            this.currentTieuDe = "Thống kê Bài thi (" + sdf.format(tuNgay) + " - " + sdf.format(denNgay) + ")";
+            this.currentTuNgay = tuNgay;
+            this.currentDenNgay = denNgay;
+            this.currentTongQuanData = null;
+            
+            if (data != null && !data.isEmpty()) {
+                for (Object[] row : data) {
+                    modelThongKe.addRow(new Object[]{
+                        row[0],
+                        row[1],
+                        String.format("%.2f", ((Number) row[2]).floatValue()),
+                        String.format("%.1f", ((Number) row[3]).floatValue())
+                    });
+                }
+                
+                updateBarChartFromTable(data, 0, 1, "Số bài thi theo Học phần");
+            }
+        }
+        
+        applyCenterRenderer();
+    }
+    
+    /**
+     * Thống kê Tỉ lệ đạt theo Quý
+     * Nếu chọn "Năm": Hiển thị cross-tab Q1|Q2|Q3|Q4|TB (%)
+     * Nếu chọn loại khác: Hiển thị bảng thống kê theo khoảng thời gian
+     */
+    private void showThongKeTyLeDatTheoQuy(Date tuNgay, Date denNgay) {
+        int loaiThoiGian = cboLoaiThoiGian.getSelectedIndex();
+        
+        if (loaiThoiGian == 3) { // Năm - hiển thị cross-tab 4 quý
+            int nam = getSelectedNam();
+            List<Object[]> data = thongKeBUS.getThongKeTyLeDatTheoQuy(nam);
+            
+            String[] columns = {"Học phần", "Q1 (%)", "Q2 (%)", "Q3 (%)", "Q4 (%)", "TB (%)"};
+            modelThongKe.setRowCount(0);
+            modelThongKe.setColumnIdentifiers(columns);
+            
+            // Lưu data để export
+            this.currentTableData = data;
+            this.currentColumnNames = columns;
+            this.currentTieuDe = "Thống kê Tỉ lệ đạt theo Quý - Năm " + nam;
+            this.currentTongQuanData = null;
+            
+            if (data != null && !data.isEmpty()) {
+                for (Object[] row : data) {
+                    modelThongKe.addRow(new Object[]{
+                        row[0],
+                        String.format("%.1f", ((Number) row[1]).floatValue()),
+                        String.format("%.1f", ((Number) row[2]).floatValue()),
+                        String.format("%.1f", ((Number) row[3]).floatValue()),
+                        String.format("%.1f", ((Number) row[4]).floatValue()),
+                        String.format("%.1f", ((Number) row[5]).floatValue())
+                    });
+                }
+                
+                // Cập nhật chart với tỉ lệ đạt trung bình
+                List<String> labels = new ArrayList<>();
+                List<Double> values = new ArrayList<>();
+                int count = Math.min(data.size(), 10);
+                for (int i = 0; i < count; i++) {
+                    Object[] row = data.get(i);
+                    String label = row[0] != null ? row[0].toString() : "-";
+                    if (label.length() > 10) {
+                        label = label.substring(0, 8) + "..";
+                    }
+                    labels.add(label);
+                    values.add(((Number) row[5]).doubleValue());
+                }
+                
+                JPanel pnlBang = (JPanel) pnlKetQua.getComponent(1);
+                JPanel pnlChartRight = (JPanel) pnlBang.getComponent(1);
+                SimpleBarChart chart = (SimpleBarChart) pnlChartRight.getComponent(0);
+                chart.setTitle("Tỉ lệ đạt theo Học phần (%)");
+                chart.setYAxisLabel("%");
+                chart.setMaxValue(100.0);
+                chart.setData(labels, values);
+            }
+        } else { // Các loại khác: từ ngày-đến ngày, tháng, quý
+            List<Object[]> data = thongKeBUS.getThongKeTyLeDatTheoThoiGian(tuNgay, denNgay);
+            
+            String[] columns = {"Học phần", "Số bài thi", "Đạt", "Rớt", "Tỷ lệ đạt (%)"};
+            modelThongKe.setRowCount(0);
+            modelThongKe.setColumnIdentifiers(columns);
+            
+            // Lưu data để export
+            this.currentTableData = data;
+            this.currentColumnNames = columns;
+            this.currentTieuDe = "Thống kê Tỉ lệ đạt (" + sdf.format(tuNgay) + " - " + sdf.format(denNgay) + ")";
+            this.currentTuNgay = tuNgay;
+            this.currentDenNgay = denNgay;
+            this.currentTongQuanData = null;
+            
+            if (data != null && !data.isEmpty()) {
+                for (Object[] row : data) {
+                    modelThongKe.addRow(new Object[]{
+                        row[0],
+                        row[1],
+                        row[2],
+                        row[3],
+                        String.format("%.1f", ((Number) row[4]).floatValue())
+                    });
+                }
+                
+                updateBarChartFromTable(data, 0, 4, "Tỉ lệ đạt theo Học phần (%)");
+            }
         }
         
         applyCenterRenderer();

@@ -75,21 +75,8 @@ public class ThongKeBUS {
         };
     }
     
-    /**
-     * Lấy tên quý
-     */
-    public String getTenQuy(int quy) {
-        return "Quý " + quy;
-    }
     
-    /**
-     * Lấy các tháng trong quý
-     */
-    public int[] getThangTrongQuy(int quy) {
-        int thangDau = (quy - 1) * 3 + 1;
-        return new int[]{thangDau, thangDau + 1, thangDau + 2};
-    }
-    
+
     // ==================== Gọi DAO ====================
     
     /**
@@ -104,17 +91,6 @@ public class ThongKeBUS {
         }
     }
     
-    /**
-     * Thống kê theo tháng
-     */
-    public List<Object[]> getThongKeTheoThang(int nam) {
-        try {
-            return thongKeDAO.getThongKeTheoThang(nam);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
     
     /**
      * Thống kê theo quý
@@ -139,18 +115,7 @@ public class ThongKeBUS {
             return null;
         }
     }
-    
-    /**
-     * Thống kê theo khoa và quý (cross-tabulation điểm TB)
-     */
-    public List<Object[]> getThongKeKhoaTheoQuy(int nam) {
-        try {
-            return thongKeDAO.getThongKeKhoaTheoQuy(nam);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+
     
     /**
      * Thống kê theo ngành
@@ -177,18 +142,6 @@ public class ThongKeBUS {
     }
     
     /**
-     * Thống kê theo giảng viên
-     */
-    public List<Object[]> getThongKeTheoGiangVien(Date tuNgay, Date denNgay) {
-        try {
-            return thongKeDAO.getThongKeTheoGiangVien(tuNgay, denNgay);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    
-    /**
      * Thống kê theo kỳ thi
      */
     public List<Object[]> getThongKeTheoKyThi(Date tuNgay, Date denNgay) {
@@ -200,72 +153,7 @@ public class ThongKeBUS {
         }
     }
     
-    /**
-     * Lấy danh sách năm có dữ liệu
-     */
-    public List<Integer> getDanhSachNam() {
-        try {
-            return thongKeDAO.getDanhSachNam();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    
-    // ==================== Tổng hợp tính toán ====================
-    
-    /**
-     * Tính hàng tổng cộng cho bảng thống kê
-     */
-    public Object[] tinhTongCong(List<Object[]> data, int[] cotSo) {
-        if (data == null || data.isEmpty()) return null;
-        
-        int soCot = data.get(0).length;
-        Object[] tongCong = new Object[soCot];
-        tongCong[0] = "Tổng cộng";
-        
-        // Khởi tạo tổng
-        double[] sums = new double[soCot];
-        int[] counts = new int[soCot];
-        
-        for (Object[] row : data) {
-            for (int cot : cotSo) {
-                if (row[cot] != null) {
-                    if (row[cot] instanceof Number) {
-                        sums[cot] += ((Number) row[cot]).doubleValue();
-                        counts[cot]++;
-                    }
-                }
-            }
-        }
-        
-        // Gán giá trị trung bình (phù hợp với điểm) hoặc tổng (phù hợp với số lượng)
-        for (int cot : cotSo) {
-            if (counts[cot] > 0) {
-                // Với cột điểm/tỷ lệ thì lấy trung bình, với cột số lượng thì lấy tổng
-                // Giả sử cột >= 3 là điểm/tỷ lệ, cột < 3 là số lượng
-                if (cot >= 3) {
-                    tongCong[cot] = Math.round(sums[cot] / counts[cot] * 100) / 100.0;
-                } else {
-                    tongCong[cot] = (int) sums[cot];
-                }
-            }
-        }
-        
-        return tongCong;
-    }
-    
-    /**
-     * Format số thập phân
-     */
-    public String formatSo(Object value, int soLe) {
-        if (value == null) return "-";
-        if (value instanceof Number) {
-            return String.format("%." + soLe + "f", ((Number) value).doubleValue());
-        }
-        return value.toString();
-    }
-    
+
     // ==================== THỐNG KÊ THEO QUÝ (MỤC 12.a) ====================
     
     /**
@@ -304,6 +192,116 @@ public class ThongKeBUS {
         }
     }
     
+    // ==================== THỐNG KÊ ĐỀ THI, BÀI THI, TỈ LỆ ĐẠT THEO QUÝ (MỤC 12.a) ====================
+    
+    /**
+     * Thống kê Đề thi theo Quý
+     */
+    public List<Object[]> getThongKeDeThiTheoQuy(int nam) {
+        try {
+            return thongKeDAO.getThongKeDeThiTheoQuy(nam);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê Đề thi theo khoảng thời gian
+     */
+    public List<Object[]> getThongKeDeThiTheoThoiGian(Date tuNgay, Date denNgay) {
+        try {
+            return thongKeDAO.getThongKeDeThiTheoThoiGian(tuNgay, denNgay);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê Bài thi theo Quý
+     */
+    public List<Object[]> getThongKeBaiThiTheoQuy(int nam) {
+        try {
+            return thongKeDAO.getThongKeBaiThiTheoQuy(nam);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê Bài thi theo khoảng thời gian
+     */
+    public List<Object[]> getThongKeBaiThiTheoThoiGian(Date tuNgay, Date denNgay) {
+        try {
+            return thongKeDAO.getThongKeBaiThiTheoThoiGian(tuNgay, denNgay);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê Tỉ lệ đạt theo Quý
+     */
+    public List<Object[]> getThongKeTyLeDatTheoQuy(int nam) {
+        try {
+            return thongKeDAO.getThongKeTyLeDatTheoQuy(nam);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê Tỉ lệ đạt theo khoảng thời gian
+     */
+    public List<Object[]> getThongKeTyLeDatTheoThoiGian(Date tuNgay, Date denNgay) {
+        try {
+            return thongKeDAO.getThongKeTyLeDatTheoThoiGian(tuNgay, denNgay);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê Giảng viên theo khoảng thời gian
+     */
+    public List<Object[]> getThongKeGiangVienTheoThoiGian(Date tuNgay, Date denNgay) {
+        try {
+            return thongKeDAO.getThongKeGiangVienTheoThoiGian(tuNgay, denNgay);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê Sinh viên theo khoảng thời gian
+     */
+    public List<Object[]> getThongKeSinhVienTheoThoiGian(Date tuNgay, Date denNgay) {
+        try {
+            return thongKeDAO.getThongKeSinhVienTheoThoiGian(tuNgay, denNgay);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /**
+     * Thống kê Học phần theo khoảng thời gian
+     */
+    public List<Object[]> getThongKeHocPhanTheoThoiGian(Date tuNgay, Date denNgay) {
+        try {
+            return thongKeDAO.getThongKeHocPhanTheoThoiGian(tuNgay, denNgay);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
     // ==================== THỐNG KÊ NHIỀU KHÓA (MỤC 12.b) ====================
     
     /**
@@ -330,27 +328,5 @@ public class ThongKeBUS {
         }
     }
     
-    /**
-     * Thống kê chi tiết theo Tháng (cho bảng mục 12.a)
-     */
-    public List<Object[]> getThongKeChiTietTheoThang(int nam) {
-        try {
-            return thongKeDAO.getThongKeChiTietTheoThang(nam);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
     
-    /**
-     * Thống kê chi tiết theo Quý (cho bảng mục 12.a)
-     */
-    public List<Object[]> getThongKeChiTietTheoQuy(int nam) {
-        try {
-            return thongKeDAO.getThongKeChiTietTheoQuy(nam);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 }
