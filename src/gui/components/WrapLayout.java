@@ -1,11 +1,32 @@
-
+/*
+ * ===========================================================================
+ * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
+ * Component: WrapLayout - FlowLayout tự động xuống dòng
+ * 
+ * MÔ TẢ:
+ *   - Mở rộng FlowLayout với khả năng tự động wrap xuống dòng mới
+ *   - Khi các component vượt quá chiều rộng container
+ *   - Tự động tính toán lại chiều cao preferred
+ * 
+ * CÁCH SỬ DỤNG:
+ *   // Thay FlowLayout bằng WrapLayout
+ *   JPanel panel = new JPanel(new WrapLayout(FlowLayout.LEFT, 5, 5));
+ *   
+ *   // Thêm các component - tự động xuống dòng khi hết chỗ
+ *   for (int i = 0; i < 20; i++) {
+ *       panel.add(new JButton("Button " + i));
+ *   }
+ * 
+ * SỬ DỤNG TRONG HỆ THỐNG:
+ *   - LamBaiThiFrame: Bảng số câu hỏi (xuống dòng khi nhiều câu)
+ * 
+ * @see LamBaiThiFrame - Sử dụng WrapLayout
+ * ===========================================================================
+ */
 package gui.components;
 
 import java.awt.*;
-
-/**
- * FlowLayout that wraps to new rows when components exceed available width.
- */
 public class WrapLayout extends FlowLayout {
     public WrapLayout() {
         super();

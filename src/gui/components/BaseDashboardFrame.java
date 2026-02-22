@@ -1,3 +1,46 @@
+/*
+ * ===========================================================================
+ * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
+ * Component: BaseDashboardFrame - Khung dashboard chung
+ * 
+ * MÔ TẢ:
+ *   - Class trừu tượng (abstract) là base cho các dashboard
+ *   - Cung cấp layout cơ bản: Header + Sidebar + Content Area
+ *   - Sử dụng CardLayout để chuyển đổi giữa các panel
+ *   - Sidebar với các nút menu có hiệu ứng active
+ * 
+ * CẤU TRÚC GIAO DIỆN:
+ *   ┌─────────────────────────────────────────────────┐
+ *   │              HEADER (Logo + User Info)             │
+ *   ├──────────┬──────────────────────────────────────┤
+ *   │ SIDEBAR  │                                      │
+ *   │          │                                      │
+ *   │ Menu 1   │          CONTENT AREA               │
+ *   │ Menu 2   │          (CardLayout)               │
+ *   │ Menu 3   │                                      │
+ *   │ ...      │                                      │
+ *   │          │                                      │
+ *   └──────────┴──────────────────────────────────────┘
+ * 
+ * CÁC METHOD ABSTRACT (subclass PHẢI implement):
+ *   - initContentPanels(): Khởi tạo các panel nội dung
+ *   - initSidebarItems(): Khởi tạo menu sidebar
+ *   - getUserName(): Lấy tên người dùng
+ *   - getRoleName(): Lấy vai trò (Admin/Giảng viên/Sinh viên)
+ *   - onLogout(): Xử lý đăng xuất
+ * 
+ * CÁC METHOD HỖ TRỢ:
+ *   - addMenuGroup(): Thêm nhóm menu (tiêu đề nhỏ)
+ *   - addMenuItem(): Thêm mục menu (nút)
+ *   - showPanel(): Chuyển đến panel theo tên
+ *   - setActiveButton(): Đánh dấu nút đang active
+ * 
+ * @see AdminDashboard - Dashboard cho Admin
+ * @see TeacherDashboard - Dashboard cho Giảng viên
+ * @see StudentDashboard - Dashboard cho Sinh viên
+ * ===========================================================================
+ */
 package gui.components;
 
 import config.Constants;

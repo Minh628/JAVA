@@ -1,6 +1,35 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: ThongTinGiangVienPanel - Panel thông tin cá nhân giảng viên (sử dụng components)
+ * ===========================================================================
+ * GUI: ThongTinAdminPanel - Panel thông tin cá nhân Admin
+ * 
+ * MÔ TẢ:
+ *   - Hiển thị thông tin cá nhân của Admin đang đăng nhập
+ *   - Cho phép đổi mật khẩu
+ * 
+ * GIAO DIỆN:
+ *   ┌─────────────────────────────────────────────────┐
+ *   │             THÔNG TIN CÁ NHÂN                       │
+ *   ├─────────────────────────────────────────────────┤
+ *   │  Mã GV:         [xxx]                             │
+ *   │  Họ tên:        [xxx xxx]                         │
+ *   │  Email:         [xxx@xxx.com]                     │
+ *   │  Khoa:          [Tên Khoa]                        │
+ *   │  Tên đăng nhập: [xxxxx]                           │
+ *   ├─────────────────────────────────────────────────┤
+ *   │             [Đổi mật khẩu]                         │
+ *   └─────────────────────────────────────────────────┘
+ * 
+ * COMPONENTS SỬ DỤNG:
+ *   - HeaderLabel: Tiêu đề panel
+ *   - InfoDisplayPanel: Hiển thị thông tin dạng Label: Value
+ *   - CustomButton: Nút đổi mật khẩu
+ *   - ChangePasswordDialog: Dialog đổi mật khẩu
+ * 
+ * @see GiangVienBUS - Business logic giảng viên
+ * @see ChangePasswordDialog - Dialog đổi mật khẩu
+ * ===========================================================================
  */
 package gui.admin;
 

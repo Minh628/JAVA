@@ -1,13 +1,45 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * Component: CrudButtonPanel - Panel chứa các nút CRUD dùng chung
+ * ===========================================================================
+ * Component: CrudButtonPanel - Panel chứa nhóm nút CRUD
+ * 
+ * MÔ TẢ:
+ *   - Panel chứa 4 nút cơ bản: Thêm, Sửa, Xóa, Làm mới
+ *   - Sử dụng CustomButton để đảm bảo style đồng bộ
+ *   - Mỗi nút có màu riêng theo chức năng:
+ *     + Thêm: SUCCESS_COLOR (xanh lá)
+ *     + Sửa: PRIMARY_COLOR (xanh dương)
+ *     + Xóa: DANGER_COLOR (đỏ)
+ *     + Làm mới: WARNING_COLOR (cam)
+ * 
+ * CÁCH SỬ DỤNG:
+ *   // Tạo panel với background mặc định
+ *   CrudButtonPanel buttons = new CrudButtonPanel();
+ *   
+ *   // Tạo panel với background tùy chỉnh
+ *   CrudButtonPanel buttons = new CrudButtonPanel(Color.WHITE);
+ *   
+ *   // Gán listener cho từng nút
+ *   buttons.setThemListener(e -> them());
+ *   buttons.setSuaListener(e -> sua());
+ *   
+ *   // Hoặc gán tất cả cùng lúc
+ *   buttons.setAllListeners(e -> them(), e -> sua(), e -> xoa(), e -> lamMoi());
+ *   
+ *   // Thêm nút bổ sung (ví dụ: Export Excel)
+ *   buttons.add(new CustomButton("Xuất Excel", Constants.INFO_COLOR, Color.WHITE));
+ * 
+ * @see BaseCrudPanel - Panel CRUD sử dụng CrudButtonPanel
+ * @see CustomButton - Nút bấm tùy chỉnh
+ * ===========================================================================
  */
 package gui.components;
 
 import config.Constants;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
 public class CrudButtonPanel extends JPanel {
     private CustomButton btnThem;

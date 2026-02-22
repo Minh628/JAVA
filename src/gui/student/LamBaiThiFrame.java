@@ -1,6 +1,43 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: LamBaiThiFrame - Frame làm bài thi (hỗ trợ cả trắc nghiệm và điền khuyết)
+ * ===========================================================================
+ * GUI: LamBaiThiFrame - Màn hình làm bài thi
+ * 
+ * MÔ TẢ:
+ *   - Màn hình full-screen để làm bài thi
+ *   - Hỗ trợ 2 loại câu hỏi: Trắc nghiệm và Điền khuyết
+ *   - Đếm ngược thời gian
+ *   - Tự động nộp bài khi hết giờ
+ * 
+ * CẤU TRÚC GIAO DIỆN:
+ *   ┌─────────────────────────────────────────────────┐
+ *   │ Câu 1/10        [Loại: Trắc nghiệm]        00:30 │
+ *   ├─────────────────────────────────────────────────┤
+ *   │                                                 │
+ *   │              NỘI DUNG CÂU HỏI                    │
+ *   │                                                 │
+ *   ├─────────────────────────────────────────────────┤
+ *   │ ○ A. Đáp án A                                    │
+ *   │ ● B. Đáp án B  <- Đã chọn                       │
+ *   │ ○ C. Đáp án C                                    │
+ *   │ ○ D. Đáp án D                                    │
+ *   ├─────────────────────────────────────────────────┤
+ *   │  [1][2][3]...[10]   Bảng số câu hỏi            │
+ *   ├─────────────────────────────────────────────────┤
+ *   │ [<< Trước]           [Tiếp >>]        [NộP BÀI] │
+ *   └─────────────────────────────────────────────────┘
+ * 
+ * TÍNH NĂNG:
+ *   - Trộn ngẫu nhiên thứ tự câu hỏi
+ *   - Trộn ngẫu nhiên đáp án (câu trắc nghiệm)
+ *   - Lưu đáp án tạm thời khi chuyển câu
+ *   - Bảng số câu hiện màu: Xanh = đã làm, Xám = chưa làm
+ *   - Khóa cửa sổ khi đang làm bài (không cho đóng)
+ * 
+ * @see BaiThiBUS - Lưu kết quả bài thi
+ * @see ChiTietBaiThiDTO - Lưu đáp án từng câu
+ * ===========================================================================
  */
 package gui.student;
 

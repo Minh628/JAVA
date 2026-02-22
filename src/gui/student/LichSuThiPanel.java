@@ -1,6 +1,30 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: LichSuThiPanel - Panel hiển thị lịch sử thi của sinh viên
+ * ===========================================================================
+ * GUI: LichSuThiPanel - Panel lịch sử thi của sinh viên
+ * 
+ * MÔ TẢ:
+ *   - Hiển thị danh sách các bài thi đã làm
+ *   - Xem chi tiết kết quả từng bài thi
+ * 
+ * THÔNG TIN HIỂN THỊ:
+ *   - Tên đề thi, Học phần, Ngày thi
+ *   - Điểm, Số câu đúng, Kết quả (Đạt/Chưa đạt)
+ * 
+ * CHỨC NĂNG:
+ *   - Xem danh sách bài thi đã làm
+ *   - Lọc theo học phần
+ *   - Xem chi tiết điểm (mở ChiTietDiemDialog)
+ *   - Làm mới danh sách
+ * 
+ * COMPONENTS SỬ DỤNG:
+ *   - CustomTable: Bảng lịch sử thi
+ *   - CustomButton: Nút "Xem chi tiết", "Làm mới"
+ * 
+ * @see ChiTietDiemDialog - Dialog xem chi tiết điểm
+ * @see BaiThiBUS - Lấy danh sách bài thi
+ * ===========================================================================
  */
 package gui.student;
 

@@ -1,3 +1,31 @@
+/*
+ * ===========================================================================
+ * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
+ * GUI: QuanLySinhVienPanel - Panel quản lý Sinh viên
+ * 
+ * MÔ TẢ:
+ *   - Quản lý danh sách sinh viên (CRUD)
+ *   - Hỗ trợ import danh sách từ Excel
+ *   - Gán sinh viên vào Ngành học
+ *   - Xem lịch sử thi của sinh viên (bảng phụ)
+ * 
+ * CHỨC NĂNG:
+ *   - Thêm sinh viên mới (tên đăng nhập, mật khẩu, email, ngành)
+ *   - Sửa thông tin sinh viên
+ *   - Xóa sinh viên (khóa tài khoản)
+ *   - Tìm kiếm theo mã SV, tên đăng nhập, họ tên, email, ngành
+ *   - Tìm kiếm nâng cao (AdvancedSearchDialog)
+ *   - Import danh sách sinh viên từ Excel
+ *   - Xem lịch sử thi khi chọn sinh viên
+ * 
+ * KẾ THỮA:
+ *   - BaseCrudPanel: Form + Nút CRUD + Bảng (2 bảng - Master-Detail)
+ * 
+ * @see SinhVienBUS - Business logic sinh viên
+ * @see SinhVienExcelImporter - Import từ Excel
+ * ===========================================================================
+ */
 package gui.admin;
 
 import bus.BaiThiBUS;

@@ -1,9 +1,29 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: XemDiemSinhVienPanel - Panel xem điểm sinh viên cho giảng viên
+ * ===========================================================================
+ * GUI: XemDiemSinhVienPanel - Panel xem điểm sinh viên
  * 
- * Giảng viên xem được tất cả điểm của sinh viên thuộc khoa mình
- * Kế thừa SearchPanel để tái sử dụng code GUI
+ * MÔ TẢ:
+ *   - Giảng viên xem kết quả thi của sinh viên
+ *   - Lọc theo học phần, sinh viên
+ *   - Xuất bảng điểm ra Excel
+ * 
+ * CHỨC NĂNG:
+ *   - Xem danh sách bài thi (Mã SV, Họ tên, Đề thi, Điểm, Ngày thi)
+ *   - Lọc theo học phần
+ *   - Tìm kiếm theo mã SV, họ tên
+ *   - Xuất bảng điểm ra file Excel
+ * 
+ * GIỚI HẠN:
+ *   - Giảng viên chỉ xem được điểm của SV làm đề thi do mình tạo
+ * 
+ * KẾ THỮA:
+ *   - SearchPanel: Thanh tìm kiếm + Bảng
+ * 
+ * @see BaiThiBUS - Business logic bài thi
+ * @see BangDiemExcelExporter - Xuất Excel
+ * ===========================================================================
  */
 package gui.teacher;
 

@@ -1,3 +1,26 @@
+/*
+ * ===========================================================================
+ * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
+ * GUI: QuanLyHocPhanPanel - Panel quản lý Học phần
+ * 
+ * MÔ TẢ:
+ *   - Quản lý danh sách học phần (môn học)
+ *   - Gán học phần vào Khoa
+ * 
+ * CHỨC NĂNG:
+ *   - Thêm học phần mới (tên môn, số tín chỉ, thuộc khoa)
+ *   - Sửa thông tin học phần
+ *   - Xóa học phần
+ *   - Tìm kiếm theo mã HP, tên môn, số tín chỉ, khoa
+ *   - Chọn Khoa qua SelectEntityDialog
+ * 
+ * KẾ THỮA:
+ *   - BaseCrudPanel: Form + Nút CRUD + Bảng
+ * 
+ * @see HocPhanBUS - Business logic học phần
+ * ===========================================================================
+ */
 package gui.admin;
 
 import bus.HocPhanBUS;

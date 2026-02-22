@@ -1,6 +1,32 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
  * Component: SimplePieChart - Biểu đồ tròn đơn giản
+ * 
+ * MÔ TẢ:
+ *   - Vẽ biểu đồ tròn (pie chart) không cần thư viện ngoài
+ *   - Tự vẽ bằng Graphics2D
+ *   - Hiển thị tỷ lệ phần trăm
+ *   - Có chú thích (legend) bên phải
+ * 
+ * CÁCH SỬ DỤNG:
+ *   SimplePieChart chart = new SimplePieChart("Tỷ lệ Đạt/Rớt");
+ *   
+ *   List<String> labels = Arrays.asList("Đạt", "Rớt");
+ *   List<Double> values = Arrays.asList(75.0, 25.0);
+ *   chart.setData(labels, values);
+ * 
+ * TÍNH NĂNG:
+ *   - Hiển thị tiêu đề (title) phía trên
+ *   - Vẽ biểu đồ tròn với các màu khác nhau
+ *   - Hiển thị phần trăm trên mỗi phần
+ *   - Legend bên phải với màu + tên + giá trị
+ *   - Màu mặc định: Xanh lá (Đạt), Đỏ (Rớt)
+ * 
+ * @see SimpleBarChart - Biểu đồ cột
+ * @see ThongKePanel - Sử dụng SimplePieChart
+ * ===========================================================================
  */
 package gui.components;
 

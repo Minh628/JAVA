@@ -1,6 +1,25 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * Component: ChangePasswordDialog - Dialog đổi mật khẩu dùng chung
+ * ===========================================================================
+ * Component: ChangePasswordDialog - Dialog đổi mật khẩu
+ * 
+ * MÔ TẢ:
+ *   - Dialog đổi mật khẩu dùng chung cho Admin, Giảng viên, Sinh viên
+ *   - Yêu cầu nhập: Mật khẩu cũ, Mật khẩu mới, Xác nhận mật khẩu mới
+ *   - Kiểm tra mật khẩu mới và xác nhận khớp nhau
+ *   - Sử dụng Callback pattern để xử lý logic đổi mật khẩu
+ * 
+ * CÁCH SỬ DỤNG:
+ *   ChangePasswordDialog.show(this, (oldPwd, newPwd) -> {
+ *       // Gọi BUS để đổi mật khẩu
+ *       return giangVienBUS.doiMatKhau(maGV, oldPwd, newPwd);
+ *   });
+ * 
+ * @see ThongTinAdminPanel - Sử dụng ChangePasswordDialog
+ * @see ThongTinGiangVienPanel - Sử dụng ChangePasswordDialog
+ * @see ThongTinSinhVienPanel - Sử dụng ChangePasswordDialog
+ * ===========================================================================
  */
 package gui.components;
 

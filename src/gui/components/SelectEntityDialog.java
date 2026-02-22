@@ -1,3 +1,37 @@
+/*
+ * ===========================================================================
+ * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
+ * Component: SelectEntityDialog - Dialog chọn entity chung
+ * 
+ * MÔ TẢ:
+ *   - Dialog generic cho phép chọn một entity từ danh sách
+ *   - Sử dụng Generic Type <T> để làm việc với mọi loại DTO
+ *   - Có thanh tìm kiếm để lọc nhanh
+ *   - Double-click hoặc Enter để chọn
+ * 
+ * CÁCH SỬ DỤNG:
+ *   // Ví dụ: Chọn Khoa
+ *   List<KhoaDTO> danhSach = khoaBUS.getDanhSachKhoa();
+ *   SelectEntityDialog<KhoaDTO> dialog = new SelectEntityDialog<>(
+ *       (Frame) SwingUtilities.getWindowAncestor(this),
+ *       "Chọn Khoa",
+ *       "KHOA",
+ *       danhSach,
+ *       KhoaDTO::getMaKhoa,    // Function lấy ID
+ *       KhoaDTO::getTenKhoa    // Function lấy tên hiển thị
+ *   );
+ *   dialog.setVisible(true);
+ *   
+ *   if (SelectEntityDialog.getSelectedId() > 0) {
+ *       int maKhoa = SelectEntityDialog.getSelectedId();
+ *       String tenKhoa = SelectEntityDialog.getSelectedLabel();
+ *   }
+ * 
+ * @see QuanLyGiangVienPanel - Sử dụng chọn Khoa
+ * @see QuanLyNganhPanel - Sử dụng chọn Khoa
+ * ===========================================================================
+ */
 package gui.components;
 
 import config.Constants;

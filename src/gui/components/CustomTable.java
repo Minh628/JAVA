@@ -1,6 +1,36 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: CustomTable - Bảng tùy chỉnh
+ * ===========================================================================
+ * Component: CustomTable - Bảng dữ liệu tùy chỉnh
+ * 
+ * MÔ TẢ:
+ *   - Bảng JTable với style hiện đại, đẹp mắt
+ *   - Header màu PRIMARY_COLOR với chữ trắng, căn giữa
+ *   - Các dòng xát (zebra stripes) dễ nhìn
+ *   - Hiệu ứng hover khi di chuột qua dòng
+ *   - Row cao 38px để dễ click
+ * 
+ * CÁCH SỬ DỤNG:
+ *   // Cách 1: Với TableModel
+ *   DefaultTableModel model = new DefaultTableModel(columns, 0);
+ *   CustomTable table = new CustomTable(model);
+ *   
+ *   // Cách 2: Với data trực tiếp
+ *   CustomTable table = new CustomTable(data, columns);
+ *   
+ *   // Cách 3: Rỗng, add data sau
+ *   CustomTable table = new CustomTable();
+ * 
+ * TÍNH NĂNG:
+ *   - Auto-resize columns
+ *   - Selection background hiệu ứng mờ
+ *   - Grid lines tùy chỉnh
+ *   - Intercell spacing đẹp
+ * 
+ * @see SearchPanel - Sử dụng CustomTable
+ * @see BaseCrudPanel - Sử dụng CustomTable
+ * ===========================================================================
  */
 package gui.components;
 

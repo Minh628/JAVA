@@ -1,7 +1,30 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: QuanLyKhoaPanel - Panel quản lý Khoa và Ngành
- * Có 2 JTable: Click vào Khoa -> hiện danh sách Ngành thuộc Khoa đó
+ * ===========================================================================
+ * GUI: QuanLyKhoaPanel - Panel quản lý Khoa
+ * 
+ * MÔ TẢ:
+ *   - Quản lý danh sách Khoa
+ *   - Hiển thị danh sách Ngành thuộc Khoa khi chọn (Master-Detail)
+ * 
+ * CHỨC NĂNG:
+ *   - Thêm khoa mới
+ *   - Sửa tên khoa
+ *   - Xóa khoa (chỉ xóa được khi không có ngành con)
+ *   - Tìm kiếm theo mã khoa, tên khoa
+ *   - Xem danh sách ngành thuộc khoa đang chọn
+ * 
+ * GIAO DIỆN:
+ *   - Bảng trái: Danh sách Khoa (Mã, Tên, Số ngành)
+ *   - Bảng phải: Danh sách Ngành thuộc Khoa được chọn
+ * 
+ * KẾ THỮA:
+ *   - BaseCrudPanel: Constructor 2 bảng (Master-Detail)
+ * 
+ * @see KhoaBUS - Business logic khoa
+ * @see NganhBUS - Lấy danh sách ngành theo khoa
+ * ===========================================================================
  */
 package gui.admin;
 

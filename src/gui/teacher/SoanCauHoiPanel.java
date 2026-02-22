@@ -1,13 +1,40 @@
-
-
-
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: SoanCauHoiPanel - Panel soạn câu hỏi (hỗ trợ cả trắc nghiệm và điền khuyết)
+ * ===========================================================================
+ * GUI: SoanCauHoiPanel - Panel soạn câu hỏi trắc nghiệm
  * 
- * Sử dụng BUS chuyên biệt:
- * - CauHoiBUS: Quản lý câu hỏi
- * - HocPhanBUS: Lấy danh sách học phần
+ * MÔ TẢ:
+ *   - Cho phép giảng viên soạn câu hỏi cho đề thi
+ *   - Hỗ trợ 2 loại câu hỏi:
+ *     + Trắc nghiệm 4 đáp án (Multiple Choice - MC)
+ *     + Điền khuyết (DK)
+ *   - Import câu hỏi từ Excel
+ * 
+ * CHỨC NĂNG:
+ *   - Thêm câu hỏi mới (nội dung, loại, độ khó, học phần)
+ *   - Sửa câu hỏi
+ *   - Xóa câu hỏi
+ *   - Tìm kiếm theo nội dung, loại, độ khó, học phần
+ *   - Import hàng loạt từ file Excel
+ * 
+ * GIAO DIỆN CÂU HỏI TRẮC NGHIỆM:
+ *   - Nội dung câu hỏi (TextArea)
+ *   - 4 đáp án A, B, C, D (TextField)
+ *   - Đáp án đúng (ComboBox A/B/C/D)
+ * 
+ * GIAO DIỆN CÂU HỏI ĐIỀN KHUYẾT:
+ *   - Câu hỏi chứa [___] (dấu chọ nghĩa)
+ *   - Đáp án đúng (từ cần điền)
+ * 
+ * KẾ THỮA:
+ *   - BaseCrudPanel: Form + Nút CRUD + Bảng
+ * 
+ * @see CauHoiBUS - Business logic câu hỏi
+ * @see CauHoiExcelImporter - Import từ Excel
+ * @see CauHoiMCDTO - DTO câu hỏi trắc nghiệm
+ * @see CauHoiDKDTO - DTO câu hỏi điền khuyết
+ * ===========================================================================
  */
 package gui.teacher;
 

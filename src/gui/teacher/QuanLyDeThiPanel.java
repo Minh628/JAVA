@@ -1,19 +1,32 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: QuanLyDeThiPanel - Panel quản lý đề thi cho giảng viên
+ * ===========================================================================
+ * GUI: QuanLyDeThiPanel - Panel quản lý đề thi
  * 
- * Kế thừa BaseCrudPanel để tái sử dụng code CRUD
+ * MÔ TẢ:
+ *   - Quản lý danh sách đề thi của giảng viên
+ *   - Thêm câu hỏi vào đề thi
+ *   - Gán đề thi vào học phần và kỳ thi
  * 
- * Sử dụng BUS chuyên biệt:
- * - DeThiBUS: Quản lý đề thi và chi tiết đề thi
- * - HocPhanBUS: Lấy danh sách học phần
- * - KyThiBUS: Lấy danh sách kỳ thi
- * - CauHoiBUS: Lấy danh sách câu hỏi
+ * LUỒNG THAO TÁC:
+ *   1. Tạo đề thi (vỏ đề): tên, học phần, kỳ thi, thời gian, số câu
+ *   2. Chọn đề thi -> Bấm "Quản lý câu hỏi" để thêm/xóa câu
+ *   3. Publish đề thi để sinh viên có thể làm bài
  * 
- * Luồng thao tác:
- * 1. Thêm đề thi: Tạo vỏ đề thi (metadata) trước
- * 2. Chọn đề thi -> Bấm "Quản lý câu hỏi" để thêm/xóa câu hỏi
- * 3. Xóa đề thi: Kiểm tra có bài thi chưa -> Nếu có thì không cho xóa
+ * CHỨC NĂNG:
+ *   - Thêm đề thi mới
+ *   - Sửa thông tin đề thi
+ *   - Xóa đề thi (chỉ xóa được nếu chưa có bài thi)
+ *   - Quản lý câu hỏi trong đề
+ *   - Tìm kiếm theo tên, học phần, kỳ thi
+ * 
+ * KẾ THỮA:
+ *   - BaseCrudPanel: Form + Nút CRUD + Bảng (2 bảng Master-Detail)
+ * 
+ * @see DeThiBUS - Business logic đề thi
+ * @see ChiTietDeThiDTO - Chi tiết câu hỏi trong đề
+ * ===========================================================================
  */
 package gui.teacher;
 

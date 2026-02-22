@@ -1,7 +1,30 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: StudentDashboard - Màn hình sinh viên
- * Refactored: Tách riêng các Panel, giống AdminDashboard
+ * ===========================================================================
+ * GUI: StudentDashboard - Giao diện chính cho Sinh viên
+ * 
+ * MÔ TẢ:
+ *   - Dashboard chính của Sinh viên sau khi đăng nhập
+ *   - Sử dụng layout: Header + Sidebar + Content Area
+ * 
+ * CÁC MENU:
+ *   - Thi trắc nghiệm: ThiTracNghiemPanel - Chọn đề thi và bắt đầu làm bài
+ *   - Lịch sử thi: LichSuThiPanel - Xem kết quả các bài thi đã làm
+ *   - Thông tin cá nhân: ThongTinSinhVienPanel
+ * 
+ * KẾ THỮA:
+ *   - BaseDashboardFrame: Layout chung, sidebar, header
+ * 
+ * LÔGIC ĐẶC BIỆT:
+ *   - Khi làm bài xong (LamBaiThiFrame), cần refresh danh sách lịch sử thi
+ *   - ThiTracNghiemPanel và LichSuThiPanel được giữ tham chiếu để refresh
+ * 
+ * @see BaseDashboardFrame - Khung dashboard chung
+ * @see ThiTracNghiemPanel - Panel thi trắc nghiệm
+ * @see LichSuThiPanel - Panel lịch sử thi
+ * @see LamBaiThiFrame - Màn hình làm bài thi
+ * ===========================================================================
  */
 package gui.student;
 

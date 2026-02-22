@@ -1,14 +1,38 @@
+/*
+ * ===========================================================================
+ * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
+ * Component: SearchPanel - Panel tìm kiếm + bảng dữ liệu
+ * 
+ * MÔ TẢ:
+ *   - Panel trừu tượng (abstract) chứa thanh tìm kiếm và bảng dữ liệu
+ *   - Hỗ trợ 2 chế độ: 1 bảng hoặc 2 bảng (Master-Detail)
+ *   - Tự động gọi loadData() sau khi component được add vào container
+ * 
+ * CẤU TRÚC:
+ *   ┌─────────────────────────────────────────────────┐
+ *   │  [ComboBox loại tìm kiếm] [TextField] [Nút tìm]  │
+ *   ├─────────────────────────────────────────────────┤
+ *   │                                                 │
+ *   │           CustomTable (Bảng chính)              │
+ *   │                                                 │
+ *   └─────────────────────────────────────────────────┘
+ * 
+ * CÁC METHOD ABSTRACT (subclass PHẢI implement):
+ *   - loadData(): Tải dữ liệu vào bảng
+ *   - timKiem(): Xử lý logic tìm kiếm
+ *   - hienThiThongTin(): Hiển thị thông tin khi chọn dòng
+ * 
+ * @see BaseCrudPanel - Kế thừa SearchPanel + thêm CRUD
+ * @see CustomTable - Bảng tùy chỉnh
+ * ===========================================================================
+ */
 package gui.components;
 
 import config.Constants;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
-/**
- * Panel tim kiem + bang du lieu (ho tro 1 bang hoac 2 bang).
- * Co the dung doc lap hoac ke thua de ket hop voi CRUD panel.
- */
 public abstract class SearchPanel extends JPanel {
     protected CustomTable table;
     protected DefaultTableModel tableModel;

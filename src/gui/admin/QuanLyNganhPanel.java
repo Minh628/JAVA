@@ -1,3 +1,26 @@
+/*
+ * ===========================================================================
+ * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
+ * GUI: QuanLyNganhPanel - Panel quản lý Ngành học
+ * 
+ * MÔ TẢ:
+ *   - Quản lý danh sách ngành học
+ *   - Gán ngành vào Khoa
+ * 
+ * CHỨC NĂNG:
+ *   - Thêm ngành mới (tên ngành, thuộc khoa)
+ *   - Sửa thông tin ngành
+ *   - Xóa ngành
+ *   - Tìm kiếm theo mã ngành, tên ngành, khoa
+ *   - Chọn Khoa qua SelectEntityDialog
+ * 
+ * KẾ THỮA:
+ *   - BaseCrudPanel: Form + Nút CRUD + Bảng
+ * 
+ * @see NganhBUS - Business logic ngành học
+ * ===========================================================================
+ */
 package gui.admin;
 
 import bus.KhoaBUS;

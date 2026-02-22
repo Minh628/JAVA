@@ -1,6 +1,37 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: ChiTietDiemDialog - Dialog hiển thị chi tiết điểm bài thi
+ * ===========================================================================
+ * GUI: ChiTietDiemDialog - Dialog xem chi tiết kết quả bài thi
+ * 
+ * MÔ TẢ:
+ *   - Hiển thị chi tiết từng câu hỏi và đáp án
+ *   - So sánh đáp án sinh viên chọn với đáp án đúng
+ *   - Đánh dấu màu: Xanh = đúng, Đỏ = sai
+ * 
+ * CẤU TRÚC GIAO DIỆN:
+ *   ┌─────────────────────────────────────────────────┐
+ *   │           KếT QUẢ CHI TIẾT                         │
+ *   ├─────────────────────────────────────────────────┤
+ *   │ Điểm: 8.5/10     Số câu đúng: 17/20               │
+ *   ├─────────────────────────────────────────────────┤
+ *   │ STT | Nội dung | Đáp án SV | Đáp án đúng | Kết quả │
+ *   │ 1   | Câu hỏi...| B         | B            | Đúng   │
+ *   │ 2   | Câu hỏi...| A         | C            | Sai    │
+ *   │ ... | ...       | ...       | ...          | ...    │
+ *   ├─────────────────────────────────────────────────┤
+ *   │                   [Đóng]                          │
+ *   └─────────────────────────────────────────────────┘
+ * 
+ * COMPONENTS SỬ DỤNG:
+ *   - CustomTable: Bảng chi tiết từng câu
+ *   - CustomButton: Nút Đóng
+ *   - Tùy chỉnh CellRenderer để tô màu
+ * 
+ * @see LichSuThiPanel - Gọi để mở dialog
+ * @see BaiThiBUS - Lấy thông tin bài thi
+ * @see ChiTietBaiThiDTO - Dữ liệu chi tiết bài thi
+ * ===========================================================================
  */
 package gui.student;
 

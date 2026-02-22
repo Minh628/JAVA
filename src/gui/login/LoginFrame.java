@@ -1,6 +1,34 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
  * GUI: LoginFrame - Màn hình đăng nhập
+ * 
+ * MÔ TẢ:
+ *   - Màn hình đầu tiên của hệ thống
+ *   - Cho phép đăng nhập với 3 vai trò: Admin, Giảng viên, Sinh viên
+ *   - Chuyển hướng đến Dashboard tương ứng sau khi đăng nhập thành công
+ * 
+ * GIAO DIỆN:
+ *   - Logo + Tên hệ thống ở trên
+ *   - Form đăng nhập ở giữa:
+ *     + ComboBox chọn vai trò
+ *     + TextField tên đăng nhập
+ *     + PasswordField mật khẩu
+ *     + Nút Đăng nhập
+ *   - Hỗ trợ nhấn Enter để đăng nhập
+ * 
+ * LUỒNG XỬ LÝ:
+ *   1. User chọn vai trò, nhập tên đăng nhập và mật khẩu
+ *   2. Gọi DangNhapBUS.dangNhap()
+ *   3. Nếu thành công -> Mở Dashboard tương ứng
+ *   4. Nếu thất bại -> Hiển thị thông báo lỗi
+ * 
+ * @see DangNhapBUS - Business logic đăng nhập
+ * @see AdminDashboard - Dashboard Admin
+ * @see TeacherDashboard - Dashboard Giảng viên
+ * @see StudentDashboard - Dashboard Sinh viên
+ * ===========================================================================
  */
 package gui.login;
 

@@ -1,7 +1,30 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: TeacherDashboard - Màn hình giảng viên
- * Refactored: Tách riêng các Panel, giống AdminDashboard
+ * ===========================================================================
+ * GUI: TeacherDashboard - Giao diện chính cho Giảng viên
+ * 
+ * MÔ TẢ:
+ *   - Dashboard chính của Giảng viên sau khi đăng nhập
+ *   - Sử dụng layout: Header + Sidebar + Content Area
+ * 
+ * CÁC MENU:
+ *   - Soạn câu hỏi: SoanCauHoiPanel - Tạo/sửa/xóa câu hỏi trắc nghiệm
+ *   - Quản lý đề thi: QuanLyDeThiPanel - Tạo/quản lý đề thi
+ *   - Xem điểm SV: XemDiemSinhVienPanel - Xem kết quả thi của SV
+ *   - Thông tin cá nhân: ThongTinGiangVienPanel
+ * 
+ * KẾ THỮA:
+ *   - BaseDashboardFrame: Layout chung, sidebar, header
+ * 
+ * REFACTORED:
+ *   - Tách riêng các Panel
+ *   - Giống cấu trúc AdminDashboard
+ * 
+ * @see BaseDashboardFrame - Khung dashboard chung
+ * @see SoanCauHoiPanel - Soạn câu hỏi
+ * @see QuanLyDeThiPanel - Quản lý đề thi
+ * ===========================================================================
  */
 package gui.teacher;
 

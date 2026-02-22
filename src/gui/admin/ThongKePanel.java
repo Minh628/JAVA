@@ -1,6 +1,54 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: ThongKePanel - Panel thống kê cho Admin
+ * ===========================================================================
+ * GUI: ThongKePanel - Panel thống kê kết quả thi cho Admin
+ * 
+ * MÔ TẢ:
+ *   - Panel này hiển thị các thống kê về kết quả thi theo nhiều tiêu chí
+ *   - Hỗ trợ lọc theo: Khoảng ngày, Tháng, Quý, Năm
+ *   - Các loại thống kê: Tổng quan, Theo Khoa, Ngành, Học phần, Kỳ thi, v.v.
+ *   - Hiển thị kết quả dưới dạng bảng và biểu đồ (BarChart, PieChart)
+ *   - Hỗ trợ xuất báo cáo PDF
+ * 
+ * CẤU TRÚC GIAO DIỆN:
+ *   ┌─────────────────────────────────────────────────────────────────┐
+ *   │                    HEADER (Tiêu đề panel)                       │
+ *   ├─────────────────────────────────────────────────────────────────┤
+ *   │  BỘ LỌC THỜI GIAN  │  LOẠI THỐNG KÊ  │  [Thống kê] [Xuất PDF]  │
+ *   ├─────────────────────────────────────────────────────────────────┤
+ *   │                                                                 │
+ *   │              KẾT QUẢ (CardLayout: TONG_QUAN / BANG)            │
+ *   │                                                                 │
+ *   │   - TONG_QUAN: Cards thống kê nhanh + PieChart + BarChart      │
+ *   │   - BANG: JTable chi tiết + BarChart bên phải                   │
+ *   │                                                                 │
+ *   └─────────────────────────────────────────────────────────────────┘
+ * 
+ * COMPONENTS SỬ DỤNG TỪ gui.components:
+ *   - HeaderLabel: Tiêu đề panel
+ *   - CustomButton: Nút "Thống kê" và "Xuất PDF" (tái sử dụng)
+ *   - CustomTable: Bảng hiển thị dữ liệu
+ *   - SimpleBarChart: Biểu đồ cột
+ *   - SimplePieChart: Biểu đồ tròn
+ * 
+ * LUỒNG DỮ LIỆU:
+ *   1. User chọn bộ lọc thời gian và loại thống kê
+ *   2. Click "Thống kê" -> gọi executeThongKe()
+ *   3. Gọi ThongKeBUS để lấy dữ liệu từ database
+ *   4. Hiển thị kết quả lên bảng/biểu đồ
+ *   5. User có thể xuất PDF qua nút "Xuất PDF"
+ * 
+ * SỬA ĐỔI:
+ *   - Thay JButton bằng CustomButton để đồng bộ style với toàn hệ thống
+ *   - Tất cả nút đều sử dụng CustomButton từ gui.components
+ * 
+ * @see gui.components.CustomButton - Nút tùy chỉnh dùng chung
+ * @see gui.components.SimpleBarChart - Biểu đồ cột
+ * @see gui.components.SimplePieChart - Biểu đồ tròn
+ * @see bus.ThongKeBUS - Business logic xử lý thống kê
+ * @see util.PDFExporter - Xuất báo cáo PDF
+ * ===========================================================================
  */
 package gui.admin;
 
@@ -19,50 +67,96 @@ import javax.swing.*;
 import javax.swing.table.*;
 import util.PDFExporter;
 
+/**
+ * Panel thống kê kết quả thi - Dành cho Admin
+ * 
+ * <p>Cung cấp các chức năng:</p>
+ * <ul>
+ *   <li>Thống kê tổng quan: tổng bài thi, đề thi, điểm TB, tỷ lệ đạt</li>
+ *   <li>Thống kê theo Khoa, Ngành, Học phần, Kỳ thi</li>
+ *   <li>Thống kê cross-tab theo Quý (hiển thị Q1|Q2|Q3|Q4|TC)</li>
+ *   <li>Thống kê 2 khóa: Sinh viên & Học phần, Giảng viên & Học phần</li>
+ *   <li>Xuất báo cáo PDF</li>
+ * </ul>
+ */
 public class ThongKePanel extends JPanel {
+    
+    // ========================== BUSINESS LOGIC ==========================
+    /** Service xử lý logic thống kê - gọi DAO để lấy dữ liệu */
     private ThongKeBUS thongKeBUS;
     
-    // Data hiện tại để export
+    // ========================== DATA EXPORT ==========================
+    /** Dữ liệu tổng quan hiện tại (dùng cho xuất PDF) */
     private Map<String, Object> currentTongQuanData;
+    /** Dữ liệu bảng hiện tại (List các row - mỗi row là Object[]) */
     private List<Object[]> currentTableData;
+    /** Tên các cột của bảng hiện tại */
     private String[] currentColumnNames;
+    /** Tiêu đề báo cáo hiện tại */
     private String currentTieuDe;
+    /** Ngày bắt đầu khoảng thời gian đang thống kê */
     private Date currentTuNgay;
+    /** Ngày kết thúc khoảng thời gian đang thống kê */
     private Date currentDenNgay;
     
-    // Components bộ lọc
+    // ========================== BỘ LỌC THỜI GIAN ==========================
+    /** ComboBox chọn loại thời gian: Khoảng ngày/Tháng/Quý/Năm */
     private JComboBox<String> cboLoaiThoiGian;
+    /** Panel chứa các bộ lọc động (thay đổi theo loại thời gian) */
     private JPanel pnlBoLoc;
+    /** CardLayout để chuyển đổi giữa các loại bộ lọc */
     private CardLayout cardLayoutBoLoc;
     
-    // Bộ lọc: Từ ngày - đến ngày
+    // ---- Bộ lọc: Từ ngày - đến ngày ----
+    /** Date chooser chọn ngày bắt đầu */
     private JDateChooser dcTuNgay;
+    /** Date chooser chọn ngày kết thúc */
     private JDateChooser dcDenNgay;
     
-    // Bộ lọc: Tháng
+    // ---- Bộ lọc: Tháng ----
+    /** ComboBox chọn tháng (1-12) */
     private JComboBox<String> cboThang;
+    /** ComboBox chọn năm (cho tháng) */
     private JComboBox<Integer> cboNamThang;
     
-    // Bộ lọc: Quý
+    // ---- Bộ lọc: Quý ----
+    /** ComboBox chọn quý (Q1-Q4) */
     private JComboBox<String> cboQuy;
+    /** ComboBox chọn năm (cho quý) */
     private JComboBox<Integer> cboNamQuy;
     
-    // Bộ lọc: Năm
+    // ---- Bộ lọc: Năm ----
+    /** ComboBox chọn năm */
     private JComboBox<Integer> cboNam;
     
-    // Loại thống kê
+    // ========================== LOẠI THỐNG KÊ ==========================
+    /** ComboBox chọn loại thống kê (Tổng quan, Theo Khoa, Ngành, etc.) */
     private JComboBox<String> cboLoaiThongKe;
     
-    // Hiển thị
+    // ========================== HIỂN THỊ KẾT QUẢ ==========================
+    /** Panel chứa kết quả - dùng CardLayout để chuyển đổi view */
     private JPanel pnlKetQua;
+    /** CardLayout quản lý các view kết quả (TONG_QUAN / BANG) */
     private CardLayout cardLayoutKetQua;
+    /** Bảng hiển thị dữ liệu thống kê chi tiết */
     private JTable tblThongKe;
+    /** Model của bảng thống kê */
     private DefaultTableModel modelThongKe;
+    /** Biểu đồ cột - hiển thị điểm TB, số lượng, etc. */
     private SimpleBarChart barChart;
+    /** Biểu đồ tròn - hiển thị tỷ lệ Đạt/Rớt */
     private SimplePieChart pieChart;
+    /** Panel tổng quan chứa cards + charts */
     private JPanel pnlTongQuan;
     
-    // Định dạng
+    // ========================== CÁC NÚT BẤM ==========================
+    /** Nút thực hiện thống kê - sử dụng CustomButton để đồng bộ style */
+    private CustomButton btnThongKe;
+    /** Nút xuất PDF - sử dụng CustomButton để đồng bộ style */
+    private CustomButton btnExportPDF;
+    
+    // ========================== ĐỊNH DẠNG ==========================
+    /** Định dạng ngày tháng: dd/MM/yyyy */
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     
     public ThongKePanel() {
@@ -146,24 +240,22 @@ public class ThongKePanel extends JPanel {
         cboLoaiThongKe.setPreferredSize(new Dimension(220, 30));
         pnlFilters.add(cboLoaiThongKe);
         
-        // 4. Nút thống kê
-        JButton btnThongKe = new JButton("🔍 Thống kê");
-        btnThongKe.setFont(Constants.BUTTON_FONT);
-        btnThongKe.setBackground(Constants.PRIMARY_COLOR);
-        btnThongKe.setForeground(Color.WHITE);
-        btnThongKe.setFocusPainted(false);
-        btnThongKe.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        // ============================================================
+        // 4. NÚT THỐNG KÊ
+        // Sử dụng CustomButton thay vì JButton để đồng bộ style
+        // CustomButton tự động có hiệu ứng hover, shadow, bo góc
+        // ============================================================
+        btnThongKe = new CustomButton("🔍 Thống kê", Constants.PRIMARY_COLOR, Color.WHITE);
         btnThongKe.setPreferredSize(new Dimension(120, 32));
         btnThongKe.addActionListener(e -> executeThongKe());
         pnlFilters.add(btnThongKe);
         
-        // 5. Nút xuất PDF
-        JButton btnExportPDF = new JButton("📄 Xuất PDF");
-        btnExportPDF.setFont(Constants.BUTTON_FONT);
-        btnExportPDF.setBackground(Constants.DANGER_COLOR);
-        btnExportPDF.setForeground(Color.WHITE);
-        btnExportPDF.setFocusPainted(false);
-        btnExportPDF.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        // ============================================================
+        // 5. NÚT XUẤT PDF
+        // Sử dụng CustomButton với màu DANGER_COLOR (đỏ)
+        // Xuất báo cáo thống kê ra file PDF
+        // ============================================================
+        btnExportPDF = new CustomButton("📄 Xuất PDF", Constants.DANGER_COLOR, Color.WHITE);
         btnExportPDF.setPreferredSize(new Dimension(120, 32));
         btnExportPDF.addActionListener(e -> exportPDF());
         pnlFilters.add(btnExportPDF);

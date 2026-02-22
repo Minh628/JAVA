@@ -1,6 +1,33 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: ThiTracNghiemPanel - Panel chọn và vào thi trắc nghiệm
+ * ===========================================================================
+ * GUI: ThiTracNghiemPanel - Panel chọn đề thi và vào thi
+ * 
+ * MÔ TẢ:
+ *   - Hiển thị danh sách đề thi sinh viên có thể làm
+ *   - Lọc theo kỳ thi
+ *   - Bấm "Vào thi" để mở LamBaiThiFrame
+ * 
+ * LUỒNG THAO TÁC:
+ *   1. Chọn kỳ thi (ComboBox) -> Load danh sách đề thi
+ *   2. Chọn đề thi trong bảng
+ *   3. Bấm "Vào thi" -> Kiểm tra đã thi chưa
+ *   4. Nếu chưa thi -> Tạo bài thi mới + Mở LamBaiThiFrame
+ *   5. Nếu đã thi -> Thông báo không cho thi lại
+ * 
+ * ĐIỀU KIỆN HIỂN ĐỀ THI:
+ *   - Đề thi đã publish (trangThai = true)
+ *   - Thuộc học phần của ngành sinh viên đang học
+ *   - Kỳ thi đang diễn ra (ngày hiện tại nằm trong khoảng)
+ * 
+ * COMPONENTS SỬ DỤNG:
+ *   - CustomTable: Bảng danh sách đề thi
+ *   - CustomButton: Nút "Vào thi", "Làm mới"
+ * 
+ * @see LamBaiThiFrame - Màn hình làm bài thi
+ * @see BaiThiBUS - Tạo bài thi mới
+ * ===========================================================================
  */
 package gui.student;
 

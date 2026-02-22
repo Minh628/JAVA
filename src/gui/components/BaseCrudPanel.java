@@ -1,14 +1,61 @@
+/*
+ * ===========================================================================
+ * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
+ * Component: BaseCrudPanel - Panel CRUD chung
+ * 
+ * MÔ TẢ:
+ *   - Class trừu tượng (abstract) là base cho các panel quản lý
+ *   - Kế thừa SearchPanel và thêm các chức năng CRUD
+ *   - Tự động tạo form nhập liệu + các nút Thêm/Sửa/Xóa/Làm mới
+ * 
+ * CẤU TRÚC GIAO DIỆN:
+ *   ┌─────────────────────────────────────────────────┐
+ *   │                 TIÊU ĐỀ PANEL                       │
+ *   ├─────────────────────────────────────────────────┤
+ *   │  Form nhập liệu (createFormPanel)                  │
+ *   ├─────────────────────────────────────────────────┤
+ *   │  [Thêm] [Sửa] [Xóa] [Làm mới] [Nút bổ sung...]     │
+ *   ├─────────────────────────────────────────────────┤
+ *   │  Thanh tìm kiếm (từ SearchPanel)                   │
+ *   ├─────────────────────────────────────────────────┤
+ *   │                                                 │
+ *   │           Bảng dữ liệu (CustomTable)              │
+ *   │                                                 │
+ *   └─────────────────────────────────────────────────┘
+ * 
+ * CÁC METHOD ABSTRACT (subclass PHẢI implement):
+ *   - createFormPanel(): Tạo form nhập liệu
+ *   - loadData(): Tải dữ liệu vào bảng
+ *   - timKiem(): Logic tìm kiếm
+ *   - hienThiThongTin(): Hiển thị thông tin khi chọn dòng
+ *   - them(): Thêm mới
+ *   - sua(): Cập nhật
+ *   - xoa(): Xóa
+ *   - lamMoi(): Reset form
+ * 
+ * CÁC METHOD HỖ TRỢ (sẵn có):
+ *   - showMessage(): Hiển thị thông báo
+ *   - confirmDelete(): Xác nhận xóa
+ *   - validateNotEmpty(): Kiểm tra rỗng
+ *   - selectComboByName(): Chọn item trong ComboBox theo tên
+ *   - createLabel(): Tạo label chuẩn
+ *   - createTextField(): Tạo text field chuẩn
+ * 
+ * HOOK METHOD:
+ *   - addExtraButtons(): Override để thêm nút bổ sung (ví dụ: Export Excel)
+ * 
+ * @see QuanLyGiangVienPanel - Ví dụ sử dụng BaseCrudPanel
+ * @see QuanLySinhVienPanel - Ví dụ sử dụng BaseCrudPanel
+ * @see CrudButtonPanel - Panel nút CRUD
+ * ===========================================================================
+ */
 package gui.components;
 
 import config.Constants;
 import java.awt.*;
 import java.util.function.Function;
 import javax.swing.*;
-
-/**
- * Base class cho tất cả các panel quản lý CRUD
- * Giúp tái sử dụng code cho phần tìm kiếm, bảng, và các nút chức năng
- */
 public abstract class BaseCrudPanel extends SearchPanel {
 
     public BaseCrudPanel(String title, String[] columns, String[] searchOptions) {

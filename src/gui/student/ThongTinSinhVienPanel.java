@@ -1,6 +1,27 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: ThongTinSinhVienPanel - Panel thông tin cá nhân sinh viên (sử dụng components)
+ * ===========================================================================
+ * GUI: ThongTinSinhVienPanel - Panel thông tin cá nhân Sinh viên
+ * 
+ * MÔ TẢ:
+ *   - Hiển thị thông tin cá nhân của Sinh viên đang đăng nhập
+ *   - Cho phép đổi mật khẩu
+ * 
+ * THÔNG TIN HIỂN THỊ:
+ *   - Mã SV, Họ tên, Email
+ *   - Ngành học
+ *   - Tên đăng nhập
+ * 
+ * COMPONENTS SỬ DỤNG:
+ *   - HeaderLabel: Tiêu đề
+ *   - InfoDisplayPanel: Hiển thị thông tin
+ *   - CustomButton: Nút đổi mật khẩu
+ *   - ChangePasswordDialog: Dialog đổi mật khẩu
+ * 
+ * @see SinhVienBUS - Business logic sinh viên
+ * @see ChangePasswordDialog - Dialog đổi mật khẩu
+ * ===========================================================================
  */
 package gui.student;
 

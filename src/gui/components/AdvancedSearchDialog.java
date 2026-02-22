@@ -1,6 +1,37 @@
+/*
+ * ===========================================================================
+ * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
+ * Component: AdvancedSearchDialog - Dialog tìm kiếm nâng cao
+ * 
+ * MÔ TẢ:
+ *   - Dialog cho phép tìm kiếm với nhiều điều kiện kết hợp
+ *   - Hỗ trợ các toán tử: =, <>, >, >=, <, <=, LIKE
+ *   - Hỗ trợ logic: AND, OR, NOT
+ *   - Có thể thêm/xóa điều kiện linh hoạt
+ * 
+ * CÁCH SỬ DỤNG:
+ *   String[] fields = {"Mã SV", "Họ tên", "Email", "Khoa"};
+ *   AdvancedSearchDialog dialog = new AdvancedSearchDialog(
+ *       (Frame) SwingUtilities.getWindowAncestor(this),
+ *       "Tìm kiếm nâng cao",
+ *       fields
+ *   );
+ *   dialog.setVisible(true);
+ *   
+ *   if (dialog.isConfirmed()) {
+ *       List<SearchCondition> conditions = dialog.getResult();
+ *       String logic = dialog.getLogic();
+ *       // Xử lý tìm kiếm với các điều kiện
+ *   }
+ * 
+ * @see SearchCondition - Đối tượng chứa điều kiện tìm kiếm
+ * @see BaseCrudPanel - Sử dụng AdvancedSearchDialog
+ * ===========================================================================
+ */
 package gui.components;
 
-import config.Constants; // Giả sử bạn đã có class này
+import config.Constants;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;

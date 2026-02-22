@@ -1,6 +1,37 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: CustomButton - Nút tùy chỉnh
+ * ===========================================================================
+ * Component: CustomButton - Nút bấm tùy chỉnh với hiệu ứng đẹp
+ * 
+ * MÔ TẢ:
+ *   - Nút bấm hiện đại với bo góc (rounded corners)
+ *   - Tự động có hiệu ứng hover (sáng lên khi di chuột)
+ *   - Hiệu ứng nhấn (pressed) - tối đi khi click
+ *   - Có shadow tạo chiều sâu
+ *   - Có gradient highlight ở nửa trên
+ * 
+ * CÁCH SỬ DỤNG:
+ *   // Tạo nút với màu mặc định (PRIMARY_COLOR)
+ *   CustomButton btn = new CustomButton("Xác nhận");
+ *   
+ *   // Tạo nút với màu tùy chỉnh
+ *   CustomButton btnXoa = new CustomButton("Xóa", Constants.DANGER_COLOR, Color.WHITE);
+ *   
+ *   // Thay đổi màu sau khi tạo
+ *   btn.setMauNen(Constants.SUCCESS_COLOR);
+ *   
+ *   // Thay đổi bo góc
+ *   btn.setBorderRadius(20); // Bo tròn hơn
+ * 
+ * CHÚ Ý:
+ *   - Nên sử dụng CustomButton thay vì JButton thông thường
+ *   - Đảm bảo đồng bộ style trên toàn hệ thống
+ *   - Không cần gọi setFont, setBackground, setFocusPainted - đã xử lý tự động
+ * 
+ * @see CrudButtonPanel - Panel chứa nhóm nút CRUD sử dụng CustomButton
+ * @see config.Constants - Màu sắc hệ thống
+ * ===========================================================================
  */
 package gui.components;
 

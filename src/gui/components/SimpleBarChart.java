@@ -1,6 +1,34 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
  * Component: SimpleBarChart - Biểu đồ cột đơn giản
+ * 
+ * MÔ TẢ:
+ *   - Vẽ biểu đồ cột (bar chart) không cần thư viện ngoài
+ *   - Tự vẽ bằng Graphics2D
+ *   - Hỗ trợ nhiều màu sắc cho các cột
+ *   - Có label trục Y và giá trị trên đầu cột
+ * 
+ * CÁCH SỬ DỤNG:
+ *   SimpleBarChart chart = new SimpleBarChart("Điểm TB theo Khoa");
+ *   chart.setYAxisLabel("Điểm");
+ *   chart.setMaxValue(10.0);
+ *   
+ *   List<String> labels = Arrays.asList("CNTT", "QTKD", "Kế toán");
+ *   List<Double> values = Arrays.asList(7.5, 6.8, 8.2);
+ *   chart.setData(labels, values);
+ * 
+ * TÍNH NĂNG:
+ *   - Hiển thị tiêu đề (title)
+ *   - Hiển thị trục Y với giá trị tối thiểu/tối đa
+ *   - Tự động chia màu cho các cột
+ *   - Hiển thị nhãn dưới mỗi cột
+ *   - Hiển thị giá trị trên đầu cột
+ * 
+ * @see SimplePieChart - Biểu đồ tròn
+ * @see ThongKePanel - Sử dụng SimpleBarChart
+ * ===========================================================================
  */
 package gui.components;
 

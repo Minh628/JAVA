@@ -1,6 +1,29 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
  * GUI: QuanLyKyThiPanel - Panel quản lý Kỳ thi
+ * 
+ * MÔ TẢ:
+ *   - Quản lý danh sách kỳ thi
+ *   - Đặt lịch thi (ngày bắt đầu, ngày kết thúc)
+ *   - Không sử dụng BaseCrudPanel vì có logic đặc thù
+ * 
+ * CHỨC NĂNG:
+ *   - Thêm kỳ thi mới (tên kỳ thi, ngày bắt đầu, ngày kết thúc)
+ *   - Sửa thông tin kỳ thi
+ *   - Xóa kỳ thi
+ *   - Tìm kiếm theo mã kỳ thi, tên kỳ thi
+ *   - Hiển thị trạng thái: Đang diễn ra, Sắp diễn ra, Đã kết thúc
+ * 
+ * CHÚ Ý:
+ *   - Panel này KHÔNG kế thừa BaseCrudPanel
+ *   - Tự tạo layout với JDateChooser cho chọn ngày
+ *   - Sử dụng CustomTable, CustomButton, HeaderLabel
+ * 
+ * @see KyThiBUS - Business logic kỳ thi
+ * @see JDateChooser - Component chọn ngày (toedter)
+ * ===========================================================================
  */
 package gui.admin;
 

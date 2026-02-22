@@ -1,7 +1,43 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * GUI: AdminDashboard - ADMIN
- * Refactored: Tách Khoa và Ngành, thêm thông tin cá nhân
+ * ===========================================================================
+ * GUI: AdminDashboard - Giao diện chính cho Admin
+ * 
+ * MÔ TẢ:
+ *   - Dashboard chính của Admin sau khi đăng nhập
+ *   - Sử dụng layout: Header + Sidebar + Content Area
+ *   - Chuyển đổi giữa các panel bằng CardLayout
+ * 
+ * CÁC MENU:
+ *   HỆ THỐNG:
+ *     - Tổng Quan: Hiển thị thống kê nhanh (số GV, SV, HP, Khoa, Ngành, Kỳ thi)
+ *     - Thống Kê: ThongKePanel - Thống kê kết quả thi
+ *   
+ *   QUẢN LÝ ĐÀO TẠO:
+ *     - Học Phần: QuanLyHocPhanPanel
+ *     - Khoa: QuanLyKhoaPanel
+ *     - Ngành: QuanLyNganhPanel
+ *     - Kỳ Thi: QuanLyKyThiPanel
+ *   
+ *   QUẢN LÝ NHÂN SỰ:
+ *     - Giảng Viên: QuanLyGiangVienPanel
+ *     - Sinh Viên: QuanLySinhVienPanel
+ *   
+ *   CÁ NHÂN:
+ *     - Thông tin cá nhân: ThongTinAdminPanel
+ * 
+ * KẾ THỮA:
+ *   - BaseDashboardFrame: Layout chung, sidebar, header
+ * 
+ * REFACTORED:
+ *   - Tách Khoa và Ngành ra 2 panel riêng
+ *   - Thêm panel Thông tin cá nhân
+ *   - Sử dụng BaseDashboardFrame
+ * 
+ * @see BaseDashboardFrame - Khung dashboard chung
+ * @see ThongKePanel - Panel thống kê
+ * ===========================================================================
  */
 package gui.admin;
 

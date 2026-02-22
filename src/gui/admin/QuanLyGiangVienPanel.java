@@ -1,3 +1,35 @@
+/*
+ * ===========================================================================
+ * Hệ thống thi trắc nghiệm trực tuyến
+ * ===========================================================================
+ * GUI: QuanLyGiangVienPanel - Panel quản lý Giảng viên
+ * 
+ * MÔ TẢ:
+ *   - Quản lý danh sách giảng viên (CRUD)
+ *   - Hỗ trợ import danh sách từ Excel
+ *   - Gán giảng viên vào Khoa
+ * 
+ * CHỨC NĂNG:
+ *   - Thêm giảng viên mới (tên đăng nhập, mật khẩu, email, khoa)
+ *   - Sửa thông tin giảng viên
+ *   - Xóa giảng viên (khóa tài khoản)
+ *   - Tìm kiếm theo mã GV, tên đăng nhập, họ tên, email, khoa
+ *   - Tìm kiếm nâng cao (AdvancedSearchDialog)
+ *   - Import danh sách giảng viên từ Excel
+ *   - Chọn Khoa qua SelectEntityDialog
+ * 
+ * KẾ THỮA:
+ *   - BaseCrudPanel: Form + Nút CRUD + Bảng
+ * 
+ * COMPONENTS SỬ DỤNG:
+ *   - CustomButton: Nút chọn Khoa, Import Excel
+ *   - SelectEntityDialog: Chọn Khoa
+ *   - AdvancedSearchDialog: Tìm kiếm nâng cao
+ * 
+ * @see GiangVienBUS - Business logic giảng viên
+ * @see GiangVienExcelImporter - Import từ Excel
+ * ===========================================================================
+ */
 package gui.admin;
 
 import bus.GiangVienBUS;

@@ -1,12 +1,35 @@
 /*
+ * ===========================================================================
  * Hệ thống thi trắc nghiệm trực tuyến
- * Component: InfoDisplayPanel - Panel hiển thị thông tin dạng label-value (dùng cho thông tin cá nhân)
+ * ===========================================================================
+ * Component: InfoDisplayPanel - Panel hiển thị thông tin cá nhân
+ * 
+ * MÔ TẢ:
+ *   - Hiển thị thông tin dạng Label: Value (chỉ đọc)
+ *   - Sử dụng cho các panel Thông tin cá nhân
+ *   - Dữ liệu truyền vào là mảng 2 chiều [[label, value], ...]
+ * 
+ * CÁCH SỬ DỤNG:
+ *   String[][] data = {
+ *       {"Họ tên:", "Nguyễn Văn A"},
+ *       {"Email:", "a@example.com"},
+ *       {"Số điện thoại:", "0123456789"}
+ *   };
+ *   InfoDisplayPanel panel = new InfoDisplayPanel(data);
+ *   
+ *   // Hoặc với số cột tùy chỉnh:
+ *   InfoDisplayPanel panel = new InfoDisplayPanel(data, 30);
+ * 
+ * @see ThongTinAdminPanel - Sử dụng InfoDisplayPanel
+ * @see ThongTinGiangVienPanel - Sử dụng InfoDisplayPanel
+ * @see ThongTinSinhVienPanel - Sử dụng InfoDisplayPanel
+ * ===========================================================================
  */
 package gui.components;
 
 import config.Constants;
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class InfoDisplayPanel extends JPanel {
     
