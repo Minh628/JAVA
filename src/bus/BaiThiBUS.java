@@ -336,4 +336,108 @@ public class BaiThiBUS {
         }
         return false;
     }
+
+    // ============== Xem điểm sinh viên theo Khoa ==============
+
+    /**
+     * Lấy tất cả bài thi của sinh viên thuộc khoa
+     * Dùng cho giảng viên xem điểm sinh viên trong khoa mình
+     */
+    public List<BaiThiDTO> getDanhSachBaiThiTheoKhoa(int maKhoa) {
+        try {
+            return baiThiDAO.getByKhoa(maKhoa);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Tìm kiếm bài thi theo khoa
+     * @param maKhoa Mã khoa
+     * @param keyword Từ khóa tìm kiếm
+     * @param loai Loại tìm kiếm: "Tất cả", "MSSV", "Họ tên SV", "Đề thi", "Môn học"
+     * @return Danh sách bài thi thỏa điều kiện
+     */
+    public List<BaiThiDTO> timKiemDiemTheoKhoa(int maKhoa, String keyword, String loai) {
+        List<BaiThiDTO> result = new ArrayList<>();
+        try {
+            keyword = keyword == null ? "" : keyword.trim().toLowerCase();
+            List<BaiThiDTO> danhSach = getDanhSachBaiThiTheoKhoa(maKhoa);
+
+            for (BaiThiDTO bt : danhSach) {
+                if (matchDiemFilter(bt, keyword, loai)) {
+                    result.add(bt);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * Kiểm tra bài thi có khớp với bộ lọc không
+     */
+    private boolean matchDiemFilter(BaiThiDTO bt, String keyword, String loai) {
+        if (keyword.isEmpty()) {
+            return true;
+        }
+
+        // Lấy thông tin sinh viên
+        String hoTenSV = "";
+        String mssv = "";
+        try {
+            dao.SinhVienDAO sinhVienDAO = new dao.SinhVienDAO();
+            dto.SinhVienDTO sv = sinhVienDAO.getById(bt.getMaSV());
+            if (sv != null) {
+                hoTenSV = sv.getHoTen() != null ? sv.getHoTen().toLowerCase() : "";
+                mssv = sv.getTenDangNhap() != null ? sv.getTenDangNhap().toLowerCase() : "";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Lấy thông tin đề thi và học phần
+        String tenDeThi = "";
+        String tenHocPhan = "";
+        try {
+            DeThiDTO deThi = deThiDAO.getById(bt.getMaDeThi());
+            if (deThi != null) {
+                tenDeThi = deThi.getTenDeThi() != null ? deThi.getTenDeThi().toLowerCase() : "";
+                HocPhanDTO hocPhan = hocPhanDAO.getById(deThi.getMaHocPhan());
+                if (hocPhan != null) {
+                    tenHocPhan = hocPhan.getTenMon() != null ? hocPhan.getTenMon().toLowerCase() : "";
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return switch (loai) {
+            case "MSSV" -> mssv.contains(keyword);
+            case "Họ tên SV" -> hoTenSV.contains(keyword);
+            case "Đề thi" -> tenDeThi.contains(keyword);
+            case "Môn học" -> tenHocPhan.contains(keyword);
+            case "Tất cả" -> mssv.contains(keyword) 
+                          || hoTenSV.contains(keyword) 
+                          || tenDeThi.contains(keyword) 
+                          || tenHocPhan.contains(keyword);
+            default -> true;
+        };
+    }
+
+
+    /**
+     * Lấy tổng số câu hỏi của đề thi
+     */
+    public int getTongSoCauHoi(int maDeThi) {
+        try {
+            DeThiDTO deThi = deThiDAO.getById(maDeThi);
+            return deThi != null ? deThi.getSoCauHoi() : 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 }

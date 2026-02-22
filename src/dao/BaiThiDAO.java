@@ -189,6 +189,33 @@ public class BaiThiDAO {
     }
     
     /**
+     * Lấy tất cả bài thi của sinh viên thuộc khoa
+     * Join: BaiThi -> SinhVien -> Nganh -> Khoa
+     */
+    public List<BaiThiDTO> getByKhoa(int maKhoa) throws SQLException {
+        List<BaiThiDTO> danhSachBT = new ArrayList<>();
+        String sql = "SELECT bt.* FROM BaiThi bt " +
+                     "INNER JOIN SinhVien sv ON bt.ma_sv = sv.ma_sv " +
+                     "INNER JOIN Nganh n ON sv.ma_nganh = n.ma_nganh " +
+                     "INNER JOIN Khoa k ON n.ma_khoa = k.ma_khoa " +
+                     "WHERE k.ma_khoa = ? " +
+                     "ORDER BY bt.ngay_thi DESC, bt.diem_so DESC";
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, maKhoa);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                danhSachBT.add(mapResultSetToDTO(rs));
+            }
+        }
+        return danhSachBT;
+    }
+
+
+    /**
      * Map ResultSet sang DTO
      */
     private BaiThiDTO mapResultSetToDTO(ResultSet rs) throws SQLException {

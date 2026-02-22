@@ -45,6 +45,7 @@ public class TeacherDashboard extends BaseDashboardFrame {
         addMenuGroup(sidebar, "QUẢN LÝ");
         JButton btnCauHoi = addMenuItem(sidebar, "❓", "Quản lý Câu hỏi", "CAU_HOI");
         addMenuItem(sidebar, "📝", "Quản lý Đề thi", "DE_THI");
+        addMenuItem(sidebar, "📊", "Xem điểm SV", "XEM_DIEM");
         
         // Nhóm: CÁ NHÂN
         sidebar.add(Box.createVerticalStrut(15));
@@ -59,6 +60,7 @@ public class TeacherDashboard extends BaseDashboardFrame {
         // Sử dụng các Panel riêng biệt
         panelNoiDung.add(new SoanCauHoiPanel(nguoiDung), "CAU_HOI");
         panelNoiDung.add(new QuanLyDeThiPanel(nguoiDung), "DE_THI");
+        panelNoiDung.add(new XemDiemSinhVienPanel(nguoiDung), "XEM_DIEM");
         panelNoiDung.add(new ThongTinGiangVienPanel(nguoiDung), "THONG_TIN");
     }
 }
