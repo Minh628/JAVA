@@ -1,5 +1,6 @@
 
 
+
 /*
  * Hệ thống thi trắc nghiệm trực tuyến
  * GUI: SoanCauHoiPanel - Panel soạn câu hỏi (hỗ trợ cả trắc nghiệm và điền khuyết)
@@ -25,6 +26,7 @@ import gui.components.SelectEntityDialog;
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
+import util.CauHoiExcelImporter;
 import util.SearchCondition;
 
 public class SoanCauHoiPanel extends BaseCrudPanel {
@@ -292,6 +294,89 @@ public class SoanCauHoiPanel extends BaseCrudPanel {
         CustomButton btnTimNangCao = new CustomButton("Tìm nâng cao", new Color(128, 0, 128), Constants.TEXT_COLOR);
         btnTimNangCao.addActionListener(e -> moTimKiemNangCao());
         searchPanel.add(btnTimNangCao);
+        
+        // Nút Import từ Excel
+        CustomButton btnImportExcel = new CustomButton("Import Excel", new Color(34, 139, 34), Constants.TEXT_COLOR);
+        btnImportExcel.addActionListener(e -> importCauHoiTuExcel());
+        searchPanel.add(btnImportExcel);
+        
+        // Nút tạo file mẫu
+        CustomButton btnTaoMau = new CustomButton("Tải mẫu Excel", new Color(70, 130, 180), Constants.TEXT_COLOR);
+        btnTaoMau.addActionListener(e -> CauHoiExcelImporter.createTemplateFile(this));
+        searchPanel.add(btnTaoMau);
+    }
+    
+    /**
+     * Import câu hỏi từ file Excel
+     */
+    private void importCauHoiTuExcel() {
+        // Lấy mã học phần mặc định từ combobox
+        HocPhanDTO selectedHP = (HocPhanDTO) cboHocPhan.getSelectedItem();
+        int defaultMaHocPhan = selectedHP != null ? selectedHP.getMaHocPhan() : 0;
+        
+        if (defaultMaHocPhan == 0) {
+            JOptionPane.showMessageDialog(this,
+                "Vui lòng chọn học phần mặc định trước khi import!",
+                "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        List<CauHoiDTO> danhSach = CauHoiExcelImporter.importFromExcel(this, giangVien.getMaGV(), defaultMaHocPhan);
+        
+        if (danhSach == null || danhSach.isEmpty()) {
+            return;
+        }
+        
+        // Xác nhận import
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Bạn có muốn import " + danhSach.size() + " câu hỏi vào hệ thống?",
+            "Xác nhận Import",
+            JOptionPane.YES_NO_OPTION);
+        
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+        
+        // Thực hiện import
+        int success = 0, fail = 0;
+        StringBuilder errors = new StringBuilder();
+        
+        for (CauHoiDTO cauHoi : danhSach) {
+            try {
+                boolean result = cauHoiBUS.themCauHoi(cauHoi);
+                
+                if (result) {
+                    success++;
+                } else {
+                    fail++;
+                    String noiDung = cauHoi.getNoiDungCauHoi();
+                    if (noiDung.length() > 30) noiDung = noiDung.substring(0, 30) + "...";
+                    errors.append("• ").append(noiDung).append(": Thêm thất bại\n");
+                }
+            } catch (Exception e) {
+                fail++;
+                String noiDung = cauHoi.getNoiDungCauHoi();
+                if (noiDung.length() > 30) noiDung = noiDung.substring(0, 30) + "...";
+                errors.append("• ").append(noiDung).append(": ").append(e.getMessage()).append("\n");
+            }
+        }
+        
+        // Hiển thị kết quả
+        StringBuilder result = new StringBuilder();
+        result.append("Kết quả import:\n\n");
+        result.append("• Thành công: ").append(success).append(" câu hỏi\n");
+        result.append("• Thất bại: ").append(fail).append(" câu hỏi\n");
+        
+        if (fail > 0 && errors.length() > 0) {
+            result.append("\nChi tiết lỗi:\n").append(errors.toString().substring(0, Math.min(errors.length(), 500)));
+        }
+        
+        JOptionPane.showMessageDialog(this, result.toString(),
+            fail > 0 ? "Import hoàn tất với lỗi" : "Import thành công",
+            fail > 0 ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE);
+        
+        // Refresh danh sách
+        loadCauHoi();
     }
 
     private void loadHocPhan() {

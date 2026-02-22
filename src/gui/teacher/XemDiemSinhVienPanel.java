@@ -17,12 +17,15 @@ import dto.DeThiDTO;
 import dto.GiangVienDTO;
 import dto.HocPhanDTO;
 import dto.SinhVienDTO;
+import gui.components.CustomButton;
 import gui.components.HeaderLabel;
 import gui.components.SearchPanel;
 import java.awt.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
+import util.BangDiemExcelExporter;
 
 public class XemDiemSinhVienPanel extends SearchPanel {
     private GiangVienDTO nguoiDung;
@@ -32,6 +35,9 @@ public class XemDiemSinhVienPanel extends SearchPanel {
     private HocPhanBUS hocPhanBUS;
     
     private JLabel lblThongKe;
+    
+    // Lưu danh sách bài thi hiện tại để export
+    private List<BaiThiDTO> danhSachBaiThiHienTai = new ArrayList<>();
     
     private static final String[] COLUMNS = {
         "Mã BT", "MSSV", "Họ tên SV", "Đề thi", "Môn học", 
@@ -92,12 +98,12 @@ public class XemDiemSinhVienPanel extends SearchPanel {
     @Override
     protected void loadData() {
         tableModel.setRowCount(0);
-        List<BaiThiDTO> danhSachBaiThi = baiThiBUS.getDanhSachBaiThiTheoKhoa(nguoiDung.getMaKhoa());
+        danhSachBaiThiHienTai = baiThiBUS.getDanhSachBaiThiTheoKhoa(nguoiDung.getMaKhoa());
         
         float tongDiem = 0;
-        int soBaiThi = danhSachBaiThi.size();
+        int soBaiThi = danhSachBaiThiHienTai.size();
         
-        for (BaiThiDTO bt : danhSachBaiThi) {
+        for (BaiThiDTO bt : danhSachBaiThiHienTai) {
             addRowToTable(bt);
             tongDiem += bt.getDiemSo();
         }
@@ -161,12 +167,12 @@ public class XemDiemSinhVienPanel extends SearchPanel {
         tableModel.setRowCount(0);
         
         // Gọi BUS để tìm kiếm
-        List<BaiThiDTO> danhSach = baiThiBUS.timKiemDiemTheoKhoa(nguoiDung.getMaKhoa(), keyword, loai);
+        danhSachBaiThiHienTai = baiThiBUS.timKiemDiemTheoKhoa(nguoiDung.getMaKhoa(), keyword, loai);
         
         float tongDiem = 0;
-        int count = danhSach.size();
+        int count = danhSachBaiThiHienTai.size();
         
-        for (BaiThiDTO bt : danhSach) {
+        for (BaiThiDTO bt : danhSachBaiThiHienTai) {
             addRowToTable(bt);
             tongDiem += bt.getDiemSo();
         }
@@ -178,5 +184,28 @@ public class XemDiemSinhVienPanel extends SearchPanel {
             "%s: %d bài thi | Điểm trung bình: %.2f", 
             prefix, count, diemTrungBinh
         ));
+    }
+    
+    @Override
+    protected void addExtraSearchComponents(JPanel searchPanel) {
+        // Nút Export Excel
+        CustomButton btnExportExcel = new CustomButton("Xuất Excel", new Color(34, 139, 34), Constants.TEXT_COLOR);
+        btnExportExcel.addActionListener(e -> exportBangDiemExcel());
+        searchPanel.add(btnExportExcel);
+    }
+    
+    /**
+     * Export bảng điểm ra file Excel
+     */
+    private void exportBangDiemExcel() {
+        if (danhSachBaiThiHienTai == null || danhSachBaiThiHienTai.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                "Không có dữ liệu để xuất!",
+                "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        BangDiemExcelExporter exporter = new BangDiemExcelExporter();
+        exporter.exportToExcel(this, danhSachBaiThiHienTai, "BẢNG ĐIỂM SINH VIÊN TRONG KHOA");
     }
 }

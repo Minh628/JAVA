@@ -1326,12 +1326,8 @@ public class ThongKePanel extends JPanel {
             // Xuất thống kê tổng quan
             PDFExporter.exportThongKeTongQuan(this, currentTongQuanData, 
                 currentTuNgay, currentDenNgay);
-        } else if (loaiThongKe == 6) {
-            // Xuất thống kê khoa theo quý
-            int nam = (Integer) cboNam.getSelectedItem();
-            PDFExporter.exportThongKeKhoaTheoQuy(this, currentTableData, nam);
         } else if (currentTableData != null && currentColumnNames != null) {
-            // Xuất thống kê theo nhóm
+            // Dùng chung cho TẤT CẢ các loại bảng còn lại
             PDFExporter.exportThongKeTheoNhom(this, currentTieuDe, 
                 currentColumnNames, currentTableData, currentTuNgay, currentDenNgay);
         } else {

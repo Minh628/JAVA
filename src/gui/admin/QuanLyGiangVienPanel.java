@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
+import util.GiangVienExcelImporter;
 import util.SearchCondition;
 
 public class QuanLyGiangVienPanel extends BaseCrudPanel {
@@ -256,6 +257,72 @@ public class QuanLyGiangVienPanel extends BaseCrudPanel {
         CustomButton btnTimNangCao = new CustomButton("Tìm nâng cao", new Color(128, 0, 128), Constants.TEXT_COLOR);
         btnTimNangCao.addActionListener(e -> moTimKiemNangCao());
         searchPanel.add(btnTimNangCao);
+        
+        // Nút Import từ Excel
+        CustomButton btnImportExcel = new CustomButton("Import Excel", new Color(34, 139, 34), Constants.TEXT_COLOR);
+        btnImportExcel.addActionListener(e -> importGiangVienTuExcel());
+        searchPanel.add(btnImportExcel);
+        
+        // Nút tạo file mẫu
+        CustomButton btnTaoMau = new CustomButton("Tải mẫu Excel", new Color(70, 130, 180), Constants.TEXT_COLOR);
+        btnTaoMau.addActionListener(e -> GiangVienExcelImporter.createTemplateFile(this));
+        searchPanel.add(btnTaoMau);
+    }
+    
+    /**
+     * Import giảng viên từ file Excel
+     */
+    private void importGiangVienTuExcel() {
+        List<GiangVienDTO> danhSach = GiangVienExcelImporter.importFromExcel(this);
+        
+        if (danhSach == null || danhSach.isEmpty()) {
+            return;
+        }
+        
+        // Xác nhận import
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Bạn có muốn import " + danhSach.size() + " giảng viên vào hệ thống?",
+            "Xác nhận Import",
+            JOptionPane.YES_NO_OPTION);
+        
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+        
+        // Thực hiện import
+        int success = 0, fail = 0;
+        StringBuilder errors = new StringBuilder();
+        
+        for (GiangVienDTO gv : danhSach) {
+            try {
+                if (giangVienBUS.themGiangVien(gv)) {
+                    success++;
+                } else {
+                    fail++;
+                    errors.append("• ").append(gv.getTenDangNhap()).append(": Thêm thất bại\n");
+                }
+            } catch (Exception e) {
+                fail++;
+                errors.append("• ").append(gv.getTenDangNhap()).append(": ").append(e.getMessage()).append("\n");
+            }
+        }
+        
+        // Hiển thị kết quả
+        StringBuilder result = new StringBuilder();
+        result.append("Kết quả import:\n\n");
+        result.append("• Thành công: ").append(success).append(" giảng viên\n");
+        result.append("• Thất bại: ").append(fail).append(" giảng viên\n");
+        
+        if (fail > 0 && errors.length() > 0) {
+            result.append("\nChi tiết lỗi:\n").append(errors.toString().substring(0, Math.min(errors.length(), 500)));
+        }
+        
+        JOptionPane.showMessageDialog(this, result.toString(),
+            fail > 0 ? "Import hoàn tất với lỗi" : "Import thành công",
+            fail > 0 ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE);
+        
+        // Refresh danh sách
+        loadData();
     }
 
     private void moChonKhoa() {
