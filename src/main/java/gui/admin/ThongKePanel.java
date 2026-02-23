@@ -52,20 +52,45 @@
  */
 package gui.admin;
 
-import bus.ThongKeBUS;
-import com.toedter.calendar.JDateChooser;
-import config.Constants;
-import gui.components.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import javax.swing.*;
-import javax.swing.table.*;
+import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+
 import org.kordamp.ikonli.Ikon;
+
+import com.toedter.calendar.JDateChooser;
+
+import bus.ThongKeBUS;
+import config.Constants;
+import gui.components.CustomButton;
+import gui.components.CustomTable;
+import gui.components.HeaderLabel;
+import gui.components.SimpleBarChart;
+import gui.components.SimplePieChart;
+import gui.components.WrapLayout;
 import util.IconHelper;
 import util.PDFExporter;
 
@@ -190,8 +215,8 @@ public class ThongKePanel extends JPanel {
         ));
         pnlBoLocWrapper.setBackground(Color.WHITE);
         
-        // Panel chứa các bộ lọc
-        JPanel pnlFilters = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 5));
+        // Panel chứa các bộ lọc - dùng WrapLayout để tự xuống dòng khi hết chỗ
+        JPanel pnlFilters = new JPanel(new WrapLayout(FlowLayout.LEFT, 15, 5));
         pnlFilters.setOpaque(false);
         
         // 1. Loại thời gian
