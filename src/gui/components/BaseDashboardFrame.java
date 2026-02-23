@@ -162,6 +162,8 @@ public abstract class BaseDashboardFrame extends JFrame {
         btnThoat.setFont(Constants.BUTTON_FONT);
         btnThoat.setForeground(Color.black);
         btnThoat.setBackground(Constants.LOGOUT_BTN);
+        btnThoat.setOpaque(true);
+        btnThoat.setBorderPainted(false);
         btnThoat.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
         btnThoat.setFocusPainted(false);
         btnThoat.setCursor(new Cursor(Cursor.HAND_CURSOR));
