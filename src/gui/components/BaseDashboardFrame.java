@@ -158,9 +158,9 @@ public abstract class BaseDashboardFrame extends JFrame {
         rightPanel.add(userInfo);
         
         JButton btnThoat = new JButton("Thoát");
-        btnThoat.setIcon(IconHelper.createIcon(Constants.ICON_POWER_OFF, Constants.ICON_SIZE_NORMAL, Color.WHITE));
+        btnThoat.setIcon(IconHelper.createIcon(Constants.ICON_POWER_OFF, Constants.ICON_SIZE_NORMAL, Color.black));
         btnThoat.setFont(Constants.BUTTON_FONT);
-        btnThoat.setForeground(Color.WHITE);
+        btnThoat.setForeground(Color.black);
         btnThoat.setBackground(Constants.LOGOUT_BTN);
         btnThoat.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
         btnThoat.setFocusPainted(false);
@@ -206,10 +206,10 @@ public abstract class BaseDashboardFrame extends JFrame {
     
     protected JButton addMenuItem(JPanel sidebar, Ikon icon, String text, String cardName) {
         JButton btn = new JButton(text);
-        btn.setIcon(IconHelper.createIcon(icon, Constants.ICON_SIZE_NORMAL, Color.WHITE));
+        btn.setIcon(IconHelper.createIcon(icon, Constants.ICON_SIZE_NORMAL, Color.BLACK));
         btn.setIconTextGap(10);
         btn.setFont(Constants.NORMAL_FONT);
-        btn.setForeground(Color.WHITE);
+        btn.setForeground(Color.BLACK);
         btn.setBackground(SIDEBAR_BG);
         btn.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
         btn.setHorizontalAlignment(SwingConstants.LEFT);

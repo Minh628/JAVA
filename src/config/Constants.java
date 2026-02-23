@@ -32,7 +32,7 @@ public class Constants {
     public static final Color CONTENT_BG = new Color(245, 247, 250); // Nền content
     public static final Color TOOLBAR_BTN = new Color(52, 73, 94); // Nút toolbar
     public static final Color TOOLBAR_HOVER = new Color(41, 128, 185); // Nút toolbar hover
-    public static final Color LOGOUT_BTN = new Color(192, 57, 43); // Nút đăng xuất
+    public static final Color LOGOUT_BTN = new Color(231, 76, 60); // Nút đăng xuất
 
     // Màu phụ cho biểu đồ/thống kê
     public static final Color PURPLE_COLOR = new Color(155, 89, 182); // Tím
