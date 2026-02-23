@@ -49,6 +49,7 @@ import java.awt.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import util.IconHelper;
 
 public class ThiTracNghiemPanel extends JPanel {
     private SinhVienDTO nguoiDung;
@@ -86,7 +87,9 @@ public class ThiTracNghiemPanel extends JPanel {
         JPanel panelHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
         panelHeader.setBackground(Constants.CONTENT_BG);
 
-        JLabel lblTieuDe = new JLabel("📝 DANH SÁCH ĐỀ THI");
+        JLabel lblTieuDe = new JLabel("DANH SÁCH ĐỀ THI");
+        lblTieuDe.setIcon(IconHelper.createIcon(Constants.ICON_FILE_TEXT, Constants.ICON_SIZE_HEADER, Constants.PRIMARY_COLOR));
+        lblTieuDe.setIconTextGap(10);
         lblTieuDe.setFont(Constants.HEADER_FONT);
         lblTieuDe.setForeground(Constants.PRIMARY_COLOR);
         panelHeader.add(lblTieuDe);
@@ -123,12 +126,14 @@ public class ThiTracNghiemPanel extends JPanel {
         JPanel panelNut = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelNut.setBackground(Constants.CONTENT_BG);
 
-        CustomButton btnVaoThi = new CustomButton("🚀  VÀO THI", Constants.SUCCESS_COLOR, Constants.TEXT_COLOR);
+        CustomButton btnVaoThi = new CustomButton("VÀO THI", Constants.SUCCESS_COLOR, Color.BLACK);
+        btnVaoThi.setIcon(IconHelper.createIcon(Constants.ICON_CHECK, Constants.ICON_SIZE_NORMAL, Color.BLACK));
         btnVaoThi.setPreferredSize(new Dimension(150, 45));
         btnVaoThi.addActionListener(e -> vaoThi());
         panelNut.add(btnVaoThi);
 
-        CustomButton btnLamMoi = new CustomButton("🔄  Làm mới", Constants.PRIMARY_COLOR, Constants.TEXT_COLOR);
+        CustomButton btnLamMoi = new CustomButton("Làm mới", Constants.PRIMARY_COLOR, Color.BLACK);
+        btnLamMoi.setIcon(IconHelper.createIcon(Constants.ICON_REFRESH, Constants.ICON_SIZE_NORMAL, Color.BLACK));
         btnLamMoi.setPreferredSize(new Dimension(150, 45));
         btnLamMoi.addActionListener(e -> loadData());
         panelNut.add(btnLamMoi);

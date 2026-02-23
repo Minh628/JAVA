@@ -6,6 +6,8 @@ package config;
 
 import java.awt.Color;
 import java.awt.Font;
+import org.kordamp.ikonli.fontawesome.FontAwesome;
+import org.kordamp.ikonli.Ikon;
 
 public class Constants {
     // Màu sắc giao diện - Modern Blue Theme
@@ -82,4 +84,60 @@ public class Constants {
 
     // Khoảng cách dọc trong menu
     public static final int MENU_VERTICAL_GAP = 15;
+    
+    // =====================================================
+    // ICON CONSTANTS - Sử dụng Ikonli FontAwesome
+    // =====================================================
+    
+    // Icons cho Dashboard/Menu
+    public static final Ikon ICON_DASHBOARD = FontAwesome.DASHBOARD;
+    public static final Ikon ICON_CHART = FontAwesome.BAR_CHART;
+    public static final Ikon ICON_LINE_CHART = FontAwesome.LINE_CHART;
+    public static final Ikon ICON_BOOK = FontAwesome.BOOK;
+    public static final Ikon ICON_UNIVERSITY = FontAwesome.UNIVERSITY;
+    public static final Ikon ICON_GRADUATION = FontAwesome.GRADUATION_CAP;
+    public static final Ikon ICON_CALENDAR = FontAwesome.CALENDAR;
+    public static final Ikon ICON_USERS = FontAwesome.USERS;
+    public static final Ikon ICON_USER = FontAwesome.USER;
+    public static final Ikon ICON_USER_CIRCLE = FontAwesome.USER_CIRCLE;
+    
+    // Icons cho hành động
+    public static final Ikon ICON_QUESTION = FontAwesome.QUESTION_CIRCLE;
+    public static final Ikon ICON_FILE_TEXT = FontAwesome.FILE_TEXT;
+    public static final Ikon ICON_HISTORY = FontAwesome.HISTORY;
+    public static final Ikon ICON_SEARCH = FontAwesome.SEARCH;
+    public static final Ikon ICON_REFRESH = FontAwesome.REFRESH;
+    public static final Ikon ICON_PLUS = FontAwesome.PLUS;
+    public static final Ikon ICON_EDIT = FontAwesome.EDIT;
+    public static final Ikon ICON_TRASH = FontAwesome.TRASH;
+    public static final Ikon ICON_SAVE = FontAwesome.SAVE;
+    public static final Ikon ICON_SIGN_OUT = FontAwesome.SIGN_OUT;
+    public static final Ikon ICON_LIST = FontAwesome.LIST;
+    public static final Ikon ICON_CLIPBOARD = FontAwesome.CLIPBOARD;
+    
+    // Icons cho trạng thái
+    public static final Ikon ICON_CHECK = FontAwesome.CHECK;
+    public static final Ikon ICON_WARNING = FontAwesome.EXCLAMATION_TRIANGLE;
+    public static final Ikon ICON_ERROR = FontAwesome.TIMES_CIRCLE;
+    public static final Ikon ICON_INFO = FontAwesome.INFO_CIRCLE;
+    
+    // Icons cho export/import
+    public static final Ikon ICON_PRINT = FontAwesome.PRINT;
+    public static final Ikon ICON_EXCEL = FontAwesome.FILE_EXCEL_O;
+    public static final Ikon ICON_UPLOAD = FontAwesome.UPLOAD;
+    public static final Ikon ICON_DOWNLOAD = FontAwesome.DOWNLOAD;
+    
+    // Icons khác
+    public static final Ikon ICON_COG = FontAwesome.COG;
+    public static final Ikon ICON_LOCK = FontAwesome.LOCK;
+    public static final Ikon ICON_POWER_OFF = FontAwesome.POWER_OFF;
+    
+    // Kích thước icon
+    public static final int ICON_SIZE_SMALL = 14;
+    public static final int ICON_SIZE_NORMAL = 18;
+    public static final int ICON_SIZE_LARGE = 24;
+    public static final int ICON_SIZE_XLARGE = 32;
+    public static final int ICON_SIZE_STAT_CARD = 40;
+    public static final int ICON_SIZE_HEADER = 28;
+    public static final int ICON_SIZE_LOGO = 32;
 }

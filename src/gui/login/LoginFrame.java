@@ -43,6 +43,7 @@ import gui.teacher.TeacherDashboard;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import util.IconHelper;
 
 public class LoginFrame extends JFrame {
     private JTextField txtTenDangNhap;
@@ -58,6 +59,7 @@ public class LoginFrame extends JFrame {
 
     private void initComponents() {
         setTitle("Đăng nhập - Hệ thống thi trắc nghiệm");
+        setIconImage(IconHelper.createIconImage(Constants.ICON_BOOK, 32, Constants.PRIMARY_COLOR));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(900, 600);
         setLocationRelativeTo(null);
@@ -98,8 +100,8 @@ public class LoginFrame extends JFrame {
         brandingContent.setOpaque(false);
         
         // Logo icon
-        JLabel lblIcon = new JLabel("📚");
-        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 80));
+        JLabel lblIcon = new JLabel();
+        lblIcon.setIcon(IconHelper.createIcon(Constants.ICON_BOOK, 80, Color.WHITE));
         lblIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
         brandingContent.add(lblIcon);
         

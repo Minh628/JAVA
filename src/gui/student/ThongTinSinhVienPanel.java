@@ -33,6 +33,7 @@ import dto.SinhVienDTO;
 import gui.components.*;
 import java.awt.*;
 import javax.swing.*;
+import util.IconHelper;
 
 public class ThongTinSinhVienPanel extends JPanel {
     private SinhVienDTO nguoiDung;
@@ -53,7 +54,7 @@ public class ThongTinSinhVienPanel extends JPanel {
                                                    Constants.PADDING_LARGE, Constants.PADDING_LARGE));
         
         // Tiêu đề - sử dụng HeaderLabel
-        add(HeaderLabel.createWithIcon("👤", "THÔNG TIN CÁ NHÂN"), BorderLayout.NORTH);
+        add(HeaderLabel.createWithIcon(Constants.ICON_USER_CIRCLE, "THÔNG TIN CÁ NHÂN"), BorderLayout.NORTH);
         
         // Panel thông tin - sử dụng InfoDisplayPanel
         String[][] info = {
@@ -71,7 +72,8 @@ public class ThongTinSinhVienPanel extends JPanel {
         JPanel panelNut = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelNut.setBackground(Constants.CONTENT_BG);
         
-        CustomButton btnDoiMK = new CustomButton("🔑  Đổi mật khẩu", Constants.PRIMARY_COLOR, Constants.TEXT_COLOR);
+        CustomButton btnDoiMK = new CustomButton("Đổi mật khẩu", Constants.PRIMARY_COLOR, Color.BLACK);
+        btnDoiMK.setIcon(IconHelper.createIcon(Constants.ICON_LOCK, Constants.ICON_SIZE_NORMAL, Color.BLACK));
         btnDoiMK.addActionListener(e -> doiMatKhau());
         panelNut.add(btnDoiMK);
         

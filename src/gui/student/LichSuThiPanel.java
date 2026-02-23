@@ -43,6 +43,7 @@ import java.awt.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import util.IconHelper;
 
 public class LichSuThiPanel extends JPanel {
     private SinhVienDTO nguoiDung;
@@ -73,7 +74,9 @@ public class LichSuThiPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Tiêu đề
-        JLabel lblTieuDe = new JLabel("📜 LỊCH SỬ THI");
+        JLabel lblTieuDe = new JLabel("LỊCH SỬ THI");
+        lblTieuDe.setIcon(IconHelper.createIcon(Constants.ICON_HISTORY, Constants.ICON_SIZE_HEADER, Constants.PRIMARY_COLOR));
+        lblTieuDe.setIconTextGap(10);
         lblTieuDe.setFont(Constants.HEADER_FONT);
         lblTieuDe.setForeground(Constants.PRIMARY_COLOR);
         add(lblTieuDe, BorderLayout.NORTH);
@@ -131,12 +134,13 @@ public class LichSuThiPanel extends JPanel {
         JPanel panelNut = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelNut.setBackground(Constants.CONTENT_BG);
 
-        CustomButton btnXemChiTiet = new CustomButton("🔍  Xem chi tiết", Constants.PRIMARY_COLOR,
-                Constants.TEXT_COLOR);
+        CustomButton btnXemChiTiet = new CustomButton("Xem chi tiết", Constants.PRIMARY_COLOR, Color.BLACK);
+        btnXemChiTiet.setIcon(IconHelper.createIcon(Constants.ICON_SEARCH, Constants.ICON_SIZE_NORMAL, Color.BLACK));
         btnXemChiTiet.addActionListener(e -> xemChiTiet());
         panelNut.add(btnXemChiTiet);
 
-        CustomButton btnLamMoi = new CustomButton("🔄  Làm mới", Constants.SUCCESS_COLOR, Constants.TEXT_COLOR);
+        CustomButton btnLamMoi = new CustomButton("Làm mới", Constants.SUCCESS_COLOR, Color.BLACK);
+        btnLamMoi.setIcon(IconHelper.createIcon(Constants.ICON_REFRESH, Constants.ICON_SIZE_NORMAL, Color.BLACK));
         btnLamMoi.addActionListener(e -> loadData());
         panelNut.add(btnLamMoi);
 

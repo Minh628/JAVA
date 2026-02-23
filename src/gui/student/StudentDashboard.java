@@ -29,6 +29,7 @@
 package gui.student;
 
 import bus.SinhVienBUS;
+import config.Constants;
 import dto.SinhVienDTO;
 import gui.components.BaseDashboardFrame;
 import gui.login.LoginFrame;
@@ -72,13 +73,13 @@ public class StudentDashboard extends BaseDashboardFrame {
     protected void initSidebarItems(JPanel sidebar) {
         // Nhóm: THI CỬ
         addMenuGroup(sidebar, "THI CỬ");
-        JButton btnThi = addMenuItem(sidebar, "📝", "Thi trắc nghiệm", "THI");
-        addMenuItem(sidebar, "📜", "Lịch sử thi", "LICH_SU");
+        JButton btnThi = addMenuItem(sidebar, Constants.ICON_FILE_TEXT, "Thi trắc nghiệm", "THI");
+        addMenuItem(sidebar, Constants.ICON_HISTORY, "Lịch sử thi", "LICH_SU");
         
         // Nhóm: CÁ NHÂN
         sidebar.add(Box.createVerticalStrut(15));
         addMenuGroup(sidebar, "CÁ NHÂN");
-        addMenuItem(sidebar, "👤", "Thông tin cá nhân", "THONG_TIN");
+        addMenuItem(sidebar, Constants.ICON_USER_CIRCLE, "Thông tin cá nhân", "THONG_TIN");
         
         setActiveButton(btnThi);
     }

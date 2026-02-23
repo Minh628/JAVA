@@ -11,9 +11,9 @@
  * 
  * CÁCH SỬ DỤNG:
  *   // Cách 1: Factory method (KHUYẾN KHÍCH)
- *   HeaderLabel title = HeaderLabel.createPrimary("📊 THỐNG KÊ");
+ *   HeaderLabel title = HeaderLabel.createPrimary("THỐNG KÊ");
  *   HeaderLabel darkTitle = HeaderLabel.createDark("Danh sách");
- *   HeaderLabel withIcon = HeaderLabel.createWithIcon("📚", "QUẢN LÝ HỌC PHẦN");
+ *   HeaderLabel withIcon = HeaderLabel.createWithIcon(Constants.ICON_BOOK, "QUẢN LÝ HỌC PHẦN");
  *   
  *   // Cách 2: Constructor trực tiếp
  *   HeaderLabel custom = new HeaderLabel("Tiêu đề", Constants.SUCCESS_COLOR);
@@ -27,6 +27,8 @@ package gui.components;
 import config.Constants;
 import java.awt.*;
 import javax.swing.*;
+import org.kordamp.ikonli.Ikon;
+import util.IconHelper;
 
 public class HeaderLabel extends JLabel {
     
@@ -49,7 +51,26 @@ public class HeaderLabel extends JLabel {
         return new HeaderLabel(text, Constants.TEXT_COLOR);
     }
     
-    public static HeaderLabel createWithIcon(String icon, String text) {
-        return new HeaderLabel(icon + " " + text, Constants.PRIMARY_COLOR);
+    /**
+     * Tạo HeaderLabel với icon từ Ikonli
+     * @param icon Icon code từ FontAwesome (VD: Constants.ICON_BOOK)
+     * @param text Nội dung text
+     * @return HeaderLabel với icon và text
+     */
+    public static HeaderLabel createWithIcon(Ikon icon, String text) {
+        HeaderLabel label = new HeaderLabel(text, Constants.PRIMARY_COLOR);
+        label.setIcon(IconHelper.createIcon(icon, Constants.ICON_SIZE_HEADER, Constants.PRIMARY_COLOR));
+        label.setIconTextGap(10);
+        return label;
+    }
+    
+    /**
+     * Tạo HeaderLabel với icon và màu tùy chỉnh
+     */
+    public static HeaderLabel createWithIcon(Ikon icon, String text, Color color) {
+        HeaderLabel label = new HeaderLabel(text, color);
+        label.setIcon(IconHelper.createIcon(icon, Constants.ICON_SIZE_HEADER, color));
+        label.setIconTextGap(10);
+        return label;
     }
 }

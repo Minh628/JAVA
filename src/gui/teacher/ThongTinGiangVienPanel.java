@@ -35,6 +35,7 @@ import dto.VaiTroDTO;
 import gui.components.*;
 import java.awt.*;
 import javax.swing.*;
+import util.IconHelper;
 
 public class ThongTinGiangVienPanel extends JPanel {
     private GiangVienDTO nguoiDung;
@@ -57,7 +58,7 @@ public class ThongTinGiangVienPanel extends JPanel {
                                                    Constants.PADDING_LARGE, Constants.PADDING_LARGE));
         
         // Tiêu đề - sử dụng HeaderLabel
-        add(HeaderLabel.createWithIcon("👤", "THÔNG TIN CÁ NHÂN"), BorderLayout.NORTH);
+        add(HeaderLabel.createWithIcon(Constants.ICON_USER_CIRCLE, "THÔNG TIN CÁ NHÂN"), BorderLayout.NORTH);
         
         // Lấy tên khoa và vai trò
         String tenKhoa = "";
@@ -83,7 +84,8 @@ public class ThongTinGiangVienPanel extends JPanel {
         JPanel panelNut = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelNut.setBackground(Constants.CONTENT_BG);
         
-        CustomButton btnDoiMK = new CustomButton("🔑  Đổi mật khẩu", Constants.PRIMARY_COLOR, Constants.TEXT_COLOR);
+        CustomButton btnDoiMK = new CustomButton("Đổi mật khẩu", Constants.PRIMARY_COLOR, Color.BLACK);
+        btnDoiMK.setIcon(IconHelper.createIcon(Constants.ICON_LOCK, Constants.ICON_SIZE_NORMAL, Color.BLACK));
         btnDoiMK.addActionListener(e -> doiMatKhau());
         panelNut.add(btnDoiMK);
         

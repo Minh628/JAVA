@@ -54,6 +54,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
+import util.IconHelper;
 
 public class LamBaiThiFrame extends JFrame {
     private int maBaiThi;
@@ -319,7 +320,8 @@ public class LamBaiThiFrame extends JFrame {
         if (CauHoiDTO.LOAI_DIEN_KHUYET.equals(cauHoi.getLoaiCauHoi())) {
             // Câu hỏi điền khuyết
             CauHoiDKDTO dk = (CauHoiDKDTO) cauHoi;
-            lblLoaiCauHoi.setText("📝 Câu hỏi điền khuyết");
+            lblLoaiCauHoi.setText("Câu hỏi điền khuyết");
+            lblLoaiCauHoi.setIcon(IconHelper.createIcon(Constants.ICON_EDIT, Constants.ICON_SIZE_NORMAL, Constants.INFO_COLOR));
             
             // Hiển thị panel điền khuyết
             cardLayout.show(parent, "DK");
@@ -329,7 +331,8 @@ public class LamBaiThiFrame extends JFrame {
         } else {
             // Câu hỏi trắc nghiệm
             CauHoiMCDTO mc = (CauHoiMCDTO) cauHoi;
-            lblLoaiCauHoi.setText("📋 Câu hỏi trắc nghiệm");
+            lblLoaiCauHoi.setText("Câu hỏi trắc nghiệm");
+            lblLoaiCauHoi.setIcon(IconHelper.createIcon(Constants.ICON_LIST, Constants.ICON_SIZE_NORMAL, Constants.INFO_COLOR));
             
             // Hiển thị panel trắc nghiệm
             cardLayout.show(parent, "TN");

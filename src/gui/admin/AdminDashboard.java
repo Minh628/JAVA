@@ -94,27 +94,27 @@ public class AdminDashboard extends BaseDashboardFrame {
     protected void initSidebarItems(JPanel sidebar) {
         // Nhóm: HỆ THỐNG
         addMenuGroup(sidebar, "HỆ THỐNG");
-        JButton btnTongQuan = addMenuItem(sidebar, "📊", "Tổng Quan", "TONG_QUAN");
-        addMenuItem(sidebar, "📈", "Thống Kê", "THONG_KE");
+        JButton btnTongQuan = addMenuItem(sidebar, Constants.ICON_DASHBOARD, "Tổng Quan", "TONG_QUAN");
+        addMenuItem(sidebar, Constants.ICON_CHART, "Thống Kê", "THONG_KE");
         
         // Nhóm: QUẢN LÝ ĐÀO TẠO
         sidebar.add(Box.createVerticalStrut(15));
         addMenuGroup(sidebar, "QUẢN LÝ ĐÀO TẠO");
-        addMenuItem(sidebar, "📖", "Học Phần", "HOC_PHAN");
-        addMenuItem(sidebar, "🏛️", "Khoa", "KHOA");
-        addMenuItem(sidebar, "🎓", "Ngành", "NGANH");
-        addMenuItem(sidebar, "📅", "Kỳ Thi", "KY_THI");
+        addMenuItem(sidebar, Constants.ICON_BOOK, "Học Phần", "HOC_PHAN");
+        addMenuItem(sidebar, Constants.ICON_UNIVERSITY, "Khoa", "KHOA");
+        addMenuItem(sidebar, Constants.ICON_GRADUATION, "Ngành", "NGANH");
+        addMenuItem(sidebar, Constants.ICON_CALENDAR, "Kỳ Thi", "KY_THI");
         
         // Nhóm: QUẢN LÝ NHÂN SỰ
         sidebar.add(Box.createVerticalStrut(15));
         addMenuGroup(sidebar, "QUẢN LÝ NHÂN SỰ");
-        addMenuItem(sidebar, "👨‍🏫", "Giảng Viên", "GIANG_VIEN");
-        addMenuItem(sidebar, "👨‍🎓", "Sinh Viên", "SINH_VIEN");
+        addMenuItem(sidebar, Constants.ICON_USERS, "Giảng Viên", "GIANG_VIEN");
+        addMenuItem(sidebar, Constants.ICON_USER, "Sinh Viên", "SINH_VIEN");
         
         // Nhóm: CÁ NHÂN
         sidebar.add(Box.createVerticalStrut(15));
         addMenuGroup(sidebar, "CÁ NHÂN");
-        addMenuItem(sidebar, "👤", "Thông tin cá nhân", "THONG_TIN");
+        addMenuItem(sidebar, Constants.ICON_USER_CIRCLE, "Thông tin cá nhân", "THONG_TIN");
         
         setActiveButton(btnTongQuan);
     }
@@ -137,7 +137,7 @@ public class AdminDashboard extends BaseDashboardFrame {
         panel.setBackground(CONTENT_BG);
         panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         
-        HeaderLabel lblTitle = HeaderLabel.createPrimary("📊 TỔNG QUAN HỆ THỐNG");
+        HeaderLabel lblTitle = HeaderLabel.createWithIcon(Constants.ICON_DASHBOARD, "TỔNG QUAN HỆ THỐNG");
         panel.add(lblTitle, BorderLayout.NORTH);
         
         // Cards thống kê
@@ -159,12 +159,12 @@ public class AdminDashboard extends BaseDashboardFrame {
         int soKyThi = kyThiBUS.getDanhSachKyThi() != null ? 
                       kyThiBUS.getDanhSachKyThi().size() : 0;
         
-        cardsPanel.add(createStatCard("👨‍🏫", "Giảng Viên", String.valueOf(soGiangVien), Constants.SECONDARY_COLOR));
-        cardsPanel.add(createStatCard("👨‍🎓", "Sinh Viên", String.valueOf(soSinhVien), Constants.SUCCESS_COLOR));
-        cardsPanel.add(createStatCard("📖", "Học Phần", String.valueOf(soHocPhan), Constants.PURPLE_COLOR));
-        cardsPanel.add(createStatCard("🏛️", "Khoa", String.valueOf(soKhoa), Constants.ORANGE_COLOR));
-        cardsPanel.add(createStatCard("🎓", "Ngành", String.valueOf(soNganh), Constants.PRIMARY_COLOR));
-        cardsPanel.add(createStatCard("📅", "Kỳ Thi", String.valueOf(soKyThi), Constants.DANGER_COLOR));
+        cardsPanel.add(createStatCard(Constants.ICON_USERS, "Giảng Viên", String.valueOf(soGiangVien), Constants.SECONDARY_COLOR));
+        cardsPanel.add(createStatCard(Constants.ICON_USER, "Sinh Viên", String.valueOf(soSinhVien), Constants.SUCCESS_COLOR));
+        cardsPanel.add(createStatCard(Constants.ICON_BOOK, "Học Phần", String.valueOf(soHocPhan), Constants.PURPLE_COLOR));
+        cardsPanel.add(createStatCard(Constants.ICON_UNIVERSITY, "Khoa", String.valueOf(soKhoa), Constants.ORANGE_COLOR));
+        cardsPanel.add(createStatCard(Constants.ICON_GRADUATION, "Ngành", String.valueOf(soNganh), Constants.PRIMARY_COLOR));
+        cardsPanel.add(createStatCard(Constants.ICON_CALENDAR, "Kỳ Thi", String.valueOf(soKyThi), Constants.DANGER_COLOR));
         
         panel.add(cardsPanel, BorderLayout.CENTER);
         

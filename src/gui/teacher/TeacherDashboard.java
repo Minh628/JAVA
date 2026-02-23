@@ -28,6 +28,7 @@
  */
 package gui.teacher;
 
+import config.Constants;
 import dto.GiangVienDTO;
 import gui.components.BaseDashboardFrame;
 import gui.login.LoginFrame;
@@ -66,14 +67,14 @@ public class TeacherDashboard extends BaseDashboardFrame {
     protected void initSidebarItems(JPanel sidebar) {
         // Nhóm: QUẢN LÝ
         addMenuGroup(sidebar, "QUẢN LÝ");
-        JButton btnCauHoi = addMenuItem(sidebar, "❓", "Quản lý Câu hỏi", "CAU_HOI");
-        addMenuItem(sidebar, "📝", "Quản lý Đề thi", "DE_THI");
-        addMenuItem(sidebar, "📊", "Xem điểm SV", "XEM_DIEM");
+        JButton btnCauHoi = addMenuItem(sidebar, Constants.ICON_QUESTION, "Quản lý Câu hỏi", "CAU_HOI");
+        addMenuItem(sidebar, Constants.ICON_FILE_TEXT, "Quản lý Đề thi", "DE_THI");
+        addMenuItem(sidebar, Constants.ICON_CHART, "Xem điểm SV", "XEM_DIEM");
         
         // Nhóm: CÁ NHÂN
         sidebar.add(Box.createVerticalStrut(15));
         addMenuGroup(sidebar, "CÁ NHÂN");
-        addMenuItem(sidebar, "👤", "Thông tin cá nhân", "THONG_TIN");
+        addMenuItem(sidebar, Constants.ICON_USER_CIRCLE, "Thông tin cá nhân", "THONG_TIN");
         
         setActiveButton(btnCauHoi);
     }

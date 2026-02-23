@@ -47,6 +47,9 @@ import config.Constants;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.swing.FontIcon;
+import util.IconHelper;
 
 public abstract class BaseDashboardFrame extends JFrame {
     protected JPanel panelNoiDung;
@@ -73,6 +76,7 @@ public abstract class BaseDashboardFrame extends JFrame {
     }
 
     private void initComponents() {
+        setIconImage(IconHelper.createIconImage(Constants.ICON_BOOK, 32, Constants.PRIMARY_COLOR));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1300, 750);
         setLocationRelativeTo(null);
@@ -120,8 +124,8 @@ public abstract class BaseDashboardFrame extends JFrame {
         // Left: Logo
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         leftPanel.setOpaque(false);
-        JLabel lblLogo = new JLabel("📚");
-        lblLogo.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 28));
+        JLabel lblLogo = new JLabel();
+        lblLogo.setIcon(IconHelper.createIcon(Constants.ICON_BOOK, Constants.ICON_SIZE_LOGO, Color.WHITE));
         JLabel lblAppName = new JLabel("EXAM MANAGEMENT");
         lblAppName.setFont(Constants.TITLE_FONT);
         lblAppName.setForeground(Color.WHITE);
@@ -133,8 +137,8 @@ public abstract class BaseDashboardFrame extends JFrame {
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
         rightPanel.setOpaque(false);
         
-        JLabel lblUserIcon = new JLabel("👤");
-        lblUserIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
+        JLabel lblUserIcon = new JLabel();
+        lblUserIcon.setIcon(IconHelper.createIcon(Constants.ICON_USER_CIRCLE, Constants.ICON_SIZE_LARGE, Color.WHITE));
         rightPanel.add(lblUserIcon);
         
         JPanel userInfo = new JPanel();
@@ -153,9 +157,10 @@ public abstract class BaseDashboardFrame extends JFrame {
         userInfo.add(lblRole);
         rightPanel.add(userInfo);
         
-        JButton btnThoat = new JButton("⏻ Thoát");
+        JButton btnThoat = new JButton("Thoát");
+        btnThoat.setIcon(IconHelper.createIcon(Constants.ICON_POWER_OFF, Constants.ICON_SIZE_NORMAL, Color.WHITE));
         btnThoat.setFont(Constants.BUTTON_FONT);
-        btnThoat.setForeground(Constants.TEXT_COLOR);
+        btnThoat.setForeground(Color.WHITE);
         btnThoat.setBackground(Constants.LOGOUT_BTN);
         btnThoat.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
         btnThoat.setFocusPainted(false);
@@ -199,10 +204,12 @@ public abstract class BaseDashboardFrame extends JFrame {
         sidebar.add(lblGroup);
     }
     
-    protected JButton addMenuItem(JPanel sidebar, String icon, String text, String cardName) {
-        JButton btn = new JButton(icon + "  " + text);
+    protected JButton addMenuItem(JPanel sidebar, Ikon icon, String text, String cardName) {
+        JButton btn = new JButton(text);
+        btn.setIcon(IconHelper.createIcon(icon, Constants.ICON_SIZE_NORMAL, Color.WHITE));
+        btn.setIconTextGap(10);
         btn.setFont(Constants.NORMAL_FONT);
-        btn.setForeground(Constants.TEXT_COLOR);
+        btn.setForeground(Color.WHITE);
         btn.setBackground(SIDEBAR_BG);
         btn.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
         btn.setHorizontalAlignment(SwingConstants.LEFT);
@@ -251,7 +258,7 @@ public abstract class BaseDashboardFrame extends JFrame {
     }
     
     // Helper cho Stat Card
-    protected JPanel createStatCard(String icon, String title, String value, Color color) {
+    protected JPanel createStatCard(Ikon icon, String title, String value, Color color) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(Constants.CARD_COLOR);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -259,8 +266,9 @@ public abstract class BaseDashboardFrame extends JFrame {
             BorderFactory.createEmptyBorder(25, 25, 25, 25)
         ));
         
-        JLabel lblIcon = new JLabel(icon);
-        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 40));
+        JLabel lblIcon = new JLabel();
+        lblIcon.setIcon(IconHelper.createIcon(icon, Constants.ICON_SIZE_STAT_CARD, color));
+        lblIcon.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 15));
         
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));

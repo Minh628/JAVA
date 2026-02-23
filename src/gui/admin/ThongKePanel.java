@@ -65,6 +65,8 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.*;
+import org.kordamp.ikonli.Ikon;
+import util.IconHelper;
 import util.PDFExporter;
 
 /**
@@ -174,7 +176,7 @@ public class ThongKePanel extends JPanel {
         JPanel pnlHeader = new JPanel(new BorderLayout());
         pnlHeader.setOpaque(false);
         
-        HeaderLabel lblTitle = HeaderLabel.createPrimary("📊 THỐNG KÊ KẾT QUẢ THI");
+        HeaderLabel lblTitle = HeaderLabel.createWithIcon(Constants.ICON_CHART, "THỐNG KÊ KẾT QUẢ THI");
         pnlHeader.add(lblTitle, BorderLayout.WEST);
         
         add(pnlHeader, BorderLayout.NORTH);
@@ -245,7 +247,8 @@ public class ThongKePanel extends JPanel {
         // Sử dụng CustomButton thay vì JButton để đồng bộ style
         // CustomButton tự động có hiệu ứng hover, shadow, bo góc
         // ============================================================
-        btnThongKe = new CustomButton("🔍 Thống kê", Constants.PRIMARY_COLOR, Color.WHITE);
+        btnThongKe = new CustomButton("Thống kê", Constants.PRIMARY_COLOR, Color.BLACK);
+        btnThongKe.setIcon(IconHelper.createIcon(Constants.ICON_SEARCH, Constants.ICON_SIZE_NORMAL, Color.BLACK));
         btnThongKe.setPreferredSize(new Dimension(120, 32));
         btnThongKe.addActionListener(e -> executeThongKe());
         pnlFilters.add(btnThongKe);
@@ -255,7 +258,8 @@ public class ThongKePanel extends JPanel {
         // Sử dụng CustomButton với màu DANGER_COLOR (đỏ)
         // Xuất báo cáo thống kê ra file PDF
         // ============================================================
-        btnExportPDF = new CustomButton("📄 Xuất PDF", Constants.DANGER_COLOR, Color.WHITE);
+        btnExportPDF = new CustomButton("Xuất PDF", Constants.DANGER_COLOR, Color.BLACK);
+        btnExportPDF.setIcon(IconHelper.createIcon(Constants.ICON_DOWNLOAD, Constants.ICON_SIZE_NORMAL, Color.BLACK));
         btnExportPDF.setPreferredSize(new Dimension(120, 32));
         btnExportPDF.addActionListener(e -> exportPDF());
         pnlFilters.add(btnExportPDF);
@@ -593,10 +597,10 @@ public class ThongKePanel extends JPanel {
         int soDat = data.get("soDat") != null ? (int) data.get("soDat") : 0;
         int soRot = data.get("soRot") != null ? (int) data.get("soRot") : 0;
         
-        pnlCards.add(createStatCard("📝", "Tổng bài thi", String.valueOf(tongBaiThi), Constants.PRIMARY_COLOR));
-        pnlCards.add(createStatCard("📋", "Số đề thi", String.valueOf(tongDeThi), Constants.PURPLE_COLOR));
-        pnlCards.add(createStatCard("📊", "Điểm TB", String.format("%.2f", diemTB), Constants.ORANGE_COLOR));
-        pnlCards.add(createStatCard("✅", "Tỷ lệ đạt", String.format("%.1f%%", tyLeDat), Constants.SUCCESS_COLOR));
+        pnlCards.add(createStatCard(Constants.ICON_FILE_TEXT, "Tổng bài thi", String.valueOf(tongBaiThi), Constants.PRIMARY_COLOR));
+        pnlCards.add(createStatCard(Constants.ICON_CLIPBOARD, "Số đề thi", String.valueOf(tongDeThi), Constants.PURPLE_COLOR));
+        pnlCards.add(createStatCard(Constants.ICON_CHART, "Điểm TB", String.format("%.2f", diemTB), Constants.ORANGE_COLOR));
+        pnlCards.add(createStatCard(Constants.ICON_CHECK, "Tỷ lệ đạt", String.format("%.1f%%", tyLeDat), Constants.SUCCESS_COLOR));
         
         pnlCards.revalidate();
         pnlCards.repaint();
@@ -1365,7 +1369,7 @@ public class ThongKePanel extends JPanel {
         }
     }
     
-    private JPanel createStatCard(String icon, String title, String value, Color color) {
+    private JPanel createStatCard(Ikon icon, String title, String value, Color color) {
         JPanel card = new JPanel(new BorderLayout(5, 5));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -1373,8 +1377,9 @@ public class ThongKePanel extends JPanel {
             BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ));
         
-        JLabel lblIcon = new JLabel(icon, SwingConstants.CENTER);
-        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 28));
+        JLabel lblIcon = new JLabel();
+        lblIcon.setIcon(IconHelper.createIcon(icon, Constants.ICON_SIZE_HEADER, color));
+        lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
         
         JPanel pnlText = new JPanel(new GridLayout(2, 1, 0, 5));
         pnlText.setOpaque(false);
