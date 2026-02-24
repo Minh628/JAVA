@@ -138,8 +138,8 @@ mvn clean compile exec:java
 | Vai trò | Tên đăng nhập | Mật khẩu |
 |---------|---------------|----------|
 | Admin | admin | admin |
-| Giảng viên | gv001 | 123456 |
-| Sinh viên | sv001 | 123456 |
+| Giảng viên | giangvien1 | 123456 |
+| Sinh viên | 20110001 | 123456 |
 
 ## 7. Cấu trúc Database (ERD)
 ### Các bảng chính:
