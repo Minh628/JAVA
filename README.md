@@ -137,7 +137,7 @@ mvn clean compile exec:java
 ## 6. Đăng nhập mặc định
 | Vai trò | Tên đăng nhập | Mật khẩu |
 |---------|---------------|----------|
-| Admin | admin | admin |
+| Admin | admin | 123456 |
 | Giảng viên | giangvien1 | 123456 |
 | Sinh viên | 20110001 | 123456 |
 
