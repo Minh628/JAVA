@@ -5,14 +5,16 @@
  */
 package bus;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 import dao.BaiThiDAO;
 import dao.ChiTietDeThiDAO;
 import dao.DeThiDAO;
 import dto.ChiTietDeThiDTO;
 import dto.DeThiDTO;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import util.SearchCondition;
 
 public class DeThiBUS {
@@ -186,8 +188,8 @@ public class DeThiBUS {
      * Tìm kiếm đề thi theo keyword và loại tìm kiếm
      */
     public List<DeThiDTO> timKiem(int maGV, String keyword, String loai, 
-            java.util.function.Function<Integer, String> getTenHocPhan,
-            java.util.function.Function<Integer, String> getTenKyThi) {
+            Function<Integer, String> getTenHocPhan,
+            Function<Integer, String> getTenKyThi) {
         List<DeThiDTO> result = new ArrayList<>();
         try {
             keyword = keyword.toLowerCase();
@@ -208,8 +210,8 @@ public class DeThiBUS {
      * Tìm kiếm nâng cao với nhiều điều kiện
      */
     public List<DeThiDTO> timKiemNangCao(int maGV, List<SearchCondition> conditions, String logic,
-            java.util.function.Function<Integer, String> getTenHocPhan,
-            java.util.function.Function<Integer, String> getTenKyThi) {
+            Function<Integer, String> getTenHocPhan,
+            Function<Integer, String> getTenKyThi) {
         List<DeThiDTO> result = new ArrayList<>();
         try {
             getDanhSachDeThi(maGV);
@@ -227,8 +229,8 @@ public class DeThiBUS {
     }
 
     private boolean matchFilter(DeThiDTO dt, String keyword, String loai,
-            java.util.function.Function<Integer, String> getTenHocPhan,
-            java.util.function.Function<Integer, String> getTenKyThi) {
+            Function<Integer, String> getTenHocPhan,
+            Function<Integer, String> getTenKyThi) {
         if (keyword.isEmpty()) return true;
         
         String tenHocPhan = getTenHocPhan.apply(dt.getMaHocPhan());
@@ -257,8 +259,8 @@ public class DeThiBUS {
     }
 
     private boolean evaluateConditions(DeThiDTO dt, List<SearchCondition> conditions, String logic,
-            java.util.function.Function<Integer, String> getTenHocPhan,
-            java.util.function.Function<Integer, String> getTenKyThi) {
+            Function<Integer, String> getTenHocPhan,
+            Function<Integer, String> getTenKyThi) {
         if (conditions.isEmpty()) return true;
         if ("AND".equals(logic)) {
             for (SearchCondition cond : conditions) {
@@ -291,8 +293,8 @@ public class DeThiBUS {
     }
 
     private boolean evaluateSingleCondition(DeThiDTO dt, SearchCondition cond,
-            java.util.function.Function<Integer, String> getTenHocPhan,
-            java.util.function.Function<Integer, String> getTenKyThi) {
+            Function<Integer, String> getTenHocPhan,
+            Function<Integer, String> getTenKyThi) {
         String fieldValue = switch (cond.getField()) {
             case "Mã đề" -> String.valueOf(dt.getMaDeThi());
             case "Tên đề thi" -> dt.getTenDeThi();
