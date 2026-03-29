@@ -1,5 +1,6 @@
 C:\Users\DELL\Desktop\java\src\main\java\dao\VaiTroDAO.java
 C:\Users\DELL\Desktop\java\src\main\java\gui\components\CustomTable.java
+C:\Users\DELL\Desktop\java\src\main\java\bus\ChiTietDeThiBUS.java
 C:\Users\DELL\Desktop\java\src\main\java\dao\CauHoiDAO.java
 C:\Users\DELL\Desktop\java\src\main\java\bus\KyThiBUS.java
 C:\Users\DELL\Desktop\java\src\main\java\bus\DeThiBUS.java
@@ -41,6 +42,7 @@ C:\Users\DELL\Desktop\java\src\main\java\dto\ChiTietDeThiDTO.java
 C:\Users\DELL\Desktop\java\src\main\java\dto\CauHoiDTO.java
 C:\Users\DELL\Desktop\java\src\main\java\dto\ChiTietBaiThiDTO.java
 C:\Users\DELL\Desktop\java\src\main\java\gui\admin\QuanLyNganhPanel.java
+C:\Users\DELL\Desktop\java\src\main\java\bus\ChiTietBaiThiBUS.java
 C:\Users\DELL\Desktop\java\src\main\java\dao\KyThiDAO.java
 C:\Users\DELL\Desktop\java\src\main\java\gui\admin\QuanLySinhVienPanel.java
 C:\Users\DELL\Desktop\java\src\main\java\dto\DeThiDTO.java

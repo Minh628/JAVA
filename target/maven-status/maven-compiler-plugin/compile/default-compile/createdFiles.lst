@@ -110,6 +110,7 @@ util\SinhVienExcelImporter.class
 gui\teacher\QuanLyCauHoiDeThiDialog$1.class
 gui\components\SimpleBarChart.class
 gui\admin\QuanLyKyThiPanel$1.class
+bus\ChiTietBaiThiBUS.class
 gui\student\LamBaiThiFrame$2.class
 gui\student\LichSuThiPanel$1.class
 gui\components\CustomButton.class

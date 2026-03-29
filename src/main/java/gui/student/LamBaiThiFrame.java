@@ -41,19 +41,47 @@
  */
 package gui.student;
 
-import bus.BaiThiBUS;
-import bus.CauHoiBUS;
-import bus.DeThiBUS;
-import config.Constants;
-import dto.*;
-import gui.components.CustomButton;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.Timer;
+
+import bus.BaiThiBUS;
+import bus.CauHoiBUS;
+import bus.ChiTietBaiThiBUS;
+import bus.ChiTietDeThiBUS;
+import config.Constants;
+import dto.CauHoiDKDTO;
+import dto.CauHoiDTO;
+import dto.CauHoiMCDTO;
+import dto.ChiTietBaiThiDTO;
+import gui.components.CustomButton;
 import util.IconHelper;
 
 public class LamBaiThiFrame extends JFrame {
@@ -87,7 +115,8 @@ public class LamBaiThiFrame extends JFrame {
     
     private Timer timer;
     private BaiThiBUS baiThiBUS;
-    private DeThiBUS deThiBUS;
+    private ChiTietBaiThiBUS chiTietBaiThiBUS;
+    private ChiTietDeThiBUS chiTietDeThiBUS;
     private CauHoiBUS cauHoiBUS;
     private StudentDashboard parentDashboard;
 
@@ -97,12 +126,13 @@ public class LamBaiThiFrame extends JFrame {
         this.maBaiThi = maBaiThi;
         this.thoiGianConLai = thoiGianPhut * 60;
         this.baiThiBUS = new BaiThiBUS();
-        this.deThiBUS = new DeThiBUS();
+        this.chiTietBaiThiBUS = new ChiTietBaiThiBUS();
+        this.chiTietDeThiBUS = new ChiTietDeThiBUS();
         this.cauHoiBUS = new CauHoiBUS();
         
         // GUI tự load câu hỏi: Lấy ID từ ChiTietDeThi -> Lấy nội dung từ CauHoi
         this.danhSachCauHoi = new ArrayList<>();
-        List<Integer> listMaCauHoi = deThiBUS.getMaCauHoiByDeThi(maDeThi);
+        List<Integer> listMaCauHoi = chiTietDeThiBUS.getMaCauHoiByDeThi(maDeThi);
         for (int maCH : listMaCauHoi) {
             CauHoiDTO ch = cauHoiBUS.getById(maCH);
             if (ch != null) this.danhSachCauHoi.add(ch);
@@ -564,11 +594,11 @@ public class LamBaiThiFrame extends JFrame {
             chiTiet.add(ct);
         }
         
-        // Lưu chi tiết bài thi - gọi BaiThiBUS
-        baiThiBUS.themChiTietBatch(chiTiet);
+        // Lưu chi tiết bài thi
+        chiTietBaiThiBUS.themChiTietBatch(chiTiet);
         
-        // Tính điểm - gọi BaiThiBUS
-        float[] ketQua = baiThiBUS.tinhDiem(maBaiThi);
+        // Tính điểm từ chi tiết bài thi
+        float[] ketQua = chiTietBaiThiBUS.tinhDiem(maBaiThi);
         int soCauDung = (int) ketQua[0];
         int soCauSai = (int) ketQua[1];
         float diemSo = ketQua[2];

@@ -30,8 +30,38 @@
  */
 package gui.teacher;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
 import bus.BaiThiBUS;
 import bus.CauHoiBUS;
+import bus.ChiTietDeThiBUS;
 import bus.DeThiBUS;
 import bus.HocPhanBUS;
 import bus.KyThiBUS;
@@ -46,18 +76,12 @@ import gui.components.BaseCrudPanel;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
 import gui.components.SelectEntityDialog;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import util.SearchCondition;
 
 public class QuanLyDeThiPanel extends BaseCrudPanel {
     private GiangVienDTO nguoiDung;
     private DeThiBUS deThiBUS;
+    private ChiTietDeThiBUS chiTietDeThiBUS;
     private HocPhanBUS hocPhanBUS;
     private KyThiBUS kyThiBUS;
     private CauHoiBUS cauHoiBUS;
@@ -87,6 +111,7 @@ public class QuanLyDeThiPanel extends BaseCrudPanel {
         super("QUẢN LÝ ĐỀ THI", COLUMNS, SEARCH_OPTIONS);
         this.nguoiDung = nguoiDung;
         this.deThiBUS = new DeThiBUS();
+        this.chiTietDeThiBUS = new ChiTietDeThiBUS();
         this.hocPhanBUS = new HocPhanBUS();
         this.kyThiBUS = new KyThiBUS();
         this.cauHoiBUS = new CauHoiBUS();
@@ -476,7 +501,7 @@ public class QuanLyDeThiPanel extends BaseCrudPanel {
 
         if (confirmDelete("đề thi")) {
             // Xóa chi tiết đề thi trước - gọi DeThiBUS
-            deThiBUS.xoaTatCaCauHoiTrongDeThi(selectedMaDeThi);
+            chiTietDeThiBUS.xoaTatCaCauHoiTrongDeThi(selectedMaDeThi);
             // Xóa đề thi
             if (deThiBUS.xoaDeThi(selectedMaDeThi)) {
                 showMessage("Xóa đề thi thành công!");
@@ -522,7 +547,7 @@ public class QuanLyDeThiPanel extends BaseCrudPanel {
         String tenDeThi = (String) tableModel.getValueAt(row, 1);
         QuanLyCauHoiDeThiDialog dialog = new QuanLyCauHoiDeThiDialog(
                 (JFrame) SwingUtilities.getWindowAncestor(this),
-                deThiBUS, cauHoiBUS, nguoiDung.getMaGV(), selectedMaDeThi, tenDeThi, maHocPhan);
+            deThiBUS, chiTietDeThiBUS, cauHoiBUS, nguoiDung.getMaGV(), selectedMaDeThi, tenDeThi, maHocPhan);
         dialog.setVisible(true);
 
         // Reload sau khi đóng dialog
@@ -564,11 +589,12 @@ public class QuanLyDeThiPanel extends BaseCrudPanel {
  * Có 2 table: câu hỏi trong đề thi và câu hỏi có thể thêm
  * 
  * Sử dụng BUS chuyên biệt:
- * - DeThiBUS: Quản lý chi tiết đề thi
+ * - ChiTietDeThiBUS: Quản lý chi tiết đề thi
  * - CauHoiBUS: Lấy danh sách câu hỏi
  */
 class QuanLyCauHoiDeThiDialog extends JDialog {
     private DeThiBUS deThiBUS;
+     private ChiTietDeThiBUS chiTietDeThiBUS;
     private CauHoiBUS cauHoiBUS;
     private int maGV;
     private int maDeThi;
@@ -588,10 +614,11 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
 
     private JLabel lblSoCauHoi;
 
-    public QuanLyCauHoiDeThiDialog(JFrame parent, DeThiBUS deThiBUS, CauHoiBUS cauHoiBUS,
+    public QuanLyCauHoiDeThiDialog(JFrame parent, DeThiBUS deThiBUS, ChiTietDeThiBUS chiTietDeThiBUS, CauHoiBUS cauHoiBUS,
             int maGV, int maDeThi, String tenDeThi, int maHocPhan) {
         super(parent, "Quản lý câu hỏi - " + tenDeThi, true);
         this.deThiBUS = deThiBUS;
+        this.chiTietDeThiBUS = chiTietDeThiBUS;
         this.cauHoiBUS = cauHoiBUS;
         this.maGV = maGV;
         this.maDeThi = maDeThi;
@@ -704,7 +731,7 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
         modelCauHoiTrongDeThi.setRowCount(0);
 
         // Lấy danh sách mã câu hỏi trong đề thi - gọi DeThiBUS
-        List<Integer> danhSachMaCH = deThiBUS.getMaCauHoiByDeThi(maDeThi);
+        List<Integer> danhSachMaCH = chiTietDeThiBUS.getMaCauHoiByDeThi(maDeThi);
 
         // Lấy thông tin chi tiết câu hỏi theo danh sách mã (không giới hạn giảng viên)
         List<CauHoiDTO> danhSachCauHoi = cauHoiBUS.getByIds(danhSachMaCH);
@@ -728,7 +755,7 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
         modelCauHoiCoTheThem.setRowCount(0);
 
         // Lấy danh sách mã câu hỏi đã có trong đề thi - gọi DeThiBUS
-        Set<Integer> danhSachDaCo = new HashSet<>(deThiBUS.getMaCauHoiByDeThi(maDeThi));
+        Set<Integer> danhSachDaCo = new HashSet<>(chiTietDeThiBUS.getMaCauHoiByDeThi(maDeThi));
 
         // Lấy danh sách câu hỏi của giảng viên theo môn học
         List<CauHoiDTO> danhSachCauHoi;
@@ -767,7 +794,7 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
             danhSachMaCH.add(maCH);
         }
 
-        boolean success = deThiBUS.themNhieuCauHoiVaoDeThi(maDeThi, danhSachMaCH);
+        boolean success = chiTietDeThiBUS.themNhieuCauHoiVaoDeThi(maDeThi, danhSachMaCH);
         if (success) {
             // Cập nhật số câu hỏi trong đề thi
             int soCauMoi = modelCauHoiTrongDeThi.getRowCount() + danhSachMaCH.size();
@@ -800,7 +827,7 @@ class QuanLyCauHoiDeThiDialog extends JDialog {
         int successCount = 0;
         for (int row : selectedRows) {
             int maCH = (int) modelCauHoiTrongDeThi.getValueAt(row, 0);
-            if (deThiBUS.xoaCauHoiKhoiDeThi(maDeThi, maCH)) {
+            if (chiTietDeThiBUS.xoaCauHoiKhoiDeThi(maDeThi, maCH)) {
                 successCount++;
             }
         }

@@ -35,8 +35,29 @@
  */
 package gui.student;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+
 import bus.BaiThiBUS;
 import bus.CauHoiBUS;
+import bus.ChiTietBaiThiBUS;
 import bus.DeThiBUS;
 import config.Constants;
 import dto.BaiThiDTO;
@@ -47,15 +68,11 @@ import dto.ChiTietBaiThiDTO;
 import dto.DeThiDTO;
 import gui.components.CustomButton;
 import gui.components.CustomTable;
-import java.awt.*;
-import java.util.List;
-import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 
 public class ChiTietDiemDialog extends JDialog {
     private int maBaiThi;
     private BaiThiBUS baiThiBUS;
+    private ChiTietBaiThiBUS chiTietBaiThiBUS;
     private CauHoiBUS cauHoiBUS;
     private DeThiBUS deThiBUS;
     
@@ -67,6 +84,7 @@ public class ChiTietDiemDialog extends JDialog {
         super(parent, "Chi tiết điểm bài thi", true);
         this.maBaiThi = maBaiThi;
         this.baiThiBUS = new BaiThiBUS();
+        this.chiTietBaiThiBUS = new ChiTietBaiThiBUS();
         this.cauHoiBUS = new CauHoiBUS();
         this.deThiBUS = new DeThiBUS();
         
@@ -179,7 +197,7 @@ public class ChiTietDiemDialog extends JDialog {
         float diemMoiCau = 10.0f / tongSoCau;
         
         // Lấy chi tiết bài thi
-        List<ChiTietBaiThiDTO> danhSachChiTiet = baiThiBUS.getChiTietByBaiThi(maBaiThi);
+        List<ChiTietBaiThiDTO> danhSachChiTiet = chiTietBaiThiBUS.getChiTietByBaiThi(maBaiThi);
         
         int stt = 1;
         int soCauDung = 0;
